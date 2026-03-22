@@ -1,0 +1,7 @@
+# Collaboration Memory System configuration
+# This file is read by hooks and referenced by methodology.md
+# Location: project root
+
+collab_dir=collab
+consolidation_soft_threshold=50
+consolidation_hard_threshold=93
