@@ -3,7 +3,7 @@
 These instructions are for you, the AI assistant. Follow them step by step to install the collaboration memory system into the user's project. The system gives you long-term episodic and world model memory that survives across sessions and context compaction.
 
 **What gets installed:**
-- A `collab/` directory with memory files (methodology, indexes, notes, world model)
+- A collaboration directory (default `collab/`, user-configurable) with memory files (methodology, indexes, notes, world model)
 - A `.collab-config` file at the project root
 - Imports added to the project's instruction file (e.g., CLAUDE.md)
 - Platform-specific lifecycle hooks (if supported)
@@ -32,14 +32,14 @@ collab/
 
 These are hard rules. Follow them without exception.
 
-1. **Never destroy or modify existing user content.** Do not overwrite, delete, or alter any existing files, instructions, or data without explicit user approval. All additions are clearly marked and placed alongside existing content.
+1. **NEVER destroy or modify existing user content.** Do not overwrite, delete, or alter any existing files, instructions, or data without explicit user approval. All additions are clearly marked and placed alongside existing content.
 2. **Flag conflicts, don't resolve them.** If you detect potential issues (existing instructions that contradict the methodology, duplicate hooks, conflicting file structures), report them to the user and ask how to proceed. Do not resolve conflicts unilaterally.
 3. **Narrate every action.** Tell the user what you are doing at every step — what file you are creating, what content you are adding, what hook you are installing.
-4. **Confirm before executing.** Describe what you will install and ask for confirmation before making any changes.
+4. **Confirm before executing.** Describe what you will install, explain what each component is for, and ask for confirmation before making any changes.
 
 ## Prerequisites
 
-You need access to this repository's files to copy the templates. If the repository is not available locally, ask the user to clone it first:
+You need access to this repository's files to read the templates. The repository is public — read files directly from GitHub (e.g., via web fetch of raw file URLs). If direct reading is not possible on your platform, ask the user to clone the repository locally:
 
 ```
 git clone https://github.com/visionscaper/ai-collab-memory.git
@@ -55,7 +55,7 @@ Before doing anything, examine the target project:
    - Does it already contain collab-memory-system markers (`<!-- collab-memory-system:start -->`)?  If yes, the system is already installed — inform the user and stop.
    - Does it contain instructions that contradict the methodology (e.g., "never write notes", "don't ask questions")?  Flag these for the user.
 
-2. **Existing hooks** — Check if the project has lifecycle hooks configured (e.g., `.claude/settings.json` for Claude Code). Note any hooks on `SessionStart` or `UserPromptSubmit` events — these overlap with the collab system's hooks.
+2. **Existing hooks** — Check if the project has lifecycle hooks configured (e.g., `.claude/settings.json` for Claude Code). Note any hooks on `SessionStart` or `UserPromptSubmit` events — these overlap with the collab system's hooks. See `hooks/claude-code/collab-memory-hook.sh` in this repository for the hooks that will be installed.
 
 3. **Directory conflicts** — Check if `collab/` (or the chosen directory name) already exists at the project root. Check if `.collab-config` already exists.
 
@@ -81,28 +81,28 @@ Wait for the user's choices before proceeding.
 
 ### Step 3: Create Files
 
-Copy files from this repository into the target project. If the user chose a custom directory name, substitute it for `collab` throughout.
+Read each template file from this repository and create it in the target project. If the user chose a custom directory, substitute it for `collab` throughout.
 
 1. Copy `.collab-config` to the project root. If the user chose a custom directory, update the `collab_dir=` value to match.
 
-2. Copy the entire `collab/` directory (including `collab/docs/.gitkeep` and `collab/.collab-memory-system`).
+2. Create the entire `collab/` directory structure (including `collab/docs/.gitkeep` and `collab/.collab-memory-system`).
 
-3. Narrate each file as you create it. The full list:
+3. Narrate each file as you create it — briefly explain what the file is for. The full list:
 
    ```
-   .collab-config
-   collab/.collab-memory-system
-   collab/methodology.md
-   collab/index.md
-   collab/notes.md
-   collab/docs/.gitkeep
-   collab/world/index.md
-   collab/world/context.md
-   collab/world/preferences.md
-   collab/world/state.md
-   collab/world/how-tos.md
-   collab/world/domain.md
-   collab/world/factoids.md
+   .collab-config                → system settings (directory path, thresholds)
+   collab/.collab-memory-system  → version marker identifying this installation
+   collab/methodology.md         → your operating instructions for the memory system
+   collab/index.md               → episodic memory index — compact cue table (Tier 1, always in context)
+   collab/notes.md               → episodic memory — detailed notes (Tier 2, searched on demand)
+   collab/docs/.gitkeep          → directory for long-form reference documents (Tier 2)
+   collab/world/index.md         → world model index — cue table to world knowledge (Tier 1)
+   collab/world/context.md       → personal, project, and business context (Tier 1)
+   collab/world/preferences.md   → user working preferences and communication style (Tier 1)
+   collab/world/state.md         → current mutable state — work in progress, todos (Tier 1)
+   collab/world/how-tos.md       → procedures for recurring tasks (Tier 2)
+   collab/world/domain.md        → domain-specific knowledge and decisions (Tier 2)
+   collab/world/factoids.md      → specific facts, numbers, references (Tier 2)
    ```
 
 ### Step 4: Configure Instruction File
@@ -228,6 +228,6 @@ Run through this checklist and report results to the user:
 
 If all checks pass, inform the user:
 
-> "The collaboration memory system is installed. I'll now follow the methodology to maintain episodic and world model memory as we work together. The system will build up knowledge naturally through our collaboration."
+> "The collaboration memory system is installed. It will become active when you start a new session — the methodology, memory files, and hooks will load automatically at that point. The system will build up knowledge naturally as we collaborate."
 
-If any checks fail, report which ones and ask the user how to proceed.
+If any checks fail, report which ones and ask the user how to proceed. For issues that cannot be resolved, the user can file an issue at https://github.com/visionscaper/ai-collab-memory/issues.
