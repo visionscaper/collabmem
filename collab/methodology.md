@@ -59,6 +59,8 @@ This is deterministic (grep, not vector search), token-efficient (loads only wha
 
 ### [DD-MM-YYYY] Title
 
+**With:** @username (or AI model name for AI-initiated observations)
+
 **Context:** Why we looked into this.
 
 **What We Did:**
@@ -70,6 +72,8 @@ This is deterministic (grep, not vector search), token-efficient (loads only wha
 
 **Related:** Links to other notes, docs, PRs
 ```
+
+Not every note needs the full template. Quick observations — patterns noticed, emerging hypotheses, things that don't fit elsewhere — can be captured as lightweight notes with just a title, `**With:**`, and a few sentences. These still require an index entry.
 
 #### Rules
 
@@ -98,9 +102,11 @@ These guidelines apply to both the notes index (`index.md`) and the world model 
 **Index format:**
 
 ```
-| Date | Title | Summary | Keywords |
-|------|-------|---------|----------|
+| Date | Who | Title | Summary | Keywords |
+|------|-----|-------|---------|----------|
 ```
+
+The `Who` column identifies who the work was done with (username or AI model name for AI-initiated observations).
 
 #### Amendment Protocol
 
@@ -295,4 +301,15 @@ Extensions follow the same patterns as the core system: append-only episodic fil
 
 ### 12. Concurrency
 
-This system assumes one active AI session per project at a time. Multiple sessions exist over time (that is the point), but concurrent sessions writing to the same files will cause conflicts.
+One AI session per user at a time. Multiple users may work on the same project concurrently.
+
+**Minimizing conflicts:** Use per-user sections (`##### @username`) in state.md (Current Work), context.md (Personal), and preferences.md. This gives each user their own write area, allowing git to auto-merge changes to different sections. Commit and push promptly after updating shared world files.
+
+**Merge conflicts in append-only files** (notes.md, index.md): keep all entries from both versions — nothing should be lost.
+
+**Merge conflicts in world model files** (world/ directory):
+
+1. Ask the user if you should merge the world model knowledge back into a consistent whole, if the user didn't ask you already
+2. Read both versions and produce an integrated version that preserves all information from both
+3. If facts contradict each other, ask the user how to resolve it. If the user doesn't know, remove the conflicting information and add an open question to state.md noting who might be able to resolve it
+4. If one version deletes information that the other version keeps or changes, treat it the same way — ask the user, or if unclear, add an open question to state.md
