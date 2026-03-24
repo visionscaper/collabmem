@@ -1,3 +1,6 @@
+# Claude Code local context (contains local paths)
+.claude/
+
 # JetBrains IDEs (PyCharm, IntelliJ, etc.)
 .idea/
 
