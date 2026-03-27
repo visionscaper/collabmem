@@ -39,13 +39,11 @@ These are hard rules. Follow them without exception.
 
 ## Prerequisites
 
-You need access to this repository's files to read the templates. **The recommended approach is to clone the repository locally:**
+You need local access to this repository's files to read the templates and copy them into the target project. If you are reading this file, you likely already have the repository cloned. If not, clone it first:
 
 ```
 git clone https://github.com/visionscaper/ai-collab-memory.git /tmp/ai-collab-memory
 ```
-
-Cloning is reliable across all platforms. Alternatively, you can try reading files directly from GitHub via raw URLs (e.g., web fetch), but this may fail due to platform permission restrictions — if it does, fall back to cloning.
 
 ## Installation Steps
 
