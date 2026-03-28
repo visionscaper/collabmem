@@ -15,7 +15,9 @@ Both memory types are plain text files, tracked in git alongside the project. Ev
 
 No databases, no vector stores, no infrastructure. Just files and a methodology that the AI follows.
 
-**Status:** v1.0 — we are actively testing and improving this system. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome users to try it and share their experience — what worked, what didn't, what's missing. File feedback and issues at https://github.com/visionscaper/ai-collab-memory/issues.
+## Help Us Improve This System
+
+**Status:** v1.0 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/ai-collab-memory/issues.
 
 ## What Gets Installed
 
