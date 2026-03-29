@@ -19,6 +19,8 @@ No databases, no vector stores, no infrastructure. Just files and a methodology 
 
 **Status:** v1.0 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/ai-collab-memory/issues.
 
+All testing and development so far has been done using Claude Opus 4.6. This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
+
 ## What Gets Installed
 
 The system adds a collaboration directory (default `collab/`) to the project:
@@ -66,6 +68,24 @@ Ask your AI assistant:
 > "Install the long-term collaboration memory system by cloning https://github.com/visionscaper/ai-collab-memory to a temporary location and following the instructions in it."
 
 The AI will clone the repository, read the installation instructions, and walk you through setup. You'll be asked to confirm before any changes are made. The default installation takes a single confirmation — customization is available if needed.
+
+## Usage Tips
+
+The methodology instructs the AI to proactively propose notes and world model updates during collaboration. However, you can also trigger these manually — especially useful early on when you're building up the memory, or when you want to make sure something specific gets captured.
+
+**Record what happened (episodic memory):**
+
+> Please write a note about what we did, learned, and/or decided. Include an index entry as well.
+
+**Capture knowledge (world model):**
+
+> Please update the world model with relevant knowledge from what we did, learned, and decided. Update the world model index too if you changed any Tier 2 files.
+
+**Update current state:**
+
+> Please update the current state with what we're working on and any open items.
+
+These are examples — phrase them however feels natural. The AI understands the underlying system and will route information to the right files.
 
 ## How It Works
 
