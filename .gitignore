@@ -1,6 +1,9 @@
 # Claude Code local context (contains local paths)
 .claude/
 
+# Local collab-config override (contains local paths)
+.collab-config.local
+
 # JetBrains IDEs (PyCharm, IntelliJ, etc.)
 .idea/
 

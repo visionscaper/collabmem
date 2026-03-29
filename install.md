@@ -76,7 +76,7 @@ Ask the user a single question:
 
 **If the user wants to customize**, present these options:
 
-- **Directory location** — Default `collab/` at project root. The directory must be in the project tree. The user can choose a different name or location.
+- **Directory location** — Default `collab/` at project root. The user can choose a different name or location. An alternative pattern is a **shared knowledge repository** — a separate repo dedicated to collaboration memory across multiple projects. Each project gets its own directory in the knowledge repo with a `collab/` subdirectory. This keeps code repos clean and centralizes collaboration knowledge. If the collab directory is outside the working repo, `.collab-config` still goes at the working repo root with `collab_dir` set to the absolute path of the collab directory. Ask the user whether `.collab-config` should be git-ignored — it may contain machine-specific paths, or the user may prefer not to commit any collab system references in the code repo.
 - **Import placement** — Where to insert the import block in the instruction file. Options:
   - (a) At the start of the file (default — the collab system is infrastructure that other instructions build on)
   - (b) At the end of the file

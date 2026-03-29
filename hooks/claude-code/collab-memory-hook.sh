@@ -102,7 +102,7 @@ fi
 if [ "$HOOK_EVENT" = "UserPromptSubmit" ]; then
     echo "$CURRENT_DATETIME"
     echo "- Check in-context indexes before searching."
-    echo "- Consider: should a note or world model update be proposed?"
+    echo "- Consider: should a note or world model update be proposed? Keep the index files updated."
     exit 0
 fi
 
