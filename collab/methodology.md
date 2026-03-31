@@ -145,7 +145,7 @@ When a world file undergoes a significant rewrite (not just adding a fact), reco
 
 The set of world files is fixed:
 
-**Tier 1 world files** (always in context, ~5,000 char cap each):
+**Tier 1 world files** (always in context, character cap per file — see `tier_1_max_chars` in `.collab-config`):
 
 | File | Purpose |
 |------|---------|
@@ -162,6 +162,14 @@ The set of world files is fixed:
 | `world/domain.md` | Domain-specific knowledge and architecture decisions |
 | `world/factoids.md` | Specific facts, numbers, references — never guess these |
 
+#### Writing World Model Knowledge
+
+**Tier 1 quality principle:** Knowledge in Tier 1 files must have enough context and detail such that a fresh AI session can understand *why* it matters and act on it effectively, without needing to load additional files. This applies whenever writing to Tier 1 files — whether adding new knowledge, updating existing content, or condensing during compaction. The character cap (see `.collab-config`) is a target to manage context window pressure, not a reason to make knowledge unusable through over-condensation. When condensing, remove redundancy, not context or minimally required details — the explanation of *why* something matters is not redundancy. When in doubt about what to cut, move detail to a Tier 2 file rather than deleting it.
+
+**Reference documentation:** When world model files describe knowledge that is documented in detail elsewhere, reference the document rather than duplicating it. Use `docs/filename.md` (relative to the collab root) for documents inside `collab/docs/`. Use absolute paths for documents outside the collab directory. Prefer a concise summary with a document reference over a long self-contained explanation.
+
+**Tier 2 content structuring:** When Tier 2 files contain knowledge about multiple topics, projects, or domains, section the content accordingly so the context of each piece of information is clear. A fresh AI session reading a section should be able to tell what project or domain it relates to without cross-referencing other files.
+
 #### World Index
 
 `world/index.md` is a cue table that tells you what knowledge exists and when to check it:
@@ -175,7 +183,7 @@ The "When to check" column is the cue mechanism — it matches user intent to wo
 
 #### Compaction and Growth
 
-When a Tier 1 world file approaches ~5,000 characters, rewrite it to remove the least relevant knowledge — but keep as much as possible, staying close to the 5,000 character range. Move removed knowledge to a note in `notes.md` and add a corresponding `index.md` entry.
+When a Tier 1 world file approaches the character cap (see `tier_1_max_chars` in `.collab-config`), rewrite it to remove the least relevant knowledge — but keep as much as possible, staying close to the cap. Move removed knowledge to a note in `notes.md` and add a corresponding `index.md` entry.
 
 When `index.md` approaches the `consolidation_soft_threshold` (see `.collab-config`), suggest to the user that knowledge from the oldest episodes — as referenced by the oldest index entries — can be consolidated into world files. The criteria is not purely age-based: only consolidate entries that are no longer actively referenced and represent mature, stabilized knowledge. Old entries that are still actively relevant (e.g., foundational architecture decisions) should remain.
 
@@ -234,6 +242,8 @@ Consolidated index entries move to `index-archive.md` (same table format as `ind
 2. Check `world/state.md` for current work
 3. Scan recent entries in `index.md` for context on active work
 4. If prior work is unclear, search `notes.md` for recent notes
+
+**IMPORTANT — Context pressure awareness:** Compaction cannot be predicted programmatically. In conversations with significant decisions, learnings, or state changes where no recent note has been written, proactively ask the user how much context remains. If remaining context is approximately 10% or less, propose a note capturing current session state before compaction occurs. If not yet, ask the user to help keep track of the remaining context window space, such that you can write a note on time.
 
 #### Before Compaction (PreCompact)
 

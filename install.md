@@ -72,7 +72,7 @@ Before doing anything, examine the target project:
 
 Ask the user a single question:
 
-> "I'll install the collaboration memory system with recommended defaults into `collab/` at the project root, with imports at the top of your instruction file. All files will be git-tracked and human-auditable. Shall I proceed with defaults, or would you prefer to review customization options first?"
+> "I'll install the collaboration memory system with recommended defaults into `collab/` at the project root, with imports at the end of your instruction file. All files will be git-tracked and human-auditable. Shall I proceed with defaults, or would you prefer to review customization options first?"
 
 **If the user chooses defaults:** proceed to Step 3.
 
@@ -80,8 +80,8 @@ Ask the user a single question:
 
 - **Directory location** — Default `collab/` at project root. The user can choose a different name or location. An alternative pattern is a **shared knowledge repository** — a separate repo dedicated to collaboration memory across multiple projects. Each project gets its own directory in the knowledge repo with a `collab/` subdirectory. This keeps code repos clean and centralizes collaboration knowledge. If the collab directory is outside the working repo, `.collab-config` still goes at the working repo root with `collab_dir` set to the absolute path of the collab directory. Ask the user whether `.collab-config` should be git-ignored — it may contain machine-specific paths, or the user may prefer not to commit any collab system references in the code repo.
 - **Import placement** — Where to insert the import block in the instruction file. Options:
-  - (a) At the start of the file (default — the collab system is infrastructure that other instructions build on)
-  - (b) At the end of the file
+  - (a) At the end of the file (default — existing project instructions establish context; the collab system appends below)
+  - (b) At the start of the file
   - (c) After a specific section the user indicates
 - **Git tracking** — Default: tracked. If the user prefers not to track collab files in git, add `collab/` and `.collab-config` to `.gitignore`.
 
@@ -119,7 +119,7 @@ Copy the template files from this repository into the target project. If the use
 
 ### Step 4: Configure Instruction File
 
-Insert the import block into the project's instruction file at the chosen placement (default: start of file). If no instruction file exists, create one (e.g., `CLAUDE.md`).
+Insert the import block into the project's instruction file at the chosen placement (default: end of file). If no instruction file exists, create one (e.g., `CLAUDE.md`).
 
 **Never overwrite existing content.** Insert the block at the chosen position, preserving everything else.
 
@@ -150,7 +150,7 @@ The import block (adjust `collab/` if a custom directory was chosen):
 
 **Note on import syntax:** The `@path` syntax is Claude Code-specific. Other AI platforms use their own import or file-inclusion mechanism. The heading structure (`##` grouping, `###`/`####` content) applies regardless of platform — it ensures files compose into a consistent hierarchy when loaded into context.
 
-**If inserting at the start** of an existing file, add a blank line after `<!-- collab-memory-system:end -->` to visually separate the collab block from the user's existing content.
+**If inserting at the end** of an existing file, add a blank line before `<!-- collab-memory-system:start -->` to visually separate the collab block from the user's existing content.
 
 ### Step 5: Platform-Specific Setup
 
@@ -229,14 +229,17 @@ Ask the user:
 
 **If the user responds with information:**
 - Parse their free-form answer
-- Distribute relevant content across the appropriate world files:
-  - Personal background, project description, business context, constraints, tech stack → `world/context.md`
-  - Communication preferences, code style, working approach → `world/preferences.md`
-  - Current work in progress, active tasks, open questions → `world/state.md`
+- Distribute relevant content across the appropriate world files, in this order:
+  1. Personal background, project description, business context, constraints, tech stack → `world/context.md` (frames everything else)
+  2. Communication preferences, code style, working approach → `world/preferences.md`
+  3. Domain knowledge, procedures, specific facts → Tier 2 files (`world/domain.md`, `world/how-tos.md`, `world/factoids.md`), with doc references where applicable
+  4. Current work in progress, active tasks, open questions → `world/state.md` (last — depends on knowing what exists)
 - Replace the HTML comment placeholders with the actual content, keeping the section headings
 - Show the user what you wrote in each file
 
 **If the user skips:** leave the template files as they are. The behavioral triggers in the methodology will populate these files organically during normal collaboration.
+
+**Existing documentation:** If the project has existing documentation (design docs, analysis reports, reference material), discuss with the user whether project-specific docs should be moved to `collab/docs/`. This makes the collab directory self-contained and enables simple relative references (`docs/filename.md`). Non-project docs (shared across projects, owned by other teams) should stay in their original location and be referenced with absolute paths. After moving or identifying docs, add references to them in the relevant world model files (see the doc reference convention in `methodology.md` Section 4).
 
 ### Step 7: Verify Installation
 
@@ -260,6 +263,15 @@ If any checks fail, report which ones and ask the user how to proceed. For issue
 
 If Step 1 identified an existing notes or journaling system, discuss migration with the user:
 
+**Transition notice:** When migrating from an existing system, recommend adding a visible comment before the collab-memory-system import block in the instruction file:
+
+```markdown
+<!-- IMPORTANT: We are transitioning from the old memory system (above) to the collaboration memory system (below).
+     The new system is authoritative where it covers a topic. Old content will be progressively migrated and removed. -->
+```
+
+This helps any AI session understand which system is authoritative during the migration period.
+
 1. **Assess feasibility** — Describe what you found (file format, number of entries, structure). Discuss with the user whether migration makes sense: Are the notes still relevant? Is the format compatible? Would the project benefit from having this history in the episodic memory system? Migration is optional — the user may prefer to start fresh and keep old notes as a separate archive.
 
 2. **Plan the migration** — If the user wants to migrate:
@@ -271,6 +283,7 @@ If Step 1 identified an existing notes or journaling system, discuss migration w
    - Copy to `notes.md` (adjust to the note template format: `###` heading with `[DD-MM-YYYY]` date, `**With:**` field, `---` separator between notes). Copy related domain-specific entries (e.g., experiment logs) to their respective files.
    - Create an index entry in `index.md` — use any existing index or summary as reference material; write new entries from scratch where none exist. Follow the index writing guidelines in the methodology (concise contextualized facts, distinctive terms, retrieval cues).
    - Check if the note contains knowledge for the world model: new facts, procedures, domain knowledge, context, or preferences. Update the relevant world files when you find something. **Don't forget to update `world/index.md` when Tier 2 world files change.**
+   - When building the world model during migration, populate context.md and preferences.md first (they frame all other knowledge), then Tier 2 files, then state.md.
    - For low-content notes, batching 2-4 at a time is acceptable. For notes with significant decisions or learnings, work one at a time to ensure careful world model review.
 
 4. **Track progress** — For large note sets that may span multiple sessions, record migration progress in `world/state.md` (e.g., "Migration: 45/184 notes done"). This is Tier 1, so the next session sees it immediately and can continue where you left off.

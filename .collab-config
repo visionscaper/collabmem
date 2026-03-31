@@ -3,3 +3,4 @@
 collab_dir=collab
 consolidation_soft_threshold=50
 consolidation_hard_threshold=93
+tier_1_max_chars=5000

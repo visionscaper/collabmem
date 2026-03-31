@@ -87,6 +87,10 @@ The methodology instructs the AI to proactively propose notes and world model up
 
 These are examples — phrase them however feels natural. The AI understands the underlying system and will route information to the right files.
 
+### IMPORTANT: Watch for automatic context compaction
+
+The AI cannot know how much context window space remains before auto-compaction occurs. When compaction happens, session details are lost — only the memory system's files preserve what was discussed and decided. When you notice the context window space is getting low, ask the AI to write a note capturing current session state — decisions made, work in progress, open questions. This is your best insurance against losing session context.
+
 ## How It Works
 
 ### Three Memory Types
