@@ -48,15 +48,9 @@ This is deterministic (grep, not vector search), token-efficient (loads only wha
 
 Write a note when a non-trivial logical unit of work concludes, or when a discussion produces questions, decisions, conclusions, or learnings worth recalling later.
 
-A non-trivial logical unit of work is a coherent piece of effort that produced a result, changed understanding, or closed a question. Examples: implementing a feature, debugging an issue, completing a refactor, running an experiment, reviewing a design. Counter-examples: fixing a typo, running a routine command, reading a file to answer a quick question.
+A non-trivial logical unit of work is a coherent piece of effort that produced a result, changed understanding, or closed a question. Examples: implementing a feature, debugging an issue, completing a refactor, running an experiment, reviewing a design, a discussion that produced decisions, a design, or a plan. The common collaboration pattern is: discuss → decide → implement. Both the discussion phase and the implementation phase are separate logical units that may each warrant a note. Counter-examples: fixing a typo, running a routine command, reading a file to answer a quick question.
 
-Common triggers:
-- A significant decision was made
-- A non-trivial problem was investigated or solved
-- An approach was tried and failed (or succeeded)
-- A discussion concluded with learnings or open questions
-- The user wants to commit non-trivial work
-- The user asks you to document something
+See Section 9 for the specific triggers that should prompt consideration of a note.
 
 **Always propose notes to the user — never write without their approval.** Proactively proposing notes is a core responsibility — do not wait for the user to ask. Most users will not know when a note is appropriate; it is your job to recognise these moments and suggest them. See Section 9 for full note proposal etiquette.
 
@@ -130,7 +124,7 @@ The `world/` directory contains current reality — not history. Unlike notes, w
 
 #### When to Update the World Model
 
-There are two triggers for world model updates:
+See Section 9 for the specific triggers that should prompt consideration of a world model update. There are two modes of world model updates:
 
 1. **Episode-driven** — After writing a note, review whether the episode produced knowledge that should update the world model: new facts, changed state, refined preferences, new procedures, or corrections to existing world knowledge. Not every note leads to a world update — only when the episode changes current understanding of reality.
 
@@ -285,15 +279,14 @@ Document project-specific long-line hazards in `world/how-tos.md`.
 
 This is a quick-reference summary. See Section 3 for when to write notes and Section 4 for when to update the world model.
 
-| Trigger | Action |
-|---------|--------|
-| Logical unit of work concluded | Propose note + index entry (Section 3) |
-| Discussion produced decisions/learnings | Propose note + index entry (Section 3) |
-| After writing a note | Check if episode should update world model (Section 4) |
-| World-relevant information detected | Update relevant world file immediately (Section 4) |
-| Tier 2 world file updated | Update `world/index.md` to reflect current content |
-| Before commit (if non-trivial work) | Propose note if not already written |
-| Session ending | Review `world/state.md` for accuracy |
+**Action (applies to all triggers):** Consider whether an episodic memory note and/or world model update should be proposed to the user. Keep `index.md` and `world/index.md` in sync with any changes.
+
+**Triggers:**
+
+- A logical unit of work concluded — e.g. a discussion produced decisions, a design, a plan, or conclusions; a piece of implementation work was completed (feature, fix, refactor, investigation)
+- The user shared context, preferences, or corrected your understanding — e.g. personal/project/business context, working preferences, factual corrections, new procedures or domain knowledge
+- A commit is about to happen for non-trivial work
+- The session is being compacted soon or the session is ending — review and update `world/state.md` when relevant
 
 **Note proposal etiquette:** When proposing a note, describe what you would capture (title + key points) and ask if the user wants it recorded. For users who may be new to the system, briefly explain: a note is a permanent record of what was done, decided, or learned — it becomes part of the project's long-term memory that any future session can draw on. Do not write notes silently or for trivial work.
 
@@ -323,7 +316,7 @@ Extensions add domain-specific files and triggers alongside the core system.
 
 1. Add extension files alongside core files (e.g., `experiment-logs.md` next to `notes.md`)
 2. Add extension instructions as a separate `methodology-<name>.md` file (loaded alongside this file)
-3. Add extension-specific triggers to the trigger table or in the extension methodology
+3. Add extension-specific triggers to the trigger list or in the extension methodology
 4. Add extension entries to `world/index.md` so the knowledge is discoverable
 
 Extensions follow the same patterns as the core system: append-only episodic files, maintained world files, index entries for discoverability.

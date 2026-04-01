@@ -3,8 +3,8 @@
 # collab-memory-hook.sh — Lifecycle hook for the Collaboration Memory System
 #
 # Handles two Claude Code hook events:
-#   - SessionStart: Context recovery and health check
-#   - UserPromptSubmit: Timestamp and search reminder
+#   - SessionStart: Context recovery, health check, and memory triggers
+#   - UserPromptSubmit: Timestamp
 #
 # Install by adding to .claude/settings.json (see README for configuration).
 # The script reads .collab-config from the project root for the collab directory path.
@@ -57,6 +57,22 @@ check_health() {
     fi
 }
 
+# --- Memory triggers ---
+# Republished at session start for primacy position in context window.
+# Same trigger list as methodology Section 9.
+print_memory_triggers() {
+    echo ""
+    echo "IMPORTANT: After each user message or your response, consider whether an episodic memory note and/or world model update should be made, for instance when:"
+    echo "- A logical unit of work concluded — e.g. a discussion produced decisions, a design, a plan, or conclusions; a piece of implementation work was completed (feature, fix, refactor, investigation)"
+    echo "- The user shared context, preferences, or corrected your understanding — e.g. personal/project/business context, working preferences, factual corrections, new procedures or domain knowledge"
+    echo "- A commit is about to happen for non-trivial work"
+    echo "- The session is being compacted soon or the session is ending — review and update world/state.md when relevant"
+    echo "Propose updates to the user — also see methodology Sections 3, 4, and 9."
+    echo "Keep index.md and world/index.md in sync with any changes."
+    echo ""
+    echo "When searching for information, check in-context indexes before searching files."
+}
+
 # --- SessionStart ---
 if [ "$HOOK_EVENT" = "SessionStart" ]; then
     SOURCE=$(echo "$INPUT" | jq -r '.source // "unknown"')
@@ -71,6 +87,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "1. Check world/state.md for current work"
             echo "2. Scan recent index.md entries for context"
             echo "3. If unclear, search notes.md for recent notes"
+            print_memory_triggers
             ;;
 
         "compact")
@@ -85,6 +102,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "Follow methodology Section 7 (After Compaction):"
             echo "1. Search notes.md for the most recent session summary note"
             echo "2. Verify with the user what was being worked on before continuing"
+            print_memory_triggers
             ;;
 
         "resume")
@@ -92,6 +110,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "$CURRENT_DATETIME"
             echo ""
             echo "Context should be intact. If uncertain about details, verify from notes and world model files."
+            print_memory_triggers
             ;;
     esac
 
@@ -101,8 +120,6 @@ fi
 # --- UserPromptSubmit ---
 if [ "$HOOK_EVENT" = "UserPromptSubmit" ]; then
     echo "$CURRENT_DATETIME"
-    echo "- Check in-context indexes before searching."
-    echo "- Consider: should a note or world model update be proposed? Keep the index files updated."
     exit 0
 fi
 

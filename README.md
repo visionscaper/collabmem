@@ -69,19 +69,23 @@ Ask your AI assistant:
 
 The AI will clone the repository, read the installation instructions, and walk you through setup. You'll be asked to confirm before any changes are made. The default installation takes a single confirmation — customization is available if needed.
 
-## Usage Tips
+## Working with the Memory System
 
-The methodology instructs the AI to proactively propose notes and world model updates during collaboration. However, you can also trigger these manually — especially useful early on when you're building up the memory, or when you want to make sure something specific gets captured.
+You, as the user, know best when something important was discussed, decided, or learned. Prompting the AI for memory updates at natural checkpoints is the most reliable way to keep the memory system current and useful:
 
-**Record what happened (episodic memory):**
+- After a discussion that produced decisions, a design, or a plan
+- After completing a piece of work (feature, fix, refactor, investigation)
+- Before committing non-trivial changes
+- When you've shared context, preferences, or corrections that should be remembered
+- At the end of a session
+
+The methodology instructs the AI to proactively propose notes and world model updates, but in practice this is unreliable — especially during focused execution. Current AI models allocate attention to the immediate task and deprioritize reflective meta-tasks like "should I update memory now?" This is not a bug in the instructions; it's a fundamental limitation of how current models process competing priorities. Don't rely on the AI to suggest updates — prompt for them yourself when the moment is right.
+
+**Example prompts:**
 
 > Please write a note about what we did, learned, and/or decided. Include an index entry as well.
 
-**Capture knowledge (world model):**
-
 > Please update the world model with relevant knowledge from what we did, learned, and decided. Update the world model index too if you changed any Tier 2 files.
-
-**Update current state:**
 
 > Please update the current state with what we're working on and any open items.
 
@@ -166,6 +170,7 @@ The core methodology works with any AI assistant that can read and write files a
 - **Hook support** — Lifecycle hooks are currently implemented for Claude Code only. Other platforms might be added in the future. If you are interested in support for a specific platform, provide your solution in a PR or file an issue (see Contributing).
 - **Single methodology version** — No migration tooling yet between methodology versions. Upgrade instructions will be provided in `upgrade.md` when needed.
 - **Instruction file reload** — Most AI platforms only load the instruction file at session start. Changes made during installation take effect in the next session, not immediately.
+- **No automatic reflection** — The AI is instructed to proactively propose memory updates but often fails to during focused execution (see "Working with the Memory System" above). The ideal solution would be a separate reflection agent that monitors the conversation and surfaces "time for a note?" signals independently of the main execution agent — separating the execution concern from the reflection concern. This is not possible on current AI coding platforms (hooks lack conversation context, sub-agents must be manually invoked) but represents a direction for future development.
 
 ## Contributing
 

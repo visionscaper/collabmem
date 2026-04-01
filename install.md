@@ -277,13 +277,17 @@ This helps any AI session understand which system is authoritative during the mi
 2. **Plan the migration** — If the user wants to migrate:
    - Determine how existing entries map to the collab system: which are episodic notes (`notes.md`), which are domain-specific logs (e.g., experiment logs as a domain extension), and which are project context that belongs in world model files. Discuss your findings with the user — they may have important insights about the structure or preferences about how things should be organised.
    - If an existing index or index-like structure exists (e.g., keyword summaries in an instruction file), assess its coverage — does it reference all notes, or are there gaps? Plan to create index entries for unreferenced notes as well.
-   - **Before starting, list the kinds of world model topics that could be relevant** for this project (e.g., architecture decisions, technology constraints, domain knowledge, procedures, key facts). This primes your attention for recognising world model knowledge as you read each note.
+   - **Before starting, list the kinds of world model topics that could be relevant** for this project (e.g., architecture decisions, technology constraints, domain knowledge, procedures, key facts). This primes your attention for recognising world model knowledge during migration.
 
-3. **Migrate chronologically** — Work through the existing notes in chronological order. For each note:
-   - Copy to `notes.md` (adjust to the note template format: `###` heading with `[DD-MM-YYYY]` date, `**With:**` field, `---` separator between notes). Copy related domain-specific entries (e.g., experiment logs) to their respective files.
-   - Create an index entry in `index.md` — use any existing index or summary as reference material; write new entries from scratch where none exist. Follow the index writing guidelines in the methodology (concise contextualized facts, distinctive terms, retrieval cues).
-   - Check if the note contains knowledge for the world model: new facts, procedures, domain knowledge, context, or preferences. Update the relevant world files when you find something. **Don't forget to update `world/index.md` when Tier 2 world files change.**
-   - When building the world model during migration, populate context.md and preferences.md first (they frame all other knowledge), then Tier 2 files, then state.md.
-   - For low-content notes, batching 2-4 at a time is acceptable. For notes with significant decisions or learnings, work one at a time to ensure careful world model review.
+3. **Migrate notes and index** — Apply mechanical format transformations to migrate notes and index entries in bulk:
+   - Copy notes to `notes.md`, adjusting to the note template format: `###` heading with `[DD-MM-YYYY]` date, `**With:**` field, `---` separator between notes. Use automated transformations (sed, find-replace) where possible — format differences between systems are typically small and mechanical (field renames, column reorder, heading format).
+   - Copy or transform index entries to `index.md` — adjust column order to match the index format (`Date | Who | Title | Summary | Keywords`). If no index exists, create entries from the notes following the index writing guidelines in the methodology.
+   - Copy related domain-specific entries (e.g., experiment logs) to their respective files. Copy reference docs to `collab/docs/`.
+   - Notes are historical records. File paths and references within notes should remain as they were at time of writing — they were correct in their original context. Only update references to files that are physically moved as part of the migration itself (e.g., docs relocated from the old system to `collab/docs/`).
 
-4. **Track progress** — For large note sets that may span multiple sessions, record migration progress in `world/state.md` (e.g., "Migration: 45/184 notes done"). This is Tier 1, so the next session sees it immediately and can continue where you left off.
+4. **Extract world model knowledge** — Read through the migrated notes as a corpus (or in batches for large note sets), identify recurring themes and topics, and populate world model files by topic rather than by note:
+   - Populate context.md and preferences.md first (they frame all other knowledge), then Tier 2 files, then state.md.
+   - Check for: domain knowledge, architecture decisions, procedures, facts, user context, and preferences.
+   - **Don't forget to update `world/index.md` when Tier 2 world files change.**
+
+5. **Track progress** — For large note sets that may span multiple sessions, record migration progress in `world/state.md` (e.g., "Migration: 45/184 notes done"). This is Tier 1, so the next session sees it immediately and can continue where you left off.
