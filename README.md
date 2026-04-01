@@ -4,7 +4,9 @@ A structured methodology for long-term collaboration between humans and AI assis
 
 ## Introduction
 
-AI assistants today have no meaningful long-term memory. Each session starts nearly blank, and within a session, context compaction discards detail as the conversation grows. This makes genuine collaboration — over days, weeks, months, or even years — impossible. The AI repeatedly rediscovers information, forgets decisions, and contradicts prior work. It never builds the contextual understanding needed for informed suggestions, and cannot draw on accumulated experience for creative solutions.
+AI platforms are adding memory features — preferences, session notes, automated memory extraction. These help with session-to-session continuity for individual developers: remembering build commands, framework choices, and working preferences. But they optimise for brevity and automation — short entries, aggressive pruning, minimal user involvement.
+
+For genuine long-term collaboration — over weeks, months, or years — this isn't enough. The AI needs rich contextual understanding: not just *what* was decided, but *why*, what alternatives were considered, how understanding evolved, and what the user's goals and constraints are. It needs memory that's detailed enough to reason from, accurate enough to trust, and persistent enough to build on. Without this, the AI repeatedly rediscovers context, loses the reasoning behind decisions, and cannot draw on accumulated experience.
 
 **ai-collab-memory** solves this with two types of persistent, file-based memory:
 
