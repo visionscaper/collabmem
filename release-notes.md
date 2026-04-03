@@ -1,5 +1,16 @@
 # Release Notes
 
+## v1.3
+
+**Changes since v1.2 (commit `708989e`):**
+
+- **upgrade.md** (new): Step-by-step upgrade instructions for AI assistants. Covers version comparison, release notes reading, diffing from installed version commit to HEAD, single-pass application, user customisation detection, memory data migration handling, and verification.
+- **README.md**: Added "How to Upgrade" section with human-friendly prompt and AI pointer to upgrade.md.
+
+**Upgrade from v1.2:**
+
+No changes to installed files, only README.md was updated and upgrade.md added. Update `collab/.collab-memory-system` to `v1.3`.
+
 ## v1.2
 
 **Changes since v1.1 (commit `238e776`):**

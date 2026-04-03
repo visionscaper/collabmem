@@ -19,7 +19,7 @@ No databases, no vector stores, no infrastructure. Just files and a methodology 
 
 ## Help Us Improve This System
 
-**Status:** v1.2 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/ai-collab-memory/issues.
+**Status:** v1.3 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/ai-collab-memory/issues.
 
 All testing and development so far has been done using Claude Opus 4.6. This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
 
@@ -70,6 +70,20 @@ Ask your AI assistant:
 > "Install the long-term collaboration memory system by cloning https://github.com/visionscaper/ai-collab-memory to a temporary location and following the instructions in it."
 
 The AI will clone the repository, read the installation instructions, and walk you through setup. You'll be asked to confirm before any changes are made. The default installation takes a single confirmation — customization is available if needed.
+
+## How to Upgrade
+
+### For AI Assistants
+
+If a user asks you to upgrade the collaboration memory system, read [`upgrade.md`](upgrade.md) and follow the step-by-step instructions.
+
+### For Humans
+
+Ask your AI assistant:
+
+> "Upgrade the collaboration memory system by cloning https://github.com/visionscaper/ai-collab-memory to a temporary location and following the upgrade instructions in it."
+
+The AI will compare your installed version with the latest, read the release notes, and apply the differences. Your notes, world model, and accumulated knowledge are never modified during an upgrade — only system files (methodology, hooks, configuration) are updated. In rare cases where memory data needs to be adapted to a new version, the AI will discuss the changes with you and ask for approval before making any modifications.
 
 ## Working with the Memory System
 
