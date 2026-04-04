@@ -121,7 +121,7 @@ The AI cannot know how much context window space remains before auto-compaction 
 | **World model** | Current understanding of reality | `world/` directory |
 | **Working memory** | What's loaded in the AI's context window | Managed via tiers |
 
-Episodic memory is **append-only** — notes are never rewritten, preserving the historical record. The world model is **maintained** — files are updated to reflect current reality.
+Episodic memory is **append-only** — notes are never rewritten, preserving the historical record. A note from month 1 describing code that was rewritten in month 3 isn't stale — it's history, and the reasoning behind that original design might matter later. When a note is superseded, an amendment links it to the newer note. The world model is **maintained** — files are updated to reflect current reality. Staleness is handled differently by type: episodic memory preserves history, the world model stays current.
 
 ### Two-Tier Context Management
 
