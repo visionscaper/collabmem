@@ -16,6 +16,7 @@ collab/
 ├── methodology.md          (your operating instructions)
 ├── index.md                (episodic memory index — Tier 1)
 ├── notes.md                (episodic memory — Tier 2)
+├── index-archive.md        (archived index entries — Tier 2)
 ├── docs/                   (long-form reference documents — Tier 2)
 │   └── .gitkeep
 └── world/
@@ -105,6 +106,7 @@ Copy the template files from this repository into the target project. If the use
    collab/methodology.md         → your operating instructions for the memory system
    collab/index.md               → episodic memory index — compact cue table (Tier 1, always in context)
    collab/notes.md               → episodic memory — detailed notes (Tier 2, searched on demand)
+   collab/index-archive.md       → archived index entries after consolidation (Tier 2)
    collab/docs/.gitkeep          → directory for long-form reference documents (Tier 2)
    collab/world/index.md         → world model index — cue table to world knowledge (Tier 1)
    collab/world/context.md       → personal, project, and business context (Tier 1)
@@ -247,7 +249,7 @@ Run through this checklist and report results to the user:
 
 - [ ] `.collab-config` exists at project root
 - [ ] `collab/.collab-memory-system` exists and contains a version string
-- [ ] All 10 collab files exist (`methodology.md`, `index.md`, `notes.md`, and 7 world files)
+- [ ] All 11 collab files exist (`methodology.md`, `index.md`, `index-archive.md`, `notes.md`, and 7 world files)
 - [ ] `collab/docs/` directory exists
 - [ ] Instruction file contains the import block between `<!-- collab-memory-system:start -->` and `<!-- collab-memory-system:end -->` markers
 - [ ] (Claude Code) Hook script exists at `.claude/hooks/collab-memory-hook.sh` and is executable

@@ -19,7 +19,7 @@ No databases, no vector stores, no infrastructure. Just files and a methodology 
 
 ## Help Us Improve This System
 
-**Status:** v1.3 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/ai-collab-memory/issues.
+**Status:** v1.4 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/ai-collab-memory/issues.
 
 All testing and development so far has been done using Claude Opus 4.6. This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
 
@@ -34,6 +34,7 @@ collab/
 ├── methodology.md              ← AI operating instructions
 ├── index.md                    ← episodic memory index (compact cue table)
 ├── notes.md                    ← episodic memory (detailed notes)
+├── index-archive.md            ← archived index entries (after consolidation)
 ├── docs/                       ← long-form reference documents
 └── world/
     ├── index.md                ← world model index (cue table)
@@ -146,6 +147,15 @@ The system is designed for teams from the ground up. Every note and index entry 
 
 The methodology defines when the AI should act: propose a note after a significant decision, update world files when the user shares new facts or preferences, check state at session boundaries, suggest consolidation when the index grows large. These triggers ensure the memory grows organically through normal collaboration — no manual maintenance required.
 
+### Memory Growth and Sustainability
+
+As collaboration continues, memory grows. Two mechanisms keep this sustainable without losing knowledge:
+
+- **Episodic index consolidation (upward)** — When the episodic index grows large, mature stable knowledge from old episodes is extracted into world model files. The consolidated index entries move to a searchable archive. The original notes remain unchanged. This keeps the active index focused on recent work while the world model absorbs the accumulated knowledge.
+- **World model compaction (downward)** — When a world model file approaches its size cap, it is rewritten to stay compact. Removed knowledge is preserved in an episodic note, so nothing is lost.
+
+Both mechanisms preserve knowledge — nothing is deleted. Consolidation and compaction are always discussed with the user before being applied.
+
 ## What Makes This Different
 
 AI platforms are adding memory features — auto-memory, memory consolidation, session notes. These systems share several core concepts with ai-collab-memory: in-context indexes for awareness, tiered storage (always-loaded vs on-demand), and consolidation of accumulated knowledge. Some go further with automated per-turn memory extraction and background consolidation. For a single developer on routine tasks, platform-native memory works well.
@@ -183,7 +193,7 @@ The core methodology works with any AI assistant that can read and write files a
 - **Context window dependency** — Tier 1 files must fit in the AI's context window alongside other instructions and conversation. The ~5,000 character caps are tuned for current context sizes but may need adjustment.
 - **No automated consolidation** — When the episodic index grows large, the AI suggests consolidation but the process is manual (AI-assisted, user-approved). Automated tooling is future work.
 - **Hook support** — Lifecycle hooks are currently implemented for Claude Code only. Other platforms might be added in the future. If you are interested in support for a specific platform, provide your solution in a PR or file an issue (see Contributing).
-- **Single methodology version** — No migration tooling yet between methodology versions. Upgrade instructions will be provided in `upgrade.md` when needed.
+- **Single methodology version** — No automated migration tooling between methodology versions. Manual upgrade instructions are in [`upgrade.md`](upgrade.md).
 - **Instruction file reload** — Most AI platforms only load the instruction file at session start. Changes made during installation take effect in the next session, not immediately.
 - **No automatic reflection** — The AI is instructed to proactively propose memory updates but often fails to during focused execution (see "Working with the Memory System" above). The ideal solution would be a separate reflection agent that monitors the conversation and surfaces "time for a note?" signals independently of the main execution agent — separating the execution concern from the reflection concern. This is not possible on current AI coding platforms (hooks lack conversation context, sub-agents must be manually invoked) but represents a direction for future development.
 

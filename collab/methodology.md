@@ -6,7 +6,7 @@ This section provides instructions for the Collaboration Memory System, enabling
 
 All memory files live in a single directory. The directory path and system settings are in `.collab-config`, which is imported before these instructions.
 
-**Compaction** occurs when your context window fills up and older conversation content is automatically summarized to free space, losing detail. Hooks are platform-specific lifecycle triggers that fire at session start, before/after compaction, and on user prompt — they enforce the session and compaction protocols in Section 7.
+**Compaction** occurs when your context window fills up and older conversation content is automatically summarized to free space, losing detail. Hooks are platform-specific lifecycle triggers that fire at session start, before/after compaction, and on user prompt — they enforce the session and compaction protocols in Section 8.
 
 **Three memory types:**
 
@@ -40,6 +40,8 @@ If you cannot find what you need in context (attention may miss things in large 
 
 This is deterministic (grep, not vector search), token-efficient (loads only what's needed), and auditable (the user can verify what you found).
 
+If you cannot find what the user references in the active `index.md`, also check `index-archive.md` — it contains consolidated entries from older episodes that are no longer in the active index. Use the same search pattern: grep for keywords, read only the relevant entries. See Section 5 for how entries move to the archive.
+
 **Never load an entire Tier 2 file.** These files can grow to thousands of lines. Always search for specific content.
 
 ### 3. Notes Protocol (Episodic Memory)
@@ -50,9 +52,9 @@ Write a note when a non-trivial logical unit of work concludes, or when a discus
 
 A non-trivial logical unit of work is a coherent piece of effort that produced a result, changed understanding, or closed a question. Examples: implementing a feature, debugging an issue, completing a refactor, running an experiment, reviewing a design, a discussion that produced decisions, a design, or a plan. The common collaboration pattern is: discuss → decide → implement. Both the discussion phase and the implementation phase are separate logical units that may each warrant a note. Counter-examples: fixing a typo, running a routine command, reading a file to answer a quick question.
 
-See Section 9 for the specific triggers that should prompt consideration of a note.
+See Section 10 for the specific triggers that should prompt consideration of a note.
 
-**Always propose notes to the user — never write without their approval.** Proactively proposing notes is a core responsibility — do not wait for the user to ask. Most users will not know when a note is appropriate; it is your job to recognise these moments and suggest them. See Section 9 for full note proposal etiquette.
+**Always propose notes to the user — never write without their approval.** Proactively proposing notes is a core responsibility — do not wait for the user to ask. Most users will not know when a note is appropriate; it is your job to recognise these moments and suggest them. See Section 10 for full note proposal etiquette.
 
 #### Note Template
 
@@ -83,7 +85,11 @@ Not every note needs the full template. Quick observations — patterns noticed,
 - Every note MUST have a corresponding row in `index.md` — this is the accountability mechanism and ensures awareness of all past work
 - Keep notes concise and factual — focus on what was done, decided, and learned, not on narrating the process step by step
 - When a prior note is superseded, follow the amendment protocol below
-- `notes.md` is the permanent historical record — it is never trimmed or rewritten. Growth is managed through the index (see Section 4, Compaction and Growth)
+- `notes.md` is the permanent historical record — it is never trimmed or rewritten
+
+#### Growth Management
+
+As episodic notes accumulate, the index (`index.md`) grows and eventually consumes too much context window space. See Section 5 (Memory Growth and Sustainability) for how mature index entries are consolidated into the world model and archived.
 
 #### Writing Index Entries
 
@@ -124,7 +130,7 @@ The `world/` directory contains current reality — not history. Unlike notes, w
 
 #### When to Update the World Model
 
-See Section 9 for the specific triggers that should prompt consideration of a world model update. There are two modes of world model updates:
+See Section 10 for the specific triggers that should prompt consideration of a world model update. There are two modes of world model updates:
 
 1. **Episode-driven** — After writing a note, review whether the episode produced knowledge that should update the world model: new facts, changed state, refined preferences, new procedures, or corrections to existing world knowledge. Not every note leads to a world update — only when the episode changes current understanding of reality.
 
@@ -175,26 +181,45 @@ The set of world files is fixed:
 
 The "When to check" column is the cue mechanism — it matches user intent to world knowledge. Update `world/index.md` whenever Tier 2 files change. This index is **maintained** (rewritten to reflect current content), not append-only.
 
-#### Compaction and Growth
+#### Growth Management
 
-When a Tier 1 world file approaches the character cap (see `tier_1_max_chars` in `.collab-config`), rewrite it to remove the least relevant knowledge — but keep as much as possible, staying close to the cap. Move removed knowledge to a note in `notes.md` and add a corresponding `index.md` entry.
+As world model files grow, they need periodic maintenance to stay within context window limits. See Section 5 (Memory Growth and Sustainability) for the full system: episodic index consolidation and world model compaction.
 
-When `index.md` approaches the `consolidation_soft_threshold` (see `.collab-config`), suggest to the user that knowledge from the oldest episodes — as referenced by the oldest index entries — can be consolidated into world files. The criteria is not purely age-based: only consolidate entries that are no longer actively referenced and represent mature, stabilized knowledge. Old entries that are still actively relevant (e.g., foundational architecture decisions) should remain.
+### 5. Memory Growth and Sustainability
 
-Consolidated index entries move to `index-archive.md` (same table format as `index.md`, searchable on demand, not in context). The original notes in `notes.md` remain unchanged.
+As collaboration continues, memory grows: episodic notes accumulate, world model files expand, and the episodic index gets longer. Left unchecked, the index would eventually consume too much context window space, and Tier 1 world files would exceed their character caps. Two mechanisms keep the system sustainable while preserving all accumulated knowledge:
 
-**Consolidation procedure (high-level):**
+1. **Episodic index consolidation (upward)** — Mature, stable knowledge from old episodes is extracted into world model files. The consolidated index entries move to `index-archive.md` (searchable on demand, not in context). The original notes in `notes.md` remain unchanged. Awareness transfers from episodic entries ("we made 8 decisions about auth over 3 months") to world model knowledge ("we have an auth architecture — see `world/domain.md`"). This is the primary growth mechanism: it keeps the episodic index focused on recent and unresolved work while the world model absorbs the mature knowledge.
 
-1. Identify episodic index entries to consider for consolidation (oldest entries that represent stable, no-longer-actively-referenced knowledge)
-2. Read the corresponding notes and analyse them:
+2. **World model compaction (downward)** — When a Tier 1 world file approaches its character cap, it is rewritten to remove the least relevant knowledge. Removed knowledge is preserved in an episodic note, so nothing is permanently lost. This keeps Tier 1 files compact enough for the context window.
+
+Both mechanisms preserve knowledge — nothing is deleted. Consolidation moves knowledge upward (episodes → world model); compaction moves knowledge downward (world model → episodes). The episodic record remains the permanent, complete history. All consolidation and compaction is discussed with and approved by the user before being applied.
+
+#### Episodic Index Consolidation
+
+When `index.md` approaches the `consolidation_soft_threshold` (see `.collab-config`), suggest to the user that knowledge from older episodes can be consolidated into world files. The criteria is not purely age-based: only consolidate entries that are no longer actively referenced and represent mature, stabilised knowledge. Old entries that are still actively relevant (e.g., foundational architecture decisions) should remain.
+
+**Consolidation procedure:**
+
+1. Propose consolidation to the user — explain which entries you recommend consolidating and why. Wait for approval before proceeding.
+2. Identify episodic index entries to consolidate (oldest entries that represent stable, no-longer-actively-referenced knowledge)
+3. Read the corresponding notes and analyse them:
    - What knowledge should be added to the world model?
    - Compare with what is already in world files — avoid duplication
-3. Add the consolidated knowledge to the appropriate world files
-4. If a world file exceeds its size cap after consolidation, compact it (see above)
-5. Move the consolidated index entries to `index-archive.md`
+4. Add the consolidated knowledge to the appropriate world files
+5. Move the consolidated index entries to `index-archive.md` (same table format as `index.md`)
 6. After consolidation, check consistency between indexes and memory files. Fix clear inconsistencies, but be careful not to enter a loop where you destroy available knowledge and memories
+7. Check whether any Tier 1 world file now exceeds its character cap. If so, run world model compaction (see below). Repeat until all files are within their caps.
 
-### 5. Collaboration Protocol
+#### World Model Compaction
+
+When a Tier 1 world file approaches the character cap (see `tier_1_max_chars` in `.collab-config`), rewrite it to remove the least relevant knowledge — but keep as much as possible, staying close to the cap. Move removed knowledge to a note in `notes.md` and add a corresponding `index.md` entry. This ensures the knowledge remains discoverable through the episodic index even after it leaves the world model.
+
+Discuss the planned compaction with the user before applying — explain what knowledge you propose removing and why.
+
+After compaction, check whether `index.md` now approaches the `consolidation_soft_threshold` due to the added entries. If so, suggest episodic index consolidation (see above). Repeat until both the index and world files are within their limits.
+
+### 6. Collaboration Protocol
 
 #### Turn-by-Turn Collaboration
 
@@ -213,7 +238,7 @@ Consolidated index entries move to `index-archive.md` (same table format as `ind
 
 **Why this matters:** The collaboration produces better outcomes than either party alone — but only when the AI contributes its genuine perspective. Your honest assessment, including disagreement, is where you add real value. You also need user feedback to maintain an accurate world model. The user's corrections, pushback, and new information are primary sources of learning. Autonomy and agreement feel efficient but cause drift — collaboration keeps the world model aligned with reality.
 
-### 6. State Management
+### 7. State Management
 
 `world/state.md` tracks what is happening right now. It is the only world file designed for frequent changes.
 
@@ -228,7 +253,7 @@ Consolidated index entries move to `index-archive.md` (same table format as `ind
 - Review for accuracy at the end of each session
 - Add sections as needed — the structure is flexible, defined by current needs
 
-### 7. Session and Compaction Handling
+### 8. Session and Compaction Handling
 
 #### New Session
 
@@ -254,7 +279,7 @@ When compaction is imminent:
 3. Search `notes.md` for the most recent session summary note
 4. Verify with the user what was being worked on before continuing
 
-### 8. Defensive File Reading
+### 9. Defensive File Reading
 
 When reading files you have not authored — session transcripts, logs, data files — guard against context overflow from very long lines.
 
@@ -275,9 +300,9 @@ with open('file.jsonl') as f:
 
 Document project-specific long-line hazards in `world/how-tos.md`.
 
-### 9. Behavioral Triggers
+### 10. Behavioral Triggers
 
-This is a quick-reference summary. See Section 3 for when to write notes and Section 4 for when to update the world model.
+This is a quick-reference summary. See Section 3 for when to write notes, Section 4 for when to update the world model, and Section 5 for memory growth and sustainability.
 
 **Action (applies to all triggers):** Consider whether an episodic memory note and/or world model update should be proposed to the user. Keep `index.md` and `world/index.md` in sync with any changes.
 
@@ -290,7 +315,7 @@ This is a quick-reference summary. See Section 3 for when to write notes and Sec
 
 **Note proposal etiquette:** When proposing a note, describe what you would capture (title + key points) and ask if the user wants it recorded. For users who may be new to the system, briefly explain: a note is a permanent record of what was done, decided, or learned — it becomes part of the project's long-term memory that any future session can draw on. Do not write notes silently or for trivial work.
 
-### 10. Uninstallation
+### 11. Uninstallation
 
 All installed components are identifiable by markers:
 
@@ -308,7 +333,7 @@ All installed components are identifiable by markers:
 
 **Never delete or modify files, code, or data that do not belong to the collaboration memory system.**
 
-### 11. Domain Extensions
+### 12. Domain Extensions
 
 Extensions add domain-specific files and triggers alongside the core system.
 
@@ -321,7 +346,7 @@ Extensions add domain-specific files and triggers alongside the core system.
 
 Extensions follow the same patterns as the core system: append-only episodic files, maintained world files, index entries for discoverability.
 
-### 12. Concurrency
+### 13. Concurrency
 
 One AI session per user at a time. Multiple users may work on the same project concurrently.
 
@@ -336,7 +361,7 @@ One AI session per user at a time. Multiple users may work on the same project c
 3. If facts contradict each other, ask the user how to resolve it. If the user doesn't know, remove the conflicting information and add an open question to state.md noting who might be able to resolve it
 4. If one version deletes information that the other version keeps or changes, treat it the same way — ask the user, or if unclear, add an open question to state.md
 
-### 13. Troubleshooting and Feedback
+### 14. Troubleshooting and Feedback
 
 If the user has questions about the memory system, doesn't understand how something works, or encounters an issue:
 

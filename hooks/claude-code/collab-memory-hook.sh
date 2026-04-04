@@ -59,7 +59,7 @@ check_health() {
 
 # --- Memory triggers ---
 # Republished at session start for primacy position in context window.
-# Same trigger list as methodology Section 9.
+# Same trigger list as methodology Section 10.
 print_memory_triggers() {
     echo ""
     echo "IMPORTANT: After each user message or your response, consider whether an episodic memory note and/or world model update should be made, for instance when:"
@@ -67,7 +67,7 @@ print_memory_triggers() {
     echo "- The user shared context, preferences, or corrected your understanding — e.g. personal/project/business context, working preferences, factual corrections, new procedures or domain knowledge"
     echo "- A commit is about to happen for non-trivial work"
     echo "- The session is being compacted soon or the session is ending — review and update world/state.md when relevant"
-    echo "Propose updates to the user — also see methodology Sections 3, 4, and 9."
+    echo "Propose updates to the user — also see methodology Sections 3, 4, and 10."
     echo "Keep index.md and world/index.md in sync with any changes."
     echo ""
     echo "When searching for information, check in-context indexes before searching files."
@@ -83,7 +83,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "$CURRENT_DATETIME"
             echo ""
             check_health
-            echo "Tier 1 files loaded via imports. Follow methodology Section 7 (New Session):"
+            echo "Tier 1 files loaded via imports. Follow methodology Section 8 (New Session):"
             echo "1. Check world/state.md for current work"
             echo "2. Scan recent index.md entries for context"
             echo "3. If unclear, search notes.md for recent notes"
@@ -99,7 +99,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo ""
             echo "Tier 1 files (indexes, world model) have been re-read from disk — they reflect the latest state."
             echo ""
-            echo "Follow methodology Section 7 (After Compaction):"
+            echo "Follow methodology Section 8 (After Compaction):"
             echo "1. Search notes.md for the most recent session summary note"
             echo "2. Verify with the user what was being worked on before continuing"
             print_memory_triggers

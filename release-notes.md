@@ -1,5 +1,23 @@
 # Release Notes
 
+## v1.4
+
+**Changes since v1.3 (commit `755edf2`):**
+
+- **collab/methodology.md**: New Section 5 (Memory Growth and Sustainability) — extracted from Section 4 as a cross-cutting concern. Conceptual overview of two mechanisms: episodic index consolidation (upward) and world model compaction (downward) with tick-tock stabilisation. User approval required for all consolidation/compaction. Growth Management forward references added to Sections 3 and 4. Archive retrieval fallback added to Section 2. All sections renumbered (old 5-13 → new 6-14). All internal section references updated. Version marker still reads v1.0 (line 1) — unchanged from template.
+- **collab/index-archive.md** (new): Template file for archived episodic index entries after consolidation.
+- **hooks/claude-code/collab-memory-hook.sh**: Section references updated (7→8, 9→10) to match methodology renumbering.
+- **install.md**: Added `index-archive.md` to repository structure, file narration list, and verification checklist (10→11 files).
+- **README.md**: Added "Memory Growth and Sustainability" subsection to "How It Works". Added `index-archive.md` to repository structure. Added staleness-by-memory-type explanation to "Three Memory Types". Fixed stale limitation text about upgrade.md.
+
+**Upgrade from v1.3:**
+
+1. Copy updated files to your installation:
+   - `collab/methodology.md` → your collab directory
+   - `hooks/claude-code/collab-memory-hook.sh` → your `.claude/hooks/collab-memory-hook.sh`
+2. Copy `collab/index-archive.md` from the repository
+3. Update `collab/.collab-memory-system` to `v1.4`
+
 ## v1.3
 
 **Changes since v1.2 (commit `708989e`):**
