@@ -39,7 +39,7 @@ Summarise the planned changes for the user and ask for confirmation before proce
 
 Apply all changes in a single pass:
 
-1. Copy updated system files from this repository to the user's installation (e.g., `collab/methodology.md`, `.claude/hooks/collab-memory-hook.sh`).
+1. Copy updated system files from this repository to the user's installation (e.g., `collab/methodology.md`, `.claude/hooks/collab-memory-hook.sh`) using the `cp` command — this is more stable than copying over changes.
 2. Add any new configuration settings to `.collab-config`.
 3. If memory data migrations are needed, apply them with the user's approval. Narrate each change to the user's memory files — what is being modified, why, and what the result looks like. If a migration is ambiguous or could lose information, ask the user how to proceed rather than guessing.
 4. Update `collab/.collab-memory-system` to the latest version.
