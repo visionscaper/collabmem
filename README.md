@@ -1,21 +1,42 @@
 # ai-collab-memory
 
-A structured methodology for long-term collaboration between humans and AI assistants.
+ai-collab-memory is a simple, easy-to-use, yet powerful memory system enabling long-term collaboration between
+humans and AI assistants. It's easy to install as well!
+
+The memory is file-based and represented as plain text (easy to inspect), can be
+git-tracked (storage & versioning) and can be used to build up knowledge within a team of users.
+So no databases, no vector stores, no infrastructure. 
+Just files and a methodology that the AI follows.
+
+Through the use of in-context memory index files, the AI can maintain a global awareness of what's in the memory.
+
+The system can, in principle, be integrated into any AI system, but so far it has been optimised for use 
+with Claude Code.
 
 ## Introduction
 
-AI platforms are adding memory features — preferences, session notes, automated memory extraction. These help with session-to-session continuity for individual developers: remembering build commands, framework choices, and working preferences. Some go further, capturing tool execution traces and generating structured session summaries. But they optimise for *restoring operational state* — getting the AI back up to speed on what it was doing — not for **building the kind of understanding that makes the AI a better collaborator over time**.
+In order to collaborate long-term with AI in an effective way, there needs to be a shared conceptual understanding about:
+ * history (episodic memory): what has been done, why, how and what decisions were made over time? What did we learn?
+ * reality (world model): what is the context of the work being done, what is the project about, for what business, why?
+   What is the current state of the work? How should the work be done in general, what are the guidelines and preferences? 
+   What are the constraints? Etc.
 
-For genuine long-term collaboration — over weeks, months, or years — session continuity isn't enough. The most valuable knowledge lives in the *discussion* between user and AI: not just *what* was decided, but *why*, what alternatives were considered, how understanding evolved, and what the user's goals and constraints are. The AI needs memory that builds up conceptual understanding — detailed enough to reason from, accurate enough to trust, and persistent enough to compound. Session 50 should be qualitatively different from session 5: the AI understands the project, the domain, and the user more deeply — not just remembers more events. Without this, the AI repeatedly rediscovers context, loses the reasoning behind decisions, and cannot draw on accumulated understanding to respond more effectively.
+Without this kind of conceptual knowledge, AI can't do its work effectively, especially over long periods, 
+i.e. weeks, months, or even years. It would need to rediscover information at every session. 
+Further, without all this context it would not effectively respond or make optimal choices when working 
+(e.g. when writing code or creating a design). 
 
-**ai-collab-memory** solves this with two types of persistent, file-based memory:
+ai-collab-memory enables the build-up of **Episodic memory** and a **World model** over time.
+Entries in this memory are summarized in an index which is always in the AI context window, allowing the model to have a 
+global **awareness** of everything that is in the memory. This allows it to cross-correlate knowledge in this memory 
+and to know where to find details from memory entries.
 
-- **Episodic memory** — a historical record of what happened, what was decided, and why. Notes capture significant work, decisions, investigations, observations, and learnings. An index provides a compact overview.
-- **World model** — the AI's current understanding of reality. Context about the project, user preferences, active state, domain knowledge, procedures, and facts. Updated as the AI learns new knowledge about the world, or when the world changes.
+While collaborating, you can ask the AI to suggest entries for the episodic memory or for the world model; if you agree 
+with the contents of the suggested entries they will be added to memory, and the related summaries are added to the 
+index files. In this way a high-quality memory with conceptual knowledge is built up over time.
 
-Both memory types are plain text files, tracked in git alongside the project. Everything is human-readable, auditable, and version-controlled. The system works for individuals and for teams collaborating on a shared project — user attribution and merge resolution are built in.
-
-No databases, no vector stores, no infrastructure. Just files and a methodology that the AI follows.
+ai-collab-memory has a methodology to ensure that episodic or world model memory is never lost. See the section
+"How It Works" for more details.
 
 ## Help Us Improve This System
 
@@ -96,7 +117,11 @@ You, as the user, know best when something important was discussed, decided, or 
 - When you've shared context, preferences, or corrections that should be remembered
 - At the end of a session
 
-The methodology instructs the AI to proactively propose notes and world model updates, but in practice this is unreliable — especially during focused execution. Current AI models allocate attention to the immediate task and deprioritize reflective meta-tasks like "should I update memory now?" This is not a bug in the instructions; it's a fundamental limitation of how current models process competing priorities. Don't rely on the AI to suggest updates — prompt for them yourself when the moment is right.
+The methodology instructs the AI to proactively propose notes and world model updates, but in practice this is unreliable 
+— especially during focused execution. Technical solutions exist to remedy this issue, but they require customization of
+the AI system in use. We might solve this in future versions.
+
+**So, don't rely on the AI to suggest updates — prompt for them yourself when the moment is right.**
 
 **Example prompts:**
 
@@ -112,7 +137,7 @@ These are examples — phrase them however feels natural. The AI understands the
 
 ### IMPORTANT: Watch for automatic context compaction
 
-The AI cannot know how much context window space remains before auto-compaction occurs. When compaction happens, session details are lost — only the memory system's files preserve what was discussed and decided. When you notice the context window space is getting low, ask the AI to write a note capturing current session state — decisions made, work in progress, open questions. This is your best insurance against losing session context.
+AI systems such as Claude Code don't know how much context window space remains before auto-compaction occurs. When compaction happens, session details are lost — only the memory system's files preserve what was discussed and decided. When you notice the context window space is getting low, ask the AI to write a note capturing current session state — decisions made, work in progress, open questions. This is your best insurance against losing session context.
 
 ## How It Works
 
@@ -164,10 +189,6 @@ An interesting use case of this memory system is building up shared memory in a 
 
 In both patterns, the code repo contains a symlink named `collab` (git-ignored; each dev creates their own) pointing to the external memory directory. This keeps `.collab-config`, the import block, and all `@collab/...` paths identical between solo and team installations. The installation procedure guides the user through the team/solo decision, repo setup (including `gh` assistance if available), and symlink creation.
 
-### Behavioral Triggers
-
-The methodology defines when the AI should act: propose a note after a significant decision, update world files when the user shares new facts or preferences, check state at session boundaries, suggest consolidation when the index grows large. These triggers ensure the memory grows organically through normal collaboration — no manual maintenance required.
-
 ### Memory Growth and Sustainability
 
 As collaboration continues, memory grows. Two mechanisms keep this sustainable without losing knowledge:
@@ -179,14 +200,17 @@ Both mechanisms preserve knowledge — nothing is deleted. Consolidation and com
 
 ## What Makes This Different
 
-AI platforms are adding memory features — auto-memory, memory consolidation, session notes. These systems share several core concepts with ai-collab-memory: in-context indexes for awareness, tiered storage (always-loaded vs on-demand), and consolidation of accumulated knowledge. Some go further with automated per-turn memory extraction and background consolidation. For a single developer on routine tasks, platform-native memory works well.
+ai-collab-memory is optimized to build up and maintain memory for long-term collaboration. 
+So, the focus is on capturing conceptual knowledge that helps the AI (and the user) to effectively work together over 
+weeks, months, or even years. Further, the system is kept simple, making it easy to install, use, inspect, store and version.
+Through its simplicity it also enables advanced use cases where teams of users build up shared knowledge together while 
+collaborating with AI.
 
-ai-collab-memory addresses a different problem: **collaboration-level memory** for extended projects, enabling long-term collaboration between the AI and the user(s). The differences are about depth, quality, and purpose — not just architecture:
-
-- **Collaborative knowledge, not just session continuity.** Most AI memory tools solve session continuity: restoring operational state so the AI can resume work. ai-collab-memory builds *cumulative collaborative understanding* — knowledge that compounds over time. Session 50 is qualitatively different from session 5: the AI has a richer world model, deeper reasoning history, and a shared vocabulary with the user. The AI doesn't just resume; it *grows* as a collaborator. The most valuable collaborative knowledge lives in the *discussion* between user and AI — reasoning, deliberation, alternatives debated — not in tool execution logs.
-- **Rich, detailed knowledge instead of brief pointers.** Platform memory systems optimise for minimal footprint — short entries, aggressive pruning, don't store what you can derive. ai-collab-memory captures detailed episodic records: context, actions taken, key learnings, reasoning, what was considered and decided against. A fresh AI session doesn't just see *what* happened — it sees *why*, which alternatives were considered, and what reasoning led to each decision. This depth is what makes the AI an effective long-term collaborator rather than a tool that needs re-explaining.
+What differentiates ai-collab-memory:
+- **Collaborative knowledge through episodic memory and world model.** Memory is split into two complementary types: episodic memory (what happened, what was decided, why) and a world model (project context, domain knowledge, preferences, current state). Episodic memory preserves history; the world model captures what was *learned* from that history — the conceptual knowledge that makes collaboration effective. As episodes accumulate, mature knowledge consolidates into the world model, so understanding compounds over time and the AI *grows* as a collaborator.
+- **Rich, detailed conceptual knowledge.** ai-collab-memory captures detailed episodic records: context, actions taken, key learnings, reasoning, what was considered and decided against. A fresh AI session doesn't just see *what* happened — it sees *why*, which alternatives were considered, and what reasoning led to each decision. This depth is what makes the AI an effective long-term collaborator rather than a tool that needs re-explaining.
 - **User-verified knowledge quality.** Automated memory extraction captures what the model *thinks* is important. User-reviewed memory captures what *actually* is important — the user knows their own context, priorities, and what matters for the work. Notes require user approval. World model updates are visible and editable. This produces more accurate, more relevant knowledge that stays aligned with reality.
-- **History preserved, not pruned away.** Episodic memory is append-only — the historical record is never rewritten. The world model is maintained separately — rewritten to reflect current reality. This separation means you can trace back to why a decision was made months ago, what alternatives were considered, and how understanding evolved. Platform systems that "aggressively prune" and "continuously edit" memory destroy this historical context by design.
+- **History preserved, not pruned away.** Episodic memory is append-only — the historical record is never rewritten. The world model is maintained separately — rewritten to reflect current reality. This separation means you can trace back to why a decision was made months ago, what alternatives were considered, and how understanding evolved.
 - **Multi-user collaboration by default.** Every note includes user attribution. World model files use per-user sections for git-friendly concurrent collaboration. Merge resolution is built into the methodology. Platform-native memory is typically per-user with no team features.
 - **Platform-independent and git-tracked.** Plain text markdown in the project repo, version-controlled alongside the code. Works with any AI assistant that can read and write files. Every change is auditable through git history. No vendor lock-in, no opaque storage. Plain text is the most portable knowledge format — a raw material that any current or future AI platform can consume. Databases, vector stores, and proprietary formats are tied to the platforms that created them.
 
