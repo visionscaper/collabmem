@@ -121,6 +121,8 @@ The system provides three sentinel tokens for interacting with memory — includ
 
 > The index is getting long. maintainmem
 
+You'll get the most out of the memory system by developing the habit of using the sentinel tokens at natural moments — `readmem` when starting work that needs context, `updatemem` when something worth remembering just happened, `maintainmem` when the index feels cluttered.
+
 The methodology defines three levels of triggers that can activate memory operations:
 
 1. **Sentinel tokens (strongest guarantee)** — When `readmem`, `updatemem`, or `maintainmem` is present in your message, the AI MUST perform the operation.
@@ -227,7 +229,7 @@ These distinctions compound over time. The longer the collaboration, the more va
 | Claude Code | Full support | SessionStart, UserPromptSubmit |
 | Other AI assistants | Full support (methodology is self-contained) | Not yet available — hooks enhance but are not required |
 
-The core methodology works with any AI assistant that can read and write files across sessions and load an instruction file into context. This includes CLI tools (Claude Code), IDE integrations, and web-based AI assistants with file access (e.g., Claude Cowork — untested but likely compatible). Hooks add session management (timestamps, health checks, context recovery reminders) but are optional.
+The core methodology works with any AI assistant that can read and write files across sessions and load an instruction file into context. This includes CLI tools (Claude Code), IDE integrations, and web-based AI assistants with file access (e.g., Claude Cowork — untested but likely compatible). Hooks add session management (timestamps, health checks, context recovery reminders) but are optional. On platforms without hooks, the AI has no automatic signal for new sessions or compaction — use `readmem` explicitly at the start of a session to trigger context recovery.
 
 ## Current Limitations and Status
 

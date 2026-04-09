@@ -21,7 +21,7 @@ HOOK_EVENT=$(echo "$INPUT" | jq -r '.hook_event_name // empty')
 # Read .collab-config for collab directory path
 CONFIG_FILE=".collab-config"
 if [ -f "$CONFIG_FILE" ]; then
-    COLLAB_DIR=$(grep '^collab_dir=' "$CONFIG_FILE" | cut -d'=' -f2)
+    COLLAB_DIR=$(grep '^collab_dir=' "$CONFIG_FILE" | cut -d'=' -f2 || true)
 fi
 COLLAB_DIR="${COLLAB_DIR:-collab}"
 

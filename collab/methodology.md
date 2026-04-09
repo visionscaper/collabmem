@@ -158,7 +158,7 @@ Not every note needs the full template. Quick observations — patterns noticed,
 #### Rules
 
 - Episodic memory is append-only: append to the bottom of `notes.md` — never insert in the middle
-- Every note MUST have a corresponding row in the Episodic Memory Index (`index.md`) — the index is also append-only
+- Every note MUST have a corresponding row in the Episodic Memory Index (`index.md`) — the index is append-only, except for amendment markers (see Amendment Protocol)
 - Keep notes concise — capture facts, decisions, and conceptual insights. Focus on what was done, decided, learned, and understood, not on narrating the process step by step
 - When a prior note is superseded, follow the Amendment Protocol below
 - `notes.md` is the permanent historical record — it is never trimmed or rewritten
@@ -279,7 +279,7 @@ When the Episodic Memory Index (`index.md`) approaches the `consolidation_soft_t
 
 #### World Model Compaction
 
-When a Tier 1 world file approaches the character cap (see `tier_1_max_chars` in `.collab-config`), rewrite it to remove the least relevant knowledge — but keep as much as possible, staying close to the cap. Move removed knowledge to a note in `notes.md` and add a corresponding entry in the Episodic Memory Index (`index.md`). This ensures the knowledge remains discoverable through the episodic index even after it leaves the world model.
+When a Tier 1 world file (except `state.md`, which has no size cap) approaches the character cap (see `tier_1_max_chars` in `.collab-config`), rewrite it to remove the least relevant knowledge — but keep as much as possible, staying close to the cap. Move removed knowledge to a note in `notes.md` and add a corresponding entry in the Episodic Memory Index (`index.md`). This ensures the knowledge remains discoverable through the episodic index even after it leaves the world model.
 
 Discuss the planned compaction with the user before applying — explain what knowledge you propose removing and why.
 
