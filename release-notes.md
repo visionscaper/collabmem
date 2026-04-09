@@ -1,5 +1,22 @@
 # Release Notes
 
+## v1.7
+
+**Changes since v1.6 (commit `c56aacc`):**
+
+- **collab/methodology.md**: Major restructuring — action-oriented structure centered on three reflection sentinel tokens (`readmem`, `updatemem`, `maintainmem`). Three-level trigger hierarchy: sentinel tokens (MUST), word cues (SHOULD), conceptual patterns (SHOULD). Session/compaction handling distributed into readmem (new session, post-compaction) and updatemem (pre-compaction). Behavioral Triggers section removed. State Management folded into World Model Protocol. Memory Maintenance Protocol added as separate section. Concurrency moved before Collaboration Protocol. Long-term collaboration framing added throughout. Amendment exception added to append-only index rule. `state.md` explicitly excluded from world model compaction.
+- **README.md**: "Working with the Memory System" rewritten around sentinel tokens with examples, three trigger levels, and platform framing. Introduction updated with sentinel tokens. "What Makes This Different" platform-independence bullet strengthened. "No automatic reflection" reframed as "Automatic reflection is best-effort". Non-hook platform guidance added. "deterministic" → "precise".
+- **hooks/claude-code/collab-memory-hook.sh**: `print_memory_triggers()` simplified to sentinel token reminder (replaces full trigger list). Session references use section titles instead of numbers. Bug fix: `set -e` crash when `collab_dir=` absent from config.
+- **install.md**: Section references updated to use titles. "behavioral triggers" → "word cues and conceptual triggers".
+- **Template files** (notes.md, index-archive.md, world/state.md, world/context.md, world/preferences.md): Section number references replaced with section titles.
+
+**Upgrade from v1.6:**
+
+1. Copy `collab/methodology.md` from the new version (full replacement — structure has changed significantly).
+2. Copy `hooks/claude-code/collab-memory-hook.sh` from the new version.
+3. Update HTML comments in template files: replace section number references with section titles (see changed template files for exact wording).
+4. Update `collab/.collab-memory-system` to `v1.7`.
+
 ## v1.6
 
 **Changes since v1.5 (commit `8971752`):**
