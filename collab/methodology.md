@@ -47,6 +47,8 @@ Always check your context window first: Tier 1 World Model information, World Mo
 
 If you cannot find what you need in your context window (attention may miss things in large contexts — this is normal), use the **index → search → read** pattern:
 
+**BEFORE searching, if a shared-knowledge repo is used, pull it first** to have the latest additions to the memory — Tier 2 files on disk may have been updated remotely since session start.
+
 1. Check the Episodic Memory Index (`index.md`) or the World Model Index (`world/index.md`) for a relevant entry
 2. Note the date, keywords, and/or file pointer
 3. Grep the target file for the specific section
@@ -64,7 +66,7 @@ If the indexes don't yield results:
 
 A new session is an implicit `readmem` trigger.
 
-1. If a shared-knowledge repo is used, pull it first to have the latest additions to the memory
+1. If a shared-knowledge repo is used, BEFORE continuing, pull it first to have the latest additions to the memory
 2. Tier 1 files are already loaded via imports — trust them
 3. Check `world/state.md` for current work
 4. Scan recent entries in the Episodic Memory Index (`index.md`) for context on active work

@@ -4,8 +4,9 @@
 
 **Changes since v1.7.1 (commit `8b7cc7a`):**
 
-- **collab/methodology.md**: New "shared-knowledge repo" definition in System Overview (Section 1) — for distributed collaboration scenarios where memory lives in a separate git repo across devices and/or users. Three new pull/push rules using this term:
-  - readmem New Session: pull the shared-knowledge repo first (new step 1)
+- **collab/methodology.md**: New "shared-knowledge repo" definition in System Overview (Section 1) — for distributed collaboration scenarios where memory lives in a separate git repo across devices and/or users. Four new pull/push rules using this term:
+  - readmem New Session: pull the shared-knowledge repo first (new step 1, "BEFORE continuing")
+  - readmem How to read: pull the shared-knowledge repo before falling through to Tier 2 search — Tier 2 files on disk may have been updated remotely since session start
   - updatemem: new "Before writing updates" subsection — `git pull` before writing to keep memory current and minimise merge conflicts
   - Concurrency: replaces the previous "commit and push promptly" sentence with a symmetric "Pull before reading, push after writing" rule, explicitly tied to `readmem` and `updatemem`
 - Motivation: discovered on a multi-machine setup (Mac Studio + MacBook Pro) where a session almost duplicated work that the other machine had already committed. Tier 1 files loaded into context can be stale relative to the remote shared-knowledge repo.
