@@ -1,4 +1,4 @@
-<!-- ai-collab-memory -->
+<!-- collabmem -->
 
 ### 1. System Overview
 
@@ -396,6 +396,6 @@ If the user has questions about the memory system, doesn't understand how someth
 1. **Try to explain or resolve it.** Use your understanding of the methodology to answer questions or fix problems within the normal operating procedures.
 2. **If you can't resolve it without changes to the system itself** (the methodology, templates, hooks, or installation procedure), don't improvise changes to system files. Instead, suggest filing an issue and help the user draft it if they want.
 
-**Issue filing:** https://github.com/visionscaper/ai-collab-memory/issues
+**Issue filing:** https://github.com/visionscaper/collabmem/issues
 
 When helping draft an issue, include: what the user was trying to do, what happened, what was expected, and the relevant context (platform, methodology version from `.collab-memory-system`, any error messages or unexpected behavior).

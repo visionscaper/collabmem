@@ -1,5 +1,31 @@
 # Release Notes
 
+## v1.8
+
+**Project renamed: `ai-collab-memory` → `collabmem`.**
+
+The GitHub repository was renamed from `visionscaper/ai-collab-memory` to `visionscaper/collabmem`. GitHub auto-redirects the old URLs (web and `git clone` over HTTPS/SSH), so existing installations and external links continue to work. No code-level identifiers were changed: the `collab-memory-system` marker file, the `collab-memory-` hook prefix, the `<!-- collab-memory-system:start --> / <!-- collab-memory-system:end -->` import markers, and the `.collab-config` file all keep their existing names. This is intentional — only the project name changes, the in-system identifiers stay stable so existing installations don't break.
+
+**Why the rename:** the new name fits the existing sentinel vocabulary (`readmem` / `updatemem` / `maintainmem` / `collabmem`) and foregrounds *collaboration* as the primary thing the system enables, with memory as the substrate. Dropping "AI" from the name is a deliberate philosophical choice — the project's contrarian thesis is that AI is a partner *inside* a collaboration, not a separate entity you collaborate *with*. The name encodes that priority. See note `[10-04-2026] Renaming ai-collab-memory → collabmem` in `claude-collab` notes for the full reasoning.
+
+**Changes since v1.7.2:**
+
+- **README.md**: project renamed throughout (title, prose, install/upgrade prompts, GitHub URLs). Status line updated to v1.8.
+- **install.md**: clone command, path examples, installation note template, and issues URL updated to use `collabmem`.
+- **collab/methodology.md**: top-of-file label `<!-- ai-collab-memory -->` → `<!-- collabmem -->`, issues URL updated.
+- **collab/.collab-memory-system**: bumped to `v1.8`.
+- Historical entries in this `release-notes.md` (v1.7.2 and earlier) intentionally still reference "the ai-collab-memory repo" — those describe past state and are useful for installations still on older versions following the documented upgrade path.
+
+**Upgrade from v1.7.2:**
+
+The only *installed* file that changed is `collab/methodology.md` (the top-of-file label). `README.md` and `install.md` live in the source repo, not in your installation, so there is nothing to copy for those.
+
+1. In your installation, copy `collab/methodology.md` from the new version into your collab directory (or just update the top-of-file comment from `<!-- ai-collab-memory -->` to `<!-- collabmem -->`).
+2. Update your installation's `collab/.collab-memory-system` to `v1.8`.
+3. No memory data migration required.
+
+If you like you can rename `ai-collab-memory/` of your local, temporary, clone of the repo to `collabmem/`.
+
 ## v1.7.2
 
 **Changes since v1.7.1 (commit `8b7cc7a`):**

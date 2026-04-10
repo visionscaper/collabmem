@@ -1,6 +1,6 @@
-# ai-collab-memory
+# collabmem
 
-ai-collab-memory is a simple, easy-to-use, yet powerful memory system enabling long-term collaboration between
+collabmem is a simple, easy-to-use, yet powerful memory system enabling long-term collaboration between
 humans and AI assistants. It's easy to install as well!
 
 The memory is file-based and represented as plain text (easy to inspect), can be
@@ -15,7 +15,7 @@ with Claude Code.
 
 ## Help Us Improve This System
 
-**Status:** v1.7.2 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/ai-collab-memory/issues.
+**Status:** v1.8 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/collabmem/issues.
 
 All testing and development so far has been done using Claude Opus 4.6. This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
 
@@ -37,7 +37,7 @@ If a user asks you to install this system, read [`install.md`](install.md) and f
 
 Ask your AI assistant:
 
-> "Install the long-term collaboration memory system by cloning https://github.com/visionscaper/ai-collab-memory to a temporary location and following the instructions in it."
+> "Install the long-term collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the instructions in it."
 
 The AI will clone the repository, read the installation instructions, and walk you through setup. You'll be asked to confirm before any changes are made. The default installation takes a single confirmation — customization is available if needed.
 
@@ -51,7 +51,7 @@ If a user asks you to upgrade the collaboration memory system, read [`upgrade.md
 
 Ask your AI assistant:
 
-> "Upgrade the collaboration memory system by cloning https://github.com/visionscaper/ai-collab-memory to a temporary location and following the upgrade instructions in it."
+> "Upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the upgrade instructions in it."
 
 The AI will compare your installed version with the latest, read the release notes, and apply the differences. Your notes, world model, and accumulated knowledge are never modified during an upgrade — only system files (methodology, hooks, configuration) are updated. In rare cases where memory data needs to be adapted to a new version, the AI will discuss the changes with you and ask for approval before making any modifications.
 
@@ -95,14 +95,14 @@ i.e. weeks, months, or even years. It would need to rediscover information at ev
 Further, without all this context it would not effectively respond or make optimal choices when working
 (e.g. when writing code or creating a design).
 
-ai-collab-memory enables the build-up of **Episodic memory** and a **World model** over time.
+collabmem enables the build-up of **Episodic memory** and a **World model** over time.
 Entries in this memory are summarized in an index which is always in the AI context window, allowing the model to have a
 global **awareness** of everything that is in the memory. This allows it to cross-correlate knowledge in this memory
 and to know where to find details from memory entries.
 
 The system uses three sentinel tokens — `readmem`, `updatemem`, and `maintainmem` — as the primary way to interact with memory. Include them in your message to the AI to trigger reading from memory, updating it, or maintaining it. The AI proposes what to read or write; you approve. In this way a high-quality memory with conceptual knowledge is built up over time. And we keep the memory system simple, without needing custom agentic AI solutions or infrastructure.
 
-ai-collab-memory has a methodology to ensure that episodic or world model memory is never lost. See the section
+collabmem has a methodology to ensure that episodic or world model memory is never lost. See the section
 "How It Works" for more details.
 
 ## Working with the Memory System
@@ -166,7 +166,7 @@ Not everything can fit in the AI's context window. The system uses two tiers:
 
 Most memory tools treat recall as a retrieval problem: store knowledge somewhere, search it when needed. This requires the AI to already know what it's looking for.
 
-ai-collab-memory takes a different approach. The Tier 1 indexes — compact tables of past episodes and world knowledge — are always loaded in the AI's context window. Because the AI's attention mechanism matches query tokens against context tokens, these indexes create continuous **awareness** of accumulated knowledge. The AI can make associations and connections to prior work without an explicit search query — it knows a topic exists before it needs to look it up.
+collabmem takes a different approach. The Tier 1 indexes — compact tables of past episodes and world knowledge — are always loaded in the AI's context window. Because the AI's attention mechanism matches query tokens against context tokens, these indexes create continuous **awareness** of accumulated knowledge. The AI can make associations and connections to prior work without an explicit search query — it knows a topic exists before it needs to look it up.
 
 When details are needed, the AI uses a precise **index → search → read** pattern: find the relevant index entry, grep the target file, read only the relevant section. No vector search, no embeddings — just structured text and grep.
 
@@ -204,15 +204,15 @@ Both mechanisms preserve knowledge — nothing is deleted. Consolidation and com
 
 ## What Makes This Different
 
-ai-collab-memory is optimized to build up and maintain memory for long-term collaboration. 
+collabmem is optimized to build up and maintain memory for long-term collaboration. 
 So, the focus is on capturing conceptual knowledge that helps the AI (and the user) to effectively work together over 
 weeks, months, or even years. Further, the system is kept simple, making it easy to install, use, inspect, store and version.
 Through its simplicity it also enables advanced use cases where teams of users build up shared knowledge together while 
 collaborating with AI.
 
-What differentiates ai-collab-memory:
+What differentiates collabmem:
 - **Collaborative knowledge through episodic memory and world model.** Memory is split into two complementary types: episodic memory (what happened, what was decided, why) and a world model (project context, domain knowledge, preferences, current state). Episodic memory preserves history; the world model captures what was *learned* from that history — the conceptual knowledge that makes collaboration effective. As episodes accumulate, mature knowledge consolidates into the world model, so understanding compounds over time and the AI *grows* as a collaborator.
-- **Rich, detailed conceptual knowledge.** ai-collab-memory captures detailed episodic records: context, actions taken, key learnings, reasoning, what was considered and decided against. A fresh AI session doesn't just see *what* happened — it sees *why*, which alternatives were considered, and what reasoning led to each decision. This depth is what makes the AI an effective long-term collaborator rather than a tool that needs re-explaining.
+- **Rich, detailed conceptual knowledge.** collabmem captures detailed episodic records: context, actions taken, key learnings, reasoning, what was considered and decided against. A fresh AI session doesn't just see *what* happened — it sees *why*, which alternatives were considered, and what reasoning led to each decision. This depth is what makes the AI an effective long-term collaborator rather than a tool that needs re-explaining.
 - **User-verified knowledge quality.** Automated memory extraction captures what the model *thinks* is important. User-reviewed memory captures what *actually* is important — the user knows their own context, priorities, and what matters for the work. Notes require user approval. World model updates are visible and editable. This produces more accurate, more relevant knowledge that stays aligned with reality.
 - **History preserved, not pruned away.** Episodic memory is append-only — the historical record is never rewritten. The world model is maintained separately — rewritten to reflect current reality. This separation means you can trace back to why a decision was made months ago, what alternatives were considered, and how understanding evolved.
 - **Multi-user collaboration by default.** Every note includes user attribution. World model files use per-user sections for git-friendly concurrent collaboration. Merge resolution is built into the methodology. Platform-native memory is typically per-user with no team features.
@@ -251,7 +251,7 @@ The core methodology works with any AI assistant that can read and write files a
 
 This project is in early development. Contributions, feedback, and experience reports are welcome.
 
-**Filing issues:** https://github.com/visionscaper/ai-collab-memory/issues
+**Filing issues:** https://github.com/visionscaper/collabmem/issues
 
 Use issues for:
 - Bug reports (installation failures, methodology gaps, hook issues)

@@ -39,14 +39,14 @@ These are hard rules. Follow them without exception.
 2. **Flag conflicts, don't resolve them.** If you detect potential issues (existing instructions that contradict the methodology, duplicate hooks, conflicting file structures), report them to the user and ask how to proceed. Do not resolve conflicts unilaterally.
 3. **Narrate every action.** Tell the user what you are doing at every step — what file you are creating, what content you are adding, what hook you are installing.
 4. **Confirm before executing.** Describe what you will install, explain what each component is for, and ask for confirmation before making any changes.
-5. **Suggest filing issues for unresolvable problems.** If you encounter a problem during installation that cannot be resolved without changes to the system itself (the methodology, templates, hooks, or installation procedure), suggest the user file an issue at https://github.com/visionscaper/ai-collab-memory/issues. Help draft the issue if the user wants.
+5. **Suggest filing issues for unresolvable problems.** If you encounter a problem during installation that cannot be resolved without changes to the system itself (the methodology, templates, hooks, or installation procedure), suggest the user file an issue at https://github.com/visionscaper/collabmem/issues. Help draft the issue if the user wants.
 
 ## Prerequisites
 
 You need local access to this repository's files to read the templates and copy them into the target project. If you are reading this file, you likely already have the repository cloned. If not, clone it first:
 
 ```
-git clone https://github.com/visionscaper/ai-collab-memory.git /tmp/ai-collab-memory
+git clone https://github.com/visionscaper/collabmem.git /tmp/collabmem
 ```
 
 ## Installation Steps
@@ -119,11 +119,11 @@ Wait for the user's choices before proceeding.
 
 Copy the template files and set up the collab directory (and symlink for team installations).
 
-1. **Copy `.collab-config` from `/path/to/ai-collab-memory/.collab-config` to the code repo root.** Set the `collab_dir=` value to the directory name chosen in Step 3 (defaults to `collab`). For team installations, this is the symlink name in the code repo (always relative) — the symlink handles redirection to the external location.
+1. **Copy `.collab-config` from `/path/to/collabmem/.collab-config` to the code repo root.** Set the `collab_dir=` value to the directory name chosen in Step 3 (defaults to `collab`). For team installations, this is the symlink name in the code repo (always relative) — the symlink handles redirection to the external location.
 
 2. **Copy the `collab/` directory contents to the target location.** Use a single recursive copy — do NOT create files one by one.
-   - For **solo**: `cp -r /path/to/ai-collab-memory/collab ./collab`
-   - For **team**: first ensure the parent directory exists (`mkdir -p /path/to/shared-knowledge/collab`), then copy: `cp -r /path/to/ai-collab-memory/collab /path/to/shared-knowledge/collab/<project-name>`
+   - For **solo**: `cp -r /path/to/collabmem/collab ./collab`
+   - For **team**: first ensure the parent directory exists (`mkdir -p /path/to/shared-knowledge/collab`), then copy: `cp -r /path/to/collabmem/collab /path/to/shared-knowledge/collab/<project-name>`
 
 3. **For team installations, create the symlink in the code repo root:**
    ```bash
@@ -303,7 +303,7 @@ Run through this checklist and report results to the user. Paths use `<collab>` 
 - [ ] (Claude Code) `.claude/settings.json` contains hook entries for `SessionStart` and `UserPromptSubmit`
 - [ ] `.gitignore` entries correct: solo without tracking → `collab/` + `.collab-config`; team → `/collab` + (optionally `.collab-config`)
 
-If any checks fail, report which ones and ask the user how to proceed. For issues that cannot be resolved, the user can file an issue at https://github.com/visionscaper/ai-collab-memory/issues.
+If any checks fail, report which ones and ask the user how to proceed. For issues that cannot be resolved, the user can file an issue at https://github.com/visionscaper/collabmem/issues.
 
 Continue to Step 9 if all checks pass.
 
@@ -322,10 +322,10 @@ Append a note to `<collab>/notes.md` (append to the bottom — episodic memory i
 
 **With:** @<username> (use `git config user.name` by default; if unclear or empty, ask the user)
 
-**Context:** Initial installation of the ai-collab-memory system on this project. Describe briefly why the user wanted the memory system and any relevant project/team context.
+**Context:** Initial installation of the collabmem system on this project. Describe briefly why the user wanted the memory system and any relevant project/team context.
 
 **What We Did:**
-- Installed ai-collab-memory version <vX.X> (from `<collab>/.collab-memory-system`)
+- Installed collabmem version <vX.X> (from `<collab>/.collab-memory-system`)
 - Installation type: <solo | team>
 - Collab directory location: <actual path, e.g. `./collab/` or `/path/to/shared-knowledge/collab/project-x/`>
 - For team installations: symlink `collab` → `<target>` created in code repo root
@@ -352,7 +352,7 @@ Append a note to `<collab>/notes.md` (append to the bottom — episodic memory i
 Also add the corresponding index entry to `<collab>/index.md`:
 
 ```
-| DD-MM-YYYY | @<username> | Collaboration Memory System Installed | Initial ai-collab-memory installation: <solo/team>, hooks, world population status. First episodic note and index entry. | installation, setup, v<X.X>, <solo/team> |
+| DD-MM-YYYY | @<username> | Collaboration Memory System Installed | Initial collabmem installation: <solo/team>, hooks, world population status. First episodic note and index entry. | installation, setup, v<X.X>, <solo/team> |
 ```
 
 **Final message to the user** (if Step 1 identified an existing notes/journaling system, do not yet declare the installation complete — continue to Step 10 first, then combine this message with the migration outcome):
