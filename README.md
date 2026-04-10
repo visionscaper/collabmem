@@ -121,7 +121,11 @@ The system provides three sentinel tokens for interacting with memory — includ
 
 > The index is getting long. maintainmem
 
-You'll get the most out of the memory system by developing the habit of using the sentinel tokens at natural moments — `readmem` when starting work that needs context, `updatemem` when something worth remembering just happened, `maintainmem` when the index feels cluttered.
+> readmem
+
+Stating `readmem` on its own — typically at the start of a session — gives you an overview of what has been worked on recently and the current state, such as open todos.
+
+You'll get the most out of the memory system by developing the habit of using the sentinel tokens at natural moments — `readmem` at the start of a session or whenever you begin a new piece of work that needs context, `updatemem` when something worth remembering just happened, `maintainmem` when the index feels cluttered.
 
 The methodology defines three levels of triggers that can activate memory operations:
 
