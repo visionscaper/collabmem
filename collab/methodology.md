@@ -47,7 +47,7 @@ Always check your context window first: Tier 1 World Model information, World Mo
 
 If you cannot find what you need in your context window (attention may miss things in large contexts — this is normal), use the **index → search → read** pattern:
 
-**BEFORE searching, if a shared-knowledge repo is used, pull it first** to have the latest additions to the memory — Tier 2 files on disk may have been updated remotely since session start.
+**BEFORE searching, if a shared-knowledge repo is used, pull it first** (ONLY the shared-knowledge repo — not the project code repo) to have the latest additions to the memory — Tier 2 files on disk may have been updated remotely since session start.
 
 1. Check the Episodic Memory Index (`index.md`) or the World Model Index (`world/index.md`) for a relevant entry
 2. Note the date, keywords, and/or file pointer
@@ -66,7 +66,7 @@ If the indexes don't yield results:
 
 A new session is an implicit `readmem` trigger.
 
-1. If a shared-knowledge repo is used, BEFORE continuing, pull it first to have the latest additions to the memory
+1. If a shared-knowledge repo is used, BEFORE continuing, pull it first (ONLY the shared-knowledge repo — not the project code repo) to have the latest additions to the memory
 2. Tier 1 files are already loaded via imports — trust them
 3. Check `world/state.md` for current work
 4. Scan recent entries in the Episodic Memory Index (`index.md`) for context on active work
@@ -93,7 +93,7 @@ The purpose of updating memory is to build up a shared conceptual understanding 
 2. **Word cues (SHOULD):** The message or conversation mentions done, completed, decided, learned, concluded, failed, resolved, designed, planned, ready, committed, pushed, correction, insight, update memory, let's capture this, write a note, compaction, session ending, end of session
 3. **Conceptual (SHOULD):** A non-trivial logical unit of work has concluded — a discussion that produced decisions and/or learnings, a design, or conclusions; a piece of implementation was completed (feature, fix, refactor, investigation); the user shared context, preferences, or corrected your understanding
 
-**Before writing updates:** if a shared-knowledge repo is used, `git pull` first. Pulling keeps your memory current and minimises merge conflicts — without it you risk writing on top of stale state, or creating avoidable conflicts in append-only files.
+**Before writing updates:** if a shared-knowledge repo is used, `git pull` first (ONLY the shared-knowledge repo — not the project code repo). Pulling keeps your memory current and minimises merge conflicts — without it you risk writing on top of stale state, or creating avoidable conflicts in append-only files.
 
 **What to consider capturing:**
 
@@ -307,7 +307,7 @@ One AI session per user at a time. Multiple users may work on the same project c
 
 **Minimizing conflicts:** Use per-user sections (`##### @username`) in state.md (Current Work), context.md (Personal), and preferences.md. This gives each user their own write area, allowing git to auto-merge changes to different sections.
 
-**Pull before reading, push after writing.** When a shared-knowledge repo is used, pull at `readmem` (so reads aren't stale) and push promptly after `updatemem` (so concurrent sessions see your updates before they start their own). This minimises stale-state edits and avoidable merge conflicts in append-only files.
+**Pull before reading, push after writing.** When a shared-knowledge repo is used, pull at `readmem` (so reads aren't stale) and push promptly after `updatemem` (so concurrent sessions see your updates before they start their own) — ONLY the shared-knowledge repo, not the project code repo. This minimises stale-state edits and avoidable merge conflicts in append-only files.
 
 **Merge conflicts in append-only files** (notes.md, index.md): keep all entries from both versions — nothing should be lost.
 
