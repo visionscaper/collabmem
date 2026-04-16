@@ -1,12 +1,36 @@
 # Release Notes
 
+## v1.8.2
+
+**Quick fixes: readmem transparency, defensive reading, domain extensions, upgrademem sentinel, index ordering.**
+
+Five improvements from the v1.8.2–v1.9 roadmap. One planned feature (#10, collab dir comment in instruction file) was dropped as redundant — `.collab-config` already provides this information in the context window.
+
+**Changes since v1.8.1 (commit `8b42372`):**
+
+- **collab/methodology.md §2 (readmem):** Rewrote "Trust it before searching" paragraph. Indexes are now framed as awareness and routing mechanism, not source of truth. For non-trivial questions, AI answers from the index first then offers to check notes and other references — "the notes may change the answer, not just add detail." Fixes misinterpretation where AI treated index entries as sufficient answers.
+- **collab/methodology.md §5 (Notes Protocol):** Added episodic index ordering principle — strictly chronological, ALWAYS append at bottom. Two reasons: attention proximity (recent entries closer to active conversation) and consolidation ordering (oldest-first).
+- **collab/methodology.md §6 (World Model Protocol):** Added world index ordering principle — group entries by topic, not chronologically. The world index reflects current knowledge structure, not history.
+- **collab/methodology.md §10 (Defensive File Reading):** Expanded from one generic pattern to principle-based guidance with text file and JSONL patterns. JSONL files (especially Claude Code session transcripts) called out as particularly dangerous. Strengthened severity: NEVER + consequence ("can crash the session and force the user to kill the process"). Common use cases for reading session transcripts added.
+- **collab/methodology.md §12 (Domain Extensions):** Added import convention — extension methodologies go under `## Methodology Domain Extensions` header after the main methodology import. Heading level 3 (`###`) or deeper for consistency.
+- **collab/methodology.md §13 (NEW — upgrademem):** New sentinel token. Confirms with user first (easy to confuse with `updatemem`), then clones fresh collabmem repo and follows upgrade.md. Previous Section 13 (Troubleshooting) renumbered to §14.
+- **collab/.collab-memory-system**: bumped to `v1.8.2`.
+
+**Upgrade from v1.8.1:**
+
+The only *installed* file that changed is `collab/methodology.md`.
+
+1. In your installation, copy `collab/methodology.md` from the new version into your collab directory.
+2. Update your installation's `collab/.collab-memory-system` to `v1.8.2`.
+3. No memory data migration required.
+
 ## v1.8.1
 
 **Attention discipline for note and index writing.**
 
 Two write-surface failures had been accumulating: (1) notes drifting toward play-by-play action bullets and invented rationale instead of conceptual substance, and (2) index rows drifting toward mini-notes instead of association pointers. Both are attention-drift failures at the point of writing — the rules existed, but attention didn't fire on them during `updatemem` execution. v1.8.1 rewrites the Notes Protocol to be purpose-driven and adds execution-surface reinforcement in `updatemem`.
 
-**Changes since v1.8:**
+**Changes since v1.8 (commit `2787535`):**
 
 - **collab/methodology.md §5 (Notes Protocol):**
   - New **What Notes Are For** subsection — notes serve two purposes: **conceptual record** (understanding and reasoning that feeds world model derivation over time) and **concrete record** (non-trivial artefacts the episode produced — facts, parameters, short plans, drafts). Size-based rule: if an artefact is large, write a conceptual summary in the note and save the artefact to `docs/` with a reference. Notes should stay short.
@@ -35,7 +59,7 @@ The GitHub repository was renamed from `visionscaper/ai-collab-memory` to `visio
 
 **Why the rename:** the new name fits the existing sentinel vocabulary (`readmem` / `updatemem` / `maintainmem` / `collabmem`) and foregrounds *collaboration* as the primary thing the system enables, with memory as the substrate. Dropping "AI" from the name is a deliberate philosophical choice — the project's contrarian thesis is that AI is a partner *inside* a collaboration, not a separate entity you collaborate *with*. The name encodes that priority. See note `[10-04-2026] Renaming ai-collab-memory → collabmem` in `claude-collab` notes for the full reasoning.
 
-**Changes since v1.7.2:**
+**Changes since v1.7.2 (commit `c5caeb3`):**
 
 - **README.md**: project renamed throughout (title, prose, install/upgrade prompts, GitHub URLs). Status line updated to v1.8.
 - **install.md**: clone command, path examples, installation note template, and issues URL updated to use `collabmem`.

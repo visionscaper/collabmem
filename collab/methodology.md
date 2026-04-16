@@ -45,7 +45,7 @@ When the user includes `readmem` in their message, you MUST read relevant inform
 
 **BEFORE readmem, if a shared-knowledge repo is used, pull it first** (ONLY the shared-knowledge repo — not the project code repo) to have the latest additions to the memory — Tier 2 files on disk may have been updated remotely since session start.
 
-Always check your context window first: Tier 1 World Model information, World Model Index and Episodic Memory Index entries. The information in your context window contains most of what you need. Trust it before searching.
+Always check your context window first: Tier 1 World Model information, World Model Index and Episodic Memory Index entries. The indexes are your awareness and routing mechanism — they tell you what exists and where to look. For non-trivial questions, answer from the index first, then offer to check the notes and other references — the notes may change the answer, not just add detail.
 
 If you cannot find what you need in your context window (attention may miss things in large contexts — this is normal), use the **index → search → read** pattern:
 
@@ -250,6 +250,8 @@ These guidelines apply to both the Episodic Memory Index (`index.md`) and the Wo
 
 The `Who` column identifies who the work was done with (username or AI model name for AI-initiated observations).
 
+**Ordering:** The episodic index must be strictly chronological — ALWAYS append new entries at the bottom. This matters for two reasons: recent entries at the bottom have stronger attention proximity to the active conversation, and consolidation works oldest-first so chronological order determines what gets consolidated.
+
 #### Amendment Protocol
 
 When a prior note is superseded by later work:
@@ -300,7 +302,7 @@ The set of world files is fixed:
 |-------|------|--------------|---------------|
 ```
 
-The "When to check" column is the cue mechanism — it matches user intent to world knowledge. Update `world/index.md` whenever Tier 2 files change. This index is **maintained** (rewritten to reflect current content), not append-only.
+The "When to check" column is the cue mechanism — it matches user intent to world knowledge. Update `world/index.md` whenever Tier 2 files change. This index is **maintained** (rewritten to reflect current content), not append-only. Group entries by topic rather than chronologically — the world index reflects current knowledge structure, not history.
 
 #### State Management
 
@@ -385,20 +387,16 @@ One AI session per user at a time. Multiple users may work on the same project c
 
 When reading files you have not authored — session transcripts, logs, data files — guard against context overflow from very long lines.
 
-**Principle:** Never read files with potentially long lines using raw shell tools (`cat`, `head`, `tail`). A single JSONL line or progress-bar log line can be megabytes long.
+**Principle:** NEVER read files with potentially long lines using raw shell tools (`cat`, `head`, `tail`). A single JSONL line or progress-bar log line can be megabytes long — reading one can crash the session and force the user to kill the process. Use Python to read line-by-line, truncate each line or text field to ~2000 chars, and pipe through `head -100`. For structured formats (JSONL, JSON), parse first, then truncate individual text fields — don't truncate the raw line before parsing.
 
-**Safe pattern:**
+**Common hazards:**
+- **JSONL files** — each line is a complete JSON object that may contain large text blocks. Claude Code session transcripts (`~/.claude/projects/<project-path>/*.jsonl`) are a frequent example.
+- **Log files** — progress bars, stack traces, or serialized data can produce extremely long lines.
 
-```bash
-python3 -c "
-with open('file.jsonl') as f:
-    for line in f:
-        text = line[:2000]
-        if 'search_term' in text:
-            print(text)
-            print('---')
-" 2>/dev/null | head -100
-```
+**Common use cases for reading session transcripts:**
+- Recovering discussion/decisions after session crash
+- Finding tables, code snippets, or specific content from previous turns
+- Reconstructing context that was lost during auto-compaction
 
 Document project-specific long-line hazards in `world/how-tos.md`.
 
@@ -427,13 +425,20 @@ Extensions add domain-specific files and triggers alongside the core system.
 **To create an extension:**
 
 1. Add extension files alongside core files (e.g., `experiment-logs.md` next to `notes.md`)
-2. Add extension instructions as a separate `methodology-<name>.md` file (loaded alongside this file)
-3. Add extension-specific triggers to the `readmem`, `updatemem`, or `maintainmem` sections, or in the extension methodology
-4. Add extension entries to `world/index.md` so the knowledge is discoverable
+2. Add extension instructions as a separate `methodology-<name>.md` file (loaded alongside this file). Use heading level 3 (`###`) or deeper to stay consistent with the main methodology
+3. Import extension methodologies in the instruction file under a `## Methodology Domain Extensions` header, placed immediately after the main `## Methodology` import
+4. Add extension-specific triggers to the `readmem`, `updatemem`, or `maintainmem` sections, or in the extension methodology
+5. Add extension entries to `world/index.md` so the knowledge is discoverable
 
 Extensions follow the same patterns as the core system: append-only episodic files, maintained world files, index entries for discoverability.
 
-### 13. Troubleshooting and Feedback
+### 13. upgrademem — Upgrading the System
+
+When the user includes `upgrademem` in their message, first confirm that they want to upgrade the collabmem memory system — `upgrademem` and `updatemem` are easy to confuse.
+
+If the user confirms, upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the upgrade instructions in it.
+
+### 14. Troubleshooting and Feedback
 
 If the user has questions about the memory system, doesn't understand how something works, or encounters an issue:
 
