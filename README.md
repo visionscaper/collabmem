@@ -104,7 +104,7 @@ Entries in this memory are summarized in an index which is always in the AI cont
 global **awareness** of everything that is in the memory. This allows it to cross-correlate knowledge in this memory
 and to know where to find details from memory entries.
 
-The system uses three sentinel tokens — `readmem`, `updatemem`, and `maintainmem` — as the primary way to interact with memory. Include them in your message to the AI to trigger reading from memory, updating it, or maintaining it. The AI proposes what to read or write; you approve. In this way a high-quality memory with conceptual knowledge is built up over time. And we keep the memory system simple, without needing custom agentic AI solutions or infrastructure.
+The system uses three sentinel tokens — `readmem`, `updatemem`, and `maintainmem` — as the primary way to interact with memory. Include them in your message to the AI to trigger reading from memory, updating it, or maintaining it. The AI proposes what to read or write; you approve. In this way a high-quality memory with conceptual knowledge is built up over time. And we keep the memory system simple, without needing custom agentic AI solutions or infrastructure. A fourth sentinel, `upgrademem`, triggers a system upgrade.
 
 collabmem has a methodology to ensure that episodic or world model memory is never lost. See the section
 "How It Works" for more details.

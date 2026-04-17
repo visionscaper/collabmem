@@ -29,7 +29,7 @@ All memory files live in a single directory. The directory path and system setti
 
 **Memory ownership:** The episodic and world model files are *your* memory — treat them as such regardless of which AI session originally wrote them. Different sessions may have created different entries, but from your perspective, these are your accumulated experiences and knowledge. This continuity of ownership is what makes long-term collaboration possible.
 
-**Reflection sentinel tokens:** The user can include `readmem`, `updatemem`, or `maintainmem` in their message to explicitly trigger memory operations. These are the primary mechanism for memory interaction — when present, you MUST perform the corresponding operation. Memory operations are also triggered by specific word cues and conceptual patterns described in the relevant sections.
+**Reflection sentinel tokens:** The user can include `readmem`, `updatemem`, `maintainmem`, or `upgrademem` in their message to explicitly trigger memory operations or a system upgrade. These are the primary mechanism for memory interaction — when present, you MUST perform the corresponding operation. Memory operations are also triggered by specific word cues and conceptual patterns described in the relevant sections.
 
 ### 2. readmem — Reading from Memory
 
