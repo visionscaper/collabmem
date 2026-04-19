@@ -29,7 +29,7 @@ All memory files live in a single directory. The directory path and system setti
 
 **Memory ownership:** The episodic and world model files are *your* memory — treat them as such regardless of which AI session originally wrote them. Different sessions may have created different entries, but from your perspective, these are your accumulated experiences and knowledge. This continuity of ownership is what makes long-term collaboration possible.
 
-**Reflection sentinel tokens:** The user can include `readmem`, `updatemem`, `maintainmem`, or `upgrademem` in their message to explicitly trigger memory operations or a system upgrade. These are the primary mechanism for memory interaction — when present, you MUST perform the corresponding operation. Memory operations are also triggered by specific word cues and conceptual patterns described in the relevant sections.
+**Reflection sentinel tokens:** The user can include `readmem`, `updatemem`, `maintainmem`, `upgrademem`, or `helpmem` in their message to explicitly trigger memory operations, an upgrade, or help. These are the primary mechanism for memory interaction — when present, you MUST perform the corresponding operation. Memory operations are also triggered by word cues and conceptual patterns described in the relevant sections (SHOULD-level), but these are less reliable because AI attention can drift from memory instructions during generation — proactive sentinel use by the user is the most dependable trigger.
 
 ### 2. readmem — Reading from Memory
 
@@ -472,7 +472,35 @@ When the user includes `upgrademem` in their message, first confirm that they wa
 
 If the user confirms, upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the upgrade instructions in it.
 
-### 14. Troubleshooting and Feedback
+### 14. `helpmem` — Help with the Memory System
+
+When the user includes `helpmem` in their message, you MUST provide help about the memory system. How depends on whether the sentinel stands alone or is part of a question.
+
+**Mode 1 — `helpmem` alone.** Give a short onboarding response. Adapt wording to the current methodology. Cover:
+
+1. What collabmem is and why it exists (aim for ~3 sentences), explicitly mentioning episodic memory and world model memory.
+2. The sentinel tokens and what each does (`readmem`, `updatemem`, `maintainmem`, `upgrademem`, `helpmem`, and any others defined in the methodology).
+3. One short line noting that memory operations also have SHOULD-level triggers (word cues, conceptual patterns), but proactive sentinel use by the user is the most dependable trigger.
+4. Ask the user if there's anything specific they want help with.
+
+**Mode 2 — `helpmem` in a question.** Answer with a tiered approach:
+
+1. **First, try to answer from the in-context methodology.** For most questions this is enough.
+2. **If that's insufficient, fetch supporting docs from the main branch of the collabmem repo.** Fetch only what looks relevant:
+   - `README.md` — overview and installation basics
+   - `install.md` — installation procedure details
+   - `upgrade.md` — upgrade procedure
+   - `release-notes.md` — change history across versions
+
+   Base URL: `https://raw.githubusercontent.com/visionscaper/collabmem/refs/heads/main/<filename>`.
+
+3. **If the answer from main-branch docs appears inconsistent with the installed methodology's actual behaviour,** the installed version may be older than main. Find the installed version in `.collab-memory-system` and look up its commit in `release-notes.md`. Clone the repo to a temporary location, check out that commit, and answer from the version-specific docs.
+
+**Download fallback.** If WebFetch fails, try cloning. If both fail (network, platform, git availability), ask the user to check the GitHub repo directly at `https://github.com/visionscaper/collabmem`.
+
+**If no satisfactory answer can be given,** suggest filing an issue (see Section 15 — Troubleshooting and Feedback) and offer to help draft it.
+
+### 15. Troubleshooting and Feedback
 
 If the user has questions about the memory system, doesn't understand how something works, or encounters an issue:
 
