@@ -4,7 +4,7 @@
 
 This section provides instructions for the Collaboration Memory System, enabling you to collaborate with the user long-term, across session and compaction boundaries.
 
-All memory files live in a single directory. The directory path and system settings are in `.collab-config`, which is imported before these instructions.
+All memory files live in a single directory tree. The directory path and system settings are in `.collab-config`, which is imported before these instructions.
 
 **Compaction** occurs when your context window fills up and older conversation content is automatically summarized to free space, losing detail.
 
@@ -14,11 +14,11 @@ All memory files live in a single directory. The directory path and system setti
 
 | Type | Purpose | Files |
 |------|---------|-------|
-| **Episodic** | What happened, what was decided, why | `notes.md`, `docs/` |
+| **Episodic** | What happened, what was decided, why | `notes.md` |
 | **World model** | Current understanding of reality | `world/` directory |
 | **Working memory** | What's loaded in the context window | Managed via tiers |
 
-`docs/` contains long-form reference material — designs, plans, studies, analyses. Documents are referenced from notes or the world index so they can be discovered. They are freeform with no prescribed structure.
+`docs/` is a shared reference pool — long-form material (designs, plans, studies, analyses) referenced from episodic notes, from the world model via `world/index.md`, or from both. Documents are freeform with no prescribed structure.
 
 **Two tiers** control what's loaded into working memory:
 
@@ -38,7 +38,7 @@ When the user includes `readmem` in their message, you MUST read relevant inform
 **Triggers to read from memory — three levels:**
 
 1. **Sentinel token (MUST):** The user includes `readmem` in their message
-2. **Word cues (SHOULD):** The message mentions context, background, history, previous, earlier, last time, before, recall, remind, read memory, new session
+2. **Word cues (SHOULD):** The message mentions context, background, history, previous, earlier, last time, before, recall, remind, read memory (a new session is also a trigger, but implicit — see the "New Session" subsection below)
 3. **Conceptual (SHOULD):** The task requires context that isn't in the current conversation — history on the topic, prior decisions, established patterns, domain knowledge, or project state, etc.
 
 **How to read:**
@@ -66,7 +66,7 @@ If the indexes don't yield results:
 
 A new session is an implicit `readmem` trigger.
 
-1. If a shared-knowledge repo is used, BEFORE continuing, pull it first (ONLY the shared-knowledge repo — not the project code repo) to have the latest additions to the memory
+1. If a shared-knowledge repo is used, BEFORE continuing, pull it first (ONLY the shared-knowledge repo — not the project code repo) to have the latest additions to the memory. If the pull updated Tier 1 files (`world/context.md`, `world/preferences.md`, `world/state.md`, `index.md`, `world/index.md`), notify the user — the in-context Tier 1 is now stale — and suggest a session restart so imports load the updated files.
 2. Tier 1 files are already loaded via imports — trust them
 3. Check `world/state.md` for current work
 4. Scan recent entries in the Episodic Memory Index (`index.md`) for context on active work
@@ -109,13 +109,13 @@ When writing the index entry, remember that an **index row is an association poi
 
 #### Learning Lifecycle and Cross-Episode Patterns
 
-Learnings from episodes have a lifecycle: they emerge in an episode, get confirmed (immediately or across multiple episodes), and once stable and generalizable get promoted to world model knowledge. Use "Where Knowledge Belongs" (Section 6) to route each kind. When unsure at any stage — whether a learning is generalizable, which file it belongs in — ask the user.
+Learnings from episodes have a lifecycle: they emerge in an episode, get confirmed (immediately or across multiple episodes), and once stable and generalizable get promoted to world model knowledge. Immediate and deferred promotion happen during `updatemem` (below); batch consolidation during `maintainmem` (Section 7) catches whatever wasn't promoted in-flight. Use "Where Knowledge Belongs" (Section 6) to route each kind. When unsure at any stage — whether a learning is generalizable, which file it belongs in — ask the user.
 
 **Immediate promotion.** When an episode produces a learning that is obviously generalizable — a new procedure, a revealed preference, a discovered fact — apply the mapping during `updatemem` and propose the world model update alongside the episodic note.
 
 **Deferred promotion.** When generalizability isn't clear from a single episode, leave the learning in the episodic note. It can be promoted later when a new `updatemem` on the same topic reveals a confirming pattern across episodes.
 
-**Cross-episode pattern check.** When performing an `updatemem`, use the current topic(s) of an index entry as the anchor and scan the Episodic Memory Index for prior entries on the same topic(s), going back as far as the index allows. Index rows are too compressed to generalize from directly — they can only surface *candidate* patterns. To formulate an actual generalization, read the underlying notes, then propose to the user.
+**Cross-episode pattern check.** When performing an `updatemem`, use the current topic(s) of an index entry as the anchor and scan the Episodic Memory Index for prior entries on the same topic(s), going back as far as the index allows. For long-term patterns that may span consolidated episodes, also scan `index-archive.md`. Index rows are too compressed to generalize from directly — they can only surface *candidate* patterns. To formulate an actual generalization, read the underlying notes, then propose to the user.
 
 Example: "this is the fourth attention drift failure — candidate pattern visible in the index; reading the four notes confirms the shared mechanism; propose addition to `domain.md`."
 
@@ -179,7 +179,7 @@ Every substantive note serves two purposes:
 
 ### [DD-MM-YYYY] Title
 
-**With:** @username (or AI model name for AI-initiated observations)
+**With:** @username for humans; AI model name without `@` for AI-initiated observations (e.g. `claude-opus-4-7`)
 
 **Context:** Why we looked into this — the question, problem, or trigger.
 Examples: "a question came up about why X keeps failing", "we needed a
@@ -260,7 +260,7 @@ These guidelines apply to both the Episodic Memory Index (`index.md`) and the Wo
 |------|-----|-------|---------|----------|
 ```
 
-The `Who` column identifies who the work was done with (username or AI model name for AI-initiated observations).
+The `Who` column identifies who the work was done with (username or AI model name for AI-initiated observations). It is populated from the `**With:**` field of the corresponding note.
 
 **Ordering:** The episodic index must be strictly chronological — ALWAYS append new entries at the bottom. This matters for two reasons: recent entries at the bottom have stronger attention proximity to the active conversation, and consolidation works oldest-first so chronological order determines what gets consolidated.
 
@@ -368,7 +368,7 @@ When the Episodic Memory Index (`index.md`) approaches the `consolidation_soft_t
 3. Read the corresponding notes and analyse them:
    - What knowledge should be added to the world model?
    - Compare with what is already in world files — avoid duplication
-4. Add the consolidated knowledge to the appropriate world files
+4. Add the consolidated knowledge to the appropriate world files (see "Where Knowledge Belongs" in Section 6)
 5. Move the consolidated index entries to `index-archive.md` (same table format as `index.md`)
 6. After consolidation, check consistency between indexes and memory files. Fix clear inconsistencies, but be careful not to enter a loop where you destroy available knowledge and memories
 7. Check whether any Tier 1 world file now exceeds its character cap. If so, run World Model Compaction (see below). Repeat until all files are within their caps.
@@ -379,7 +379,7 @@ When a Tier 1 world file (except `state.md`, which has no size cap) approaches t
 
 Discuss the planned compaction with the user before applying — explain what knowledge you propose removing and why.
 
-After compaction, check whether the Episodic Memory Index now approaches the `consolidation_soft_threshold` due to the added entries. If so, suggest Episodic Index Consolidation (see above). Repeat until both the index and world files are within their limits.
+After compaction, check whether the Episodic Memory Index now approaches the `consolidation_soft_threshold` due to the added entries. If so, suggest Episodic Index Consolidation (see above). Repeat until both the index and world files are within their limits. If the loop doesn't converge within 2–3 cycles, pause and involve the user — pathological states are rare but should not be worked around silently.
 
 ### 8. Concurrency
 
@@ -448,7 +448,7 @@ All installed components are identifiable by markers:
 1. Remove instruction file imports (between the comment markers)
 2. Remove hook configurations with the `collab-memory-` prefix
 3. Remove `.collab-config` from project root
-4. Ask the user whether to keep or remove the collaboration directory (default: keep — preserves accumulated knowledge)
+4. Ask the user whether to keep or remove the collaboration directory (default: keep — preserves accumulated knowledge). If the collaboration directory is a symlink (team install pattern pointing to a shared-knowledge repo), removing the symlink is safe, but the target repo must never be deleted — it holds shared team data. Confirm explicitly with the user which is meant.
 
 **Never delete or modify files, code, or data that do not belong to the collaboration memory system.**
 
@@ -470,9 +470,9 @@ Extensions follow the same patterns as the core system: append-only episodic fil
 
 When the user includes `upgrademem` in their message, first confirm that they want to upgrade the collabmem memory system — `upgrademem` and `updatemem` are easy to confuse.
 
-If the user confirms, upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the upgrade instructions in it.
+If the user confirms, upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the instructions in `upgrade.md` from the clone.
 
-### 14. `helpmem` — Help with the Memory System
+### 14. helpmem — Help with the Memory System
 
 When the user includes `helpmem` in their message, you MUST provide help about the memory system. How depends on whether the sentinel stands alone or is part of a question.
 
@@ -496,11 +496,13 @@ When the user includes `helpmem` in their message, you MUST provide help about t
 
 3. **If the answer from main-branch docs appears inconsistent with the installed methodology's actual behaviour,** the installed version may be older than main. Find the installed version in `.collab-memory-system` and look up its commit in `release-notes.md`. Clone the repo to a temporary location, check out that commit, and answer from the version-specific docs.
 
-**Download fallback.** If WebFetch fails, try cloning. If both fail (network, platform, git availability), ask the user to check the GitHub repo directly at `https://github.com/visionscaper/collabmem`.
+**Download fallback.** If the web fetch fails, try cloning. If both fail (network, platform, git availability), ask the user to check the GitHub repo directly at `https://github.com/visionscaper/collabmem`.
 
 **If no satisfactory answer can be given,** suggest filing an issue (see Section 15 — Troubleshooting and Feedback) and offer to help draft it.
 
 ### 15. Troubleshooting and Feedback
+
+For user-triggered help with the memory system, see `helpmem` (Section 14); this section is the escalation target when the system itself needs change.
 
 If the user has questions about the memory system, doesn't understand how something works, or encounters an issue:
 

@@ -1,5 +1,50 @@
 # Release Notes
 
+## v1.8.3
+
+**Three features: reference documents as Tier 2, learning routing + cross-episode pattern detection, and the `helpmem` sentinel. Plus a methodology quality pass.**
+
+v1.8.3 ships three of the planned v1.8.3 features from the roadmap — #3, #9, and a combined #12+#13. Feature #7 (world model gap scan) was pushed to v1.9 or later — lower priority, and `updatemem`'s new cross-episode pattern check already provides incremental coverage at write-time. A methodology quality pass (triggered by an external review) landed a dozen small fixes.
+
+**Changes since v1.8.2 (commit `5eba54f`):**
+
+- **collab/methodology.md §1:** `helpmem` added to the reflection sentinel tokens list; rationale for proactive sentinel use spelled out (SHOULD-level word cues and conceptual triggers are less reliable due to AI attention drift). "Single directory" → "single directory tree". `docs/` moved out of the Episodic row of the Three Memory Types table — it is a shared reference pool referenced by both episodic and world model.
+- **collab/methodology.md §2 (readmem):**
+  - Scoped "Never load an entire Tier 2 file" rule to *growing* files (notes.md, world model files); reference documents in `docs/` may be loaded in full when reasonably sized.
+  - New Session step 1: if a pull updates Tier 1 files, notify the user and suggest a session restart (mid-session CLAUDE.md re-evaluation doesn't happen on Claude Code; source: `code.claude.com/docs/en/memory.md`).
+  - Word cues: "new session" clarified as implicit trigger, not a typed cue.
+- **collab/methodology.md §3 (updatemem):** New **Learning Lifecycle and Cross-Episode Patterns** subsection. Three parts: (a) immediate promotion for obviously generalizable learnings, (b) deferred promotion when generalizability isn't clear yet, (c) cross-episode pattern check using the current index entry's topic(s) as the anchor, scanning the Episodic Memory Index (and `index-archive.md` for long-term patterns). Key rule: index rows are too compressed to generalize from directly — they surface *candidate* patterns; formulating an actual generalization requires reading the underlying notes.
+- **collab/methodology.md §5 (Notes Protocol):**
+  - Note template: `@username` for humans, AI model name without `@` for AI-initiated observations (e.g. `claude-opus-4-7`).
+  - Index format: `Who` column explicitly mapped to the `**With:**` field of the note.
+- **collab/methodology.md §6 (World Model Protocol):**
+  - New **Reference documents in docs/** paragraph — when adding a doc, add `world/index.md` entries first (multiple if multi-topic; the doc is invisible without them); optional short narrative in `context.md` only if the index entries alone don't convey what the doc is about.
+  - New **Where Knowledge Belongs** subsection — source-agnostic routing table mapping knowledge nature to world file (procedure → `how-tos.md`, concept → `domain.md`, fact → `factoids.md`, context → `context.md`, preference → `preferences.md`, state → `state.md`). Anti-duplication rule included.
+- **collab/methodology.md §7 (Memory Maintenance Protocol):**
+  - Consolidation step 4 cross-references the new "Where Knowledge Belongs" mapping.
+  - Compaction loop: bail-out after 2–3 cycles if the loop doesn't converge — involve the user rather than loop silently.
+- **collab/methodology.md §11 (Uninstallation):** Step 4 now distinguishes symlinked `collab/` (team install pattern) from actual directories — removing the symlink is safe, but the target shared-knowledge repo must never be deleted.
+- **collab/methodology.md §13 (upgrademem):** Now names `upgrade.md` explicitly (consistency with §14).
+- **collab/methodology.md §14 (NEW — `helpmem`):** New sentinel token. Two modes: `helpmem` alone gives a short onboarding response (what collabmem is, the sentinel tokens, proactive-use rationale); `helpmem` in a question triggers a tiered answer — in-context methodology first, then main-branch docs fetch (README.md, install.md, upgrade.md, release-notes.md), then version-specific clone if the main-branch answer appears inconsistent with the installed methodology's behaviour. Fallbacks for download failure and unanswerable questions (issue filing).
+- **collab/methodology.md §15 (Troubleshooting and Feedback, renumbered from §14):** Preamble pointer to `helpmem` for user-triggered help; this section is the escalation target.
+- **hooks/claude-code/collab-memory-hook.sh:** Sentinel list in the SessionStart nudge expanded from 3 to 5 (adds `upgrademem` and `helpmem`).
+- **README.md:** Status → v1.8.3; intro paragraph mentions `helpmem`; "Working with the Memory System" bullet list expanded from 3 to 5 sentinels (adds `upgrademem` and `helpmem`); three-level trigger paragraph updated with a short parenthetical noting `upgrademem` and `helpmem` are MUST-level but outside memory operations.
+- **collab/.collab-memory-system:** bumped to `v1.8.3`.
+
+**Dropped from v1.8.3:**
+
+- **Feature #7 (world model gap scan)** pushed to v1.9 or later. Low priority — `updatemem`'s new cross-episode pattern check provides incremental coverage at write-time; MLPug migration showed ~97% coverage is achievable without it. The gap-scan procedure also needs more design work (two distinct scans — episodic and Tier 2 docs — with separate procedures).
+
+**Upgrade from v1.8.2:**
+
+Two *installed* files change: `collab/methodology.md` and the Claude Code hook script.
+
+1. In your installation, copy `collab/methodology.md` from the new version into your collab directory.
+2. **Replace your installed hook script** (typically at `.claude/hooks/collab-memory-hook.sh` or similar) with the new `hooks/claude-code/collab-memory-hook.sh` — the sentinel list in the SessionStart nudge was expanded. If you've customised your hook, merge the sentinel-list change manually.
+3. Update your installation's `collab/.collab-memory-system` to `v1.8.3`.
+4. **Post-upgrade check for existing installations (feature #3).** The new "Reference documents in docs/" rule expects documents in `docs/` to be indexed via `world/index.md`. For each existing document in your `docs/` directory, check whether its topics and details are represented in `world/index.md`; if not, propose entries — see the updated `collab/methodology.md` §6 for details. Also consider whether any document warrants a short narrative summary in `context.md` for continuous awareness.
+5. No memory data migration required.
+
 ## v1.8.2
 
 **Quick fixes: readmem transparency, defensive reading, domain extensions, upgrademem sentinel, index ordering.**

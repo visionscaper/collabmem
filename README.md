@@ -17,7 +17,7 @@ with Claude Code.
 
 ## Help Us Improve This System
 
-**Status:** v1.8.2 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/collabmem/issues.
+**Status:** v1.8.3 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/collabmem/issues.
 
 All testing and development so far has been done using Claude Opus 4.6. This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
 
@@ -104,18 +104,20 @@ Entries in this memory are summarized in an index which is always in the AI cont
 global **awareness** of everything that is in the memory. This allows it to cross-correlate knowledge in this memory
 and to know where to find details from memory entries.
 
-The system uses three sentinel tokens — `readmem`, `updatemem`, and `maintainmem` — as the primary way to interact with memory. Include them in your message to the AI to trigger reading from memory, updating it, or maintaining it. The AI proposes what to read or write; you approve. In this way a high-quality memory with conceptual knowledge is built up over time. And we keep the memory system simple, without needing custom agentic AI solutions or infrastructure. A fourth sentinel, `upgrademem`, triggers a system upgrade.
+The system uses three sentinel tokens — `readmem`, `updatemem`, and `maintainmem` — as the primary way to interact with memory. Include them in your message to the AI to trigger reading from memory, updating it, or maintaining it. The AI proposes what to read or write; you approve. In this way a high-quality memory with conceptual knowledge is built up over time. And we keep the memory system simple, without needing custom agentic AI solutions or infrastructure. Two further sentinels complete the set: `upgrademem` for system upgrade and `helpmem` for help about the memory system.
 
 collabmem has a methodology to ensure that episodic or world model memory is never lost. See the section
 "How It Works" for more details.
 
 ## Working with the Memory System
 
-The system provides three sentinel tokens for interacting with memory — include them in your message to trigger the corresponding operation:
+The system provides five sentinel tokens — include them in your message to trigger the corresponding operation:
 
 - **`readmem`** — Read relevant information from memory before handling a task. Use when you need background, history, or context from prior work.
 - **`updatemem`** — Evaluate what should be captured in memory — as a note, a world model update, or both. Use after discussions that produced decisions or learnings, after completing work, or when you've shared context that should be remembered.
 - **`maintainmem`** — Evaluate whether memory maintenance is needed — consolidating old index entries into the world model, or compacting world files that have grown too large.
+- **`upgrademem`** — Upgrade the memory system to the latest version.
+- **`helpmem`** — Get help about the memory system. Use it alone for a short overview, or embedded in a question (e.g. "what does maintainmem do? helpmem").
 
 **Example usage:**
 
@@ -133,7 +135,7 @@ You'll get the most out of the memory system by developing the habit of using th
 
 The methodology defines three levels of triggers that can activate memory operations:
 
-1. **Sentinel tokens (strongest guarantee)** — When `readmem`, `updatemem`, or `maintainmem` is present in your message, the AI MUST perform the operation.
+1. **Sentinel tokens (strongest guarantee)** — When `readmem`, `updatemem`, or `maintainmem` is present in your message, the AI MUST perform the operation. (`upgrademem` and `helpmem` are also MUST-level sentinels, but for system upgrade and help respectively — not memory operations.)
 2. **Word cues** — Words like "done", "decided", "background", "history" may prompt the AI to read from or update memory without an explicit sentinel token.
 3. **Conceptual triggers** — The AI is instructed to recognise situations where memory operations are appropriate, such as when a logical unit of work concludes.
 
