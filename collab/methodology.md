@@ -58,7 +58,7 @@ If the indexes don't yield results:
 
 1. Check `index-archive.md` for consolidated entries from older episodes — use the same search pattern
 2. Search Tier 2 files directly — `notes.md` for episodic history, `docs/` for reference material, or Tier 2 World Model files (`world/domain.md`, `world/how-tos.md`, `world/factoids.md`) for domain knowledge, procedures, and facts
-3. **Never load an entire Tier 2 file** — these files can grow to thousands of lines. Always search for specific content.
+3. **Never load an entire growing Tier 2 file** — notes.md and world model files can grow to thousands of lines. Always search for specific content. Reasonably-sized reference documents in `docs/` may be loaded in full.
 
 **When no information is found:** Report this to the user before proceeding. Explain what you searched and suggest how to continue — the user may know where the information lives or may confirm it doesn't exist yet.
 
@@ -106,6 +106,18 @@ When writing the index entry, remember that an **index row is an association poi
 - **Both:** Most significant episodes produce both a note (what happened) and world model updates (what changed about reality, what new information or conceptual knowledge was learned or decided). After writing a note, always review whether the episode also changes the world model.
 
 **Always propose updates to the user — never write without their approval.** Proactively proposing updates is a core responsibility. Describe what you would capture (title + key points) and ask if the user wants it recorded. Do not write silently or for trivial work.
+
+#### Learning Lifecycle and Cross-Episode Patterns
+
+Learnings from episodes have a lifecycle: they emerge in an episode, get confirmed (immediately or across multiple episodes), and once stable and generalizable get promoted to world model knowledge. Use "Where Knowledge Belongs" (Section 6) to route each kind. When unsure at any stage — whether a learning is generalizable, which file it belongs in — ask the user.
+
+**Immediate promotion.** When an episode produces a learning that is obviously generalizable — a new procedure, a revealed preference, a discovered fact — apply the mapping during `updatemem` and propose the world model update alongside the episodic note.
+
+**Deferred promotion.** When generalizability isn't clear from a single episode, leave the learning in the episodic note. It can be promoted later when a new `updatemem` on the same topic reveals a confirming pattern across episodes.
+
+**Cross-episode pattern check.** When performing an `updatemem`, use the current topic(s) of an index entry as the anchor and scan the Episodic Memory Index for prior entries on the same topic(s), going back as far as the index allows. Index rows are too compressed to generalize from directly — they can only surface *candidate* patterns. To formulate an actual generalization, read the underlying notes, then propose to the user.
+
+Example: "this is the fourth attention drift failure — candidate pattern visible in the index; reading the four notes confirms the shared mechanism; propose addition to `domain.md`."
 
 #### Before Compaction
 
@@ -291,7 +303,29 @@ The set of world files is fixed:
 
 **Reference documentation:** When world model files describe knowledge that is documented in detail elsewhere, reference the document rather than duplicating it. Use `docs/filename.md` (relative to the collab root) for documents inside `collab/docs/`. Use absolute paths for documents outside the collab directory. Prefer a concise summary with a document reference over a long self-contained explanation.
 
+**Reference documents in docs/:** When adding a document to `docs/` (or an external reference file in the shared-knowledge repo):
+
+1. Add world model index entries covering the document's key topics and details — multiple entries if the document covers multiple distinct topics. The index is the awareness and association mechanism; without entries, the document is invisible.
+2. Optionally add a short narrative summary to `context.md` if the index entries alone don't convey what the document is about and why it matters. Narrative is for orientation (the what/how/why); associative keywords and topic routing belong in world model index entries.
+
+When information from such a document is needed, load the relevant section — or the whole document if it has a fixed scope and is reasonably sized.
+
 **Tier 2 content structuring:** When Tier 2 files contain knowledge about multiple topics, projects, or domains, section the content accordingly so the context of each piece of information is clear. A fresh AI session reading a section should be able to tell what project or domain it relates to without cross-referencing other files.
+
+#### Where Knowledge Belongs
+
+Knowledge in the world model is categorized by its **nature**, not its origin. A single source (an episode, a document, a user correction) can produce knowledge that maps to multiple files:
+
+- **Procedure or workflow** → `how-tos.md` — e.g., "include previous version's commit hash in release notes"
+- **Conceptual understanding** (design rationale, mental model) → `domain.md` — e.g., "SaaS products in the AI era need a strong moat in data and integration"
+- **Specific fact, number, or reference** → `factoids.md` — e.g., "learning rate 3e-4 works best for this architecture"
+- **User, project, or business context** → `context.md` — e.g., "the user has a max budget of EUR 1000 per month"
+- **Working preference or communication style** → `preferences.md` — e.g., "user prefers short docs with links to detail"
+- **Current action item or active resource** → `state.md` — e.g., "deploy blocked until cert renewal"
+
+All categories receive learnings — preferences, context, and facts emerge from episodes just as often as procedures and concepts. Don't duplicate knowledge across files: if a conceptual insight implies a procedure, put the concept in `domain.md` and the procedure in `how-tos.md`, not both.
+
+For how episodic learnings are identified and promoted over time, see `updatemem` (Section 3).
 
 #### Writing World Model Index Entries
 
