@@ -21,6 +21,10 @@ with Claude Code.
 
 All testing and development so far has been done using Claude Opus 4.8 (medium effort) and Fable 5 (medium effort). This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
 
+## Stay in the Loop
+
+collabmem is built by [Lucens](https://lucens.ai) — collaborative AI that builds your organisation's memory. For occasional updates about collabmem and Lucens, [subscribe to The Lucens Loop](https://lucens.ai/subscribe/?source=github&source_topic=collabmem).
+
 ## How to Install
 
 ### For AI Assistants
