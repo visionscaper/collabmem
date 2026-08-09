@@ -23,7 +23,7 @@ All testing and development so far has been done using Claude Opus 4.8 (medium e
 
 ## Stay in the Loop
 
-collabmem is built by [Lucens](https://lucens.ai) — collaborative AI that builds your organisation's memory. For occasional updates about collabmem and Lucens, [subscribe to The Lucens Loop](https://lucens.ai/subscribe/?source=github&source_topic=collabmem).
+collabmem is built by [Lucens](https://lucens.ai) — collaborative AI that builds your organisation's memory. For occasional updates about collabmem and Lucens, [subscribe to The Lucens Loop newsletter](https://lucens.ai/subscribe/?source=github&source_topic=collabmem).
 
 ## How to Install
 
