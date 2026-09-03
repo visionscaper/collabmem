@@ -28,9 +28,10 @@ Diff from the installed version's commit (listed in the release notes) to HEAD i
 Check for user customisations: diff the user's installed system files against the originals from the installed version's commit, which can be found in `release-notes.md`. Any differences indicate user customisations that must be preserved or merged during the upgrade.
 
 Plan the upgrade as a single pass — do not apply version by version. Identify:
-- System files that need replacing (e.g., `methodology.md`, hook scripts)
+- System files that need replacing (e.g., `methodology.md`, hook scripts, client support files such as `clients/<client-name>/troubleshoot.md` → `<collab>/docs/`)
+- Instruction-file block updates — changes to the import block between the `<!-- collab-memory-system:start/end -->` markers in the project's instruction file (e.g., the COLLABMEM-LOAD-CHECK section)
 - Configuration settings that need adding or updating (e.g., new `.collab-config` entries)
-- Memory data migrations — structural changes to memory files (e.g., new columns in index tables, new sections in world files, renamed or reorganised files). These affect the user's accumulated knowledge and require explicit approval.
+- Memory data migrations — structural changes to memory files (e.g., new columns in index tables, new sections in world files, renamed or reorganised files, marker lines added to existing files). These affect the user's accumulated knowledge and require explicit approval.
 - Any other changes that require user input
 
 Summarise the planned changes for the user and ask for confirmation before proceeding. If memory data migrations are needed, explain what will change and why, and clearly distinguish them from system file updates.
@@ -55,4 +56,12 @@ Confirm that:
 - Hooks are updated (if applicable)
 - If memory data migrations were applied, verify the migrated files are consistent and complete
 
-Inform the user that the upgrade is complete and summarise what changed.
+**Probe what actually loads (Claude Code).** The checks above verify files on disk; finish by verifying the harness really injects them. Run a fresh, non-interactive probe from the project directory and **show its verbatim output to the user**:
+
+```bash
+claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with the two marker names and present/absent for each." < /dev/null
+```
+
+If either marker is reported absent, imports are not loading — consult `clients/claude-code/troubleshoot.md` (also copied to `<collab>/docs/troubleshoot.md`). Recommend the user re-run this probe after any CLI upgrade, config-directory change, machine change, or project move — these are the events that reset external-import handling.
+
+Inform the user that the upgrade is complete and summarise what changed. The upgrade takes effect in the next session (Tier 1 imports load once at session start) — suggest a restart.

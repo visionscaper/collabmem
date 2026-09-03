@@ -63,7 +63,7 @@ Before doing anything, examine the target project:
    - **Project level:** Check if `.claude/settings.json` (or equivalent) exists and contains hook definitions.
    - **Already running:** Look at `system-reminder` output in the current session for evidence of hooks already firing (e.g., timestamps, prompts, or other injected text on `SessionStart` or `UserPromptSubmit`). These may come from user-level or organization-level settings that are not visible in project files.
 
-   Note any hooks on `SessionStart` or `UserPromptSubmit` events — these overlap with the collab system's hooks. See `hooks/claude-code/collab-memory-hook.sh` in this repository for the hooks that will be installed.
+   Note any hooks on `SessionStart` or `UserPromptSubmit` events — these overlap with the collab system's hooks. See `clients/claude-code/hooks/collab-memory-hook.sh` in this repository for the hooks that will be installed.
 
 3. **Directory conflicts** — Check if `collab/` already exists at the project root (as a directory or a symlink). Check if `.collab-config` already exists at the project root.
 
@@ -171,7 +171,9 @@ Insert the import block into the project's instruction file at the chosen placem
   - Instruction file in `.claude/` (`.claude/CLAUDE.md`): use `@../collab/...` — the `../` navigates up from `.claude/` to the project root where `collab/` lives (as a real directory or symlink)
   - Instruction file in another location of the repo: adjust the relative path accordingly so it navigates from the instruction file's directory to the `collab/` directory
   - **External collab directory (outside the repo root):** Relative paths cannot reach outside the repository root — this is a security restriction. Use absolute paths instead (e.g., `@~/workspace/shared-knowledge/collab/project-x/methodology.md`). Note that absolute paths are not portable across machines or team members — each developer would need their own instruction file (git-ignored) with their local absolute paths. The symlink approach (see Step 2) avoids this by keeping the collab directory reachable via a relative path within the repo.
+  - **Recommended for team/symlink and external-directory installs (Claude Code):** additionally declare the resolved external directory in `.claude/settings.json` under `permissions.additionalDirectories` (pointing at the real target, not the symlink). Imports that resolve outside the project depend on external-import approval, which harness updates have silently reset in the past — declaring the directory states the intent through a supported permission mechanism and is more durable. Details and diagnostics: `clients/claude-code/troubleshoot.md`.
 - **Directory name:** If the user chose a custom directory name in Step 3, replace `collab/` throughout the template below with the chosen name.
+- **Troubleshooting-guide path (in the COLLABMEM-LOAD-CHECK section):** two different mechanisms resolve the paths in this block. `@` import paths are expanded by the harness at session start, **relative to the instruction file's location** — that is what the adjustment rule above is for. The local path `collab/docs/troubleshoot.md` is not an import: it is plain text the AI will later open with its file-reading tools, which resolve **from the project root**. So the import-path adjustment does NOT apply to it — leave it as-is even when the instruction file lives in `.claude/`. Only adapt it for a custom collab directory name, or make it absolute when the collab directory lives outside the repo without a symlink. The guide itself is client-specific — the URL fallback in the template points to the Claude Code guide (`clients/claude-code/troubleshoot.md` in the source repo); for other platforms, point to that platform's guide if one exists.
 - **Import syntax:** The `@path` syntax in the template below is Claude Code-specific. For other AI platforms, ask the user how their platform handles file imports or file-inclusion, and adapt the template accordingly. The heading structure (`##` grouping) applies regardless of platform — it ensures files compose into a consistent hierarchy when loaded into context.
 - **Blank line:** If inserting at the end of an existing file, add a blank line before `<!-- collab-memory-system:start -->` to visually separate the collab block from the user's existing content.
 
@@ -197,6 +199,36 @@ The import block template (paths shown for instruction file at project root — 
 ## Episodic Memory Index
 @collab/index.md
 
+## COLLABMEM-LOAD-CHECK
+
+At this point the collabmem memory system should be loaded. This section
+describes how to verify that this is true, and what to do when it is not.
+
+Directly after each import statement above, the contents of the imported file
+should have been placed into your context. To verify this, confirm that two
+marker lines are present in your context: the text `COLLABMEM-MARKER-` joined
+with `METHODOLOGY` (from the methodology.md file), and `COLLABMEM-MARKER-`
+joined with `CONTEXT` (from the world model context.md file). The joined marker
+texts themselves do not appear in this instruction file — if you can find them,
+they came from the imported files.
+
+If either marker is absent, the memory system did NOT load properly. In that
+case: tell the user before doing anything else, and do not read the memory
+files as a substitute — a silently-patched session hides the problem and gives
+the user a degraded experience without them knowing why. Start your report
+with this exact line:
+====== COLLABMEM MEMORY SYSTEM FAILED TO LOAD ======
+After informing the user, offer to help resolve it. When the user agrees,
+start by consulting the troubleshooting guide:
+
+- Local: `collab/docs/troubleshoot.md`
+- If the local file is unreachable or you can't find it:
+  https://raw.githubusercontent.com/visionscaper/collabmem/refs/heads/main/clients/claude-code/troubleshoot.md
+
+When both markers are present, the memory system loaded correctly — report
+this to the user, starting your message with this exact line:
+====== COLLABMEM MEMORY SYSTEM LOADED SUCCESSFULLY ======
+
 <!-- collab-memory-system:end -->
 ```
 
@@ -212,7 +244,7 @@ Install the lifecycle hook and configure it in the project's settings.
    .claude/hooks/collab-memory-hook.sh
    ```
 
-   Copy from this repository's `hooks/claude-code/collab-memory-hook.sh`. Create the `.claude/hooks/` directory if it doesn't exist. Make the script executable.
+   Copy from this repository's `clients/claude-code/hooks/collab-memory-hook.sh`. Create the `.claude/hooks/` directory if it doesn't exist. Make the script executable.
 
 2. **Configure hooks in `.claude/settings.json`:**
 
@@ -260,6 +292,14 @@ Install the lifecycle hook and configure it in the project's settings.
 
    Discuss the options with the user and let them choose. If hooks exist at the user level rather than the project level, note this — the user may prefer to integrate the collab-memory hook into their user-level script rather than adding a separate project-level hook.
 
+4. **Copy the troubleshooting guide into the memory directory:**
+
+   ```bash
+   cp /path/to/collabmem/clients/claude-code/troubleshoot.md <collab>/docs/troubleshoot.md
+   ```
+
+   This is the local copy the COLLABMEM-LOAD-CHECK section points to when loading fails. The local copy matches the installed version and stays reachable when network access or fetch permissions are restricted; the URL in the load-check covers the case where the collab directory itself is unreachable (e.g., a dangling symlink).
+
 #### Other Platforms
 
 For platforms other than Claude Code, skip hook installation. The methodology instructions in `collab/methodology.md` are self-contained — hooks enhance the experience (timestamps, health checks, session reminders) but are not required for the core system to function. The user can add platform-specific hooks later.
@@ -298,10 +338,20 @@ Run through this checklist and report results to the user. Paths use `<collab>` 
 - [ ] `<collab>/.collab-memory-system` exists and contains a version string
 - [ ] All 11 collab files exist (`methodology.md`, `index.md`, `index-archive.md`, `notes.md`, and 7 world files)
 - [ ] `<collab>/docs/` directory exists
-- [ ] Instruction file contains the import block between `<!-- collab-memory-system:start -->` and `<!-- collab-memory-system:end -->` markers
+- [ ] Instruction file contains the import block between `<!-- collab-memory-system:start -->` and `<!-- collab-memory-system:end -->` markers, including the `COLLABMEM-LOAD-CHECK` section
+- [ ] `<collab>/methodology.md` and `<collab>/world/context.md` start with their load-check marker lines
+- [ ] (Claude Code) `<collab>/docs/troubleshoot.md` exists (the load-check's local pointer target)
 - [ ] (Claude Code) Hook script exists at `.claude/hooks/collab-memory-hook.sh` and is executable
 - [ ] (Claude Code) `.claude/settings.json` contains hook entries for `SessionStart` and `UserPromptSubmit`
 - [ ] `.gitignore` entries correct: solo without tracking → `collab/` + `.collab-config`; team → `/collab` + (optionally `.collab-config`)
+
+**Final check — probe what actually loads (Claude Code).** The checks above verify files on disk; this one verifies the harness really injects them into context. Run a fresh, non-interactive probe from the project directory:
+
+```bash
+claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with the two marker names and present/absent for each." < /dev/null
+```
+
+**Show the probe's verbatim output to the user** — do not summarise it or just declare success. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing.
 
 If any checks fail, report which ones and ask the user how to proceed. For issues that cannot be resolved, the user can file an issue at https://github.com/visionscaper/collabmem/issues.
 

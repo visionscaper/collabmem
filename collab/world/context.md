@@ -1,3 +1,5 @@
+COLLABMEM-MARKER-CONTEXT — load-check marker, do not remove
+
 ### Context
 
 <!-- Tier 1 — ~5,000 char cap. See World Model Protocol in methodology.md. -->

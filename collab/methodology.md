@@ -1,4 +1,4 @@
-<!-- collabmem -->
+COLLABMEM-MARKER-METHODOLOGY — load-check marker, do not remove (see System Overview)
 
 ### 1. System Overview
 
@@ -30,6 +30,8 @@ All memory files live in a single directory tree. The directory path and system 
 **Memory ownership:** The episodic and world model files are *your* memory — treat them as such regardless of which AI session originally wrote them. Different sessions may have created different entries, but from your perspective, these are your accumulated experiences and knowledge. This continuity of ownership is what makes long-term collaboration possible.
 
 **Reflection sentinel tokens:** The user can include `readmem`, `updatemem`, `maintainmem`, `upgrademem`, or `helpmem` in their message to explicitly trigger memory operations, an upgrade, or help. These are the primary mechanism for memory interaction — when present, you MUST perform the corresponding operation. Memory operations are also triggered by word cues and conceptual patterns described in the relevant sections (SHOULD-level), but these are less reliable because AI attention can drift from memory instructions during generation — proactive sentinel use by the user is the most dependable trigger.
+
+**Load-check:** Tier 1 files reach your context through imports in the project instruction file, and imports can fail silently — leaving you without memory while nothing looks wrong. The COLLABMEM-LOAD-CHECK section in the project instruction file describes how to verify loading, using two marker lines: one at the top of this file (`COLLABMEM-MARKER-` joined with `METHODOLOGY`), one at the top of `world/context.md` (`COLLABMEM-MARKER-` joined with `CONTEXT`). The check lives in the instruction file, not here, because when loading fails this methodology is exactly what's missing. Do not remove or alter the marker lines. If a load-check ever fails: warn the user first, and never silently read the memory files as a substitute.
 
 ### 2. readmem — Reading from Memory
 
@@ -67,7 +69,7 @@ If the indexes don't yield results:
 A new session is an implicit `readmem` trigger.
 
 1. If a shared-knowledge repo is used, BEFORE continuing, pull it first (ONLY the shared-knowledge repo — not the project code repo) to have the latest additions to the memory. If the pull updated Tier 1 files (`world/context.md`, `world/preferences.md`, `world/state.md`, `index.md`, `world/index.md`), notify the user — the in-context Tier 1 is now stale — and suggest a session restart so imports load the updated files.
-2. Tier 1 files are already loaded via imports — trust them
+2. Tier 1 files are already loaded via imports, as confirmed by the COLLABMEM-LOAD-CHECK — trust them
 3. Check `world/state.md` for current work
 4. Scan recent entries in the Episodic Memory Index (`index.md`) for context on active work
 5. If prior work is unclear, search `notes.md` for recent notes
@@ -375,7 +377,7 @@ When the Episodic Memory Index (`index.md`) approaches the `consolidation_soft_t
 
 #### World Model Compaction
 
-When a Tier 1 world file (except `state.md`, which has no size cap) approaches the character cap (see `tier_1_max_chars` in `.collab-config`), rewrite it to remove the least relevant knowledge — but keep as much as possible, staying close to the cap. Move removed knowledge to a note in `notes.md` and add a corresponding entry in the Episodic Memory Index (`index.md`). This ensures the knowledge remains discoverable through the episodic index even after it leaves the world model.
+When a Tier 1 world file (except `state.md`, which has no size cap) approaches the character cap (see `tier_1_max_chars` in `.collab-config`), rewrite it to remove the least relevant knowledge — but keep as much as possible, staying close to the cap. Move removed knowledge to a note in `notes.md` and add a corresponding entry in the Episodic Memory Index (`index.md`). This ensures the knowledge remains discoverable through the episodic index even after it leaves the world model. When rewriting `world/context.md`, you MUST preserve the marker line at the top of the file — it is part of the load-check (see System Overview), not content to be compacted away.
 
 Discuss the planned compaction with the user before applying — explain what knowledge you propose removing and why.
 
@@ -491,6 +493,7 @@ When the user includes `helpmem` in their message, you MUST provide help about t
    - `install.md` — installation procedure details
    - `upgrade.md` — upgrade procedure
    - `release-notes.md` — change history across versions
+   - `clients/<client-name>/troubleshoot.md` (e.g. `clients/claude-code/troubleshoot.md`) — diagnostics when the memory system appears installed but does not load or behave as expected (a copy is also installed locally at `<collab_dir>/docs/troubleshoot.md` — prefer the local copy, it matches the installed version)
 
    Base URL: `https://raw.githubusercontent.com/visionscaper/collabmem/refs/heads/main/<filename>`.
 

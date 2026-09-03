@@ -57,6 +57,28 @@ check_health() {
     fi
 }
 
+# --- Load check ---
+# Two-layer check: a) verifies the instruction file (with the COLLABMEM-LOAD-CHECK
+# section) reached context; b) delegates marker verification to that section.
+# The hook never asserts that files are loaded — it cannot observe that.
+# Marker tokens are deliberately NOT spelled out here (single definition site =
+# the COLLABMEM-LOAD-CHECK section; avoids self-match from hook output).
+print_load_check() {
+    echo "Tier 1 collabmem memory-system files should be loaded at this point. Verify:"
+    echo ""
+    echo "a) Confirm that the COLLABMEM-LOAD-CHECK section — with its verification"
+    echo "   instructions — is present in your context."
+    echo "b) If it is present, execute the COLLABMEM-LOAD-CHECK instructions now."
+    echo "c) If it is NOT present, the project instruction file (CLAUDE.md) itself did"
+    echo "   not load — the collabmem memory system is not operational. Report this to"
+    echo "   the user before doing anything else — do not read the memory files as a"
+    echo "   substitute — and offer to help resolve it. When the user agrees, start by"
+    echo "   consulting the troubleshooting guide:"
+    echo "   - Local: $COLLAB_DIR/docs/troubleshoot.md"
+    echo "   - If the local file is unreachable or you can't find it:"
+    echo "     https://raw.githubusercontent.com/visionscaper/collabmem/refs/heads/main/clients/claude-code/troubleshoot.md"
+}
+
 # --- Memory triggers ---
 # Republished at session start for primacy position in context window.
 # Sentinel token names create attention matches to methodology headings.
@@ -77,7 +99,9 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "$CURRENT_DATETIME"
             echo ""
             check_health
-            echo "Tier 1 files loaded via imports. Follow readmem — New Session:"
+            print_load_check
+            echo ""
+            echo "Then follow readmem — New Session:"
             echo "1. Check world/state.md for current work"
             echo "2. Scan recent index.md entries for context"
             echo "3. If unclear, search notes.md for recent notes"
@@ -91,9 +115,9 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             check_health
             echo "Your conversation history was just compacted. Do NOT continue from the summary alone."
             echo ""
-            echo "Tier 1 files (indexes, world model) have been re-read from disk — they reflect the latest state."
+            print_load_check
             echo ""
-            echo "Follow readmem — After Compaction:"
+            echo "Then follow readmem — After Compaction:"
             echo "1. Search notes.md for the most recent session summary note"
             echo "2. Verify with the user what was being worked on before continuing"
             print_memory_triggers
