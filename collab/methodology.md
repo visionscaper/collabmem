@@ -109,6 +109,8 @@ When writing the index entry, remember that an **index row is an association poi
 
 **Always propose updates to the user — never write without their approval.** Proactively proposing updates is a core responsibility. Describe what you would capture (title + key points) and ask if the user wants it recorded. Do not write silently or for trivial work.
 
+**You MUST write memory through the harness's file-edit tools, which surface the actual change as a reviewable diff.** On harnesses where shell commands are auto-approved or shown only as a command plus a success message (e.g. Claude Code), writing memory files via shell — heredocs, `sed`, inline scripts — hides the content from the user, defeating the approval rule above even when approval was asked. Appending still works: anchor the edit at the end of the previous entry. Shell remains appropriate for operations the user is not reviewing: running scripts, inspecting data, git operations.
+
 #### Learning Lifecycle and Cross-Episode Patterns
 
 Learnings from episodes have a lifecycle: they emerge in an episode, get confirmed (immediately or across multiple episodes), and once stable and generalizable get promoted to world model knowledge. Immediate and deferred promotion happen during `updatemem` (below); batch consolidation during `maintainmem` (Section 7) catches whatever wasn't promoted in-flight. Use "Where Knowledge Belongs" (Section 6) to route each kind. When unsure at any stage — whether a learning is generalizable, which file it belongs in — ask the user.
