@@ -302,7 +302,7 @@ start. Until then, read Tier 1 files explicitly on `readmem`, and tell the user 
 
 | Date | Event | Status |
 |------|-------|--------|
-| 23-12-2025 | [#15124](https://github.com/anthropics/claude-code/issues/15124) opened: `@` imports with openly-external (absolute) paths expand to the literal path, contents not loaded (CC 2.0.76). Later **closed as "not planned"** — dropping unapproved external imports is intended behaviour, not a bug awaiting a fix. | public record |
+| 23-12-2025 | [#15124](https://github.com/anthropics/claude-code/issues/15124) opened: `@` imports with openly-external (absolute) paths expand to the literal path, contents not loaded (CC 2.0.76). **Closed 14-02-2026 as "not planned"** — dropping unapproved external imports is intended behaviour, not a bug awaiting a fix. | public record |
 | 18–20-07-2026 | Researcher reports the symlink bypass to Anthropic (HackerOne): internal-*looking* symlinked imports loaded **without** the external-import dialog on `2.1.207`/`2.1.215`. Anthropic closes it in two days as **"Informative" / out of scope** ("workspace trust is the boundary") — explicitly declining remediation. | public record |
 | 21-07-2026 | Public disclosure (tego.ai article above). | public record |
 | between 21-07 and 26-08-2026 | The flip: symlink-resolved external imports go from silently *loaded* to silently *dropped* when external-include approval is absent. **No changelog entry announces it** (checked 2.1.170–2.1.255). Whether this was a quiet reversal prompted by the disclosure or an independent hardening is **not publicly documented**. | inferred from the two brackets |
