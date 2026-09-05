@@ -4,7 +4,7 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 
 ## Principles
 
-1. **NEVER modify the user's episodic memory or world model content.** Notes (`notes.md`), indexes (`index.md`), docs, and world model files contain the user's accumulated knowledge. Only update system files: `methodology.md`, `support.md`, hooks, `.collab-config` settings, `.collab-memory-system`.
+1. **NEVER modify the user's episodic memory or world model content.** Notes (`notes.md`), indexes (`index.md`), the user's own documents in `docs/`, and world model files contain the user's accumulated knowledge. Only update system files: `methodology.md`, `support.md`, hooks, `.collab-config` settings, `.collab-memory-system`, the system's own copied guide `docs/troubleshoot.md` (Claude Code), and the collab-memory-system import block in the instruction file. One exception to "never modify user files": when a release adds a marker/anchor line to a user-owned file (e.g. the load-check marker atop `world/context.md`), prepend exactly that line, leaving all existing content untouched (see Step 4).
 2. **If a release note mentions a structural change that could affect existing content**, flag it for the user rather than applying it automatically.
 3. **Narrate every change.** Tell the user what you are updating and why.
 4. **Confirm before applying.** Summarise the planned changes and ask for confirmation before modifying any files.
@@ -64,7 +64,7 @@ Confirm that:
 claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves." < /dev/null
 ```
 
-If either marker is reported absent, imports are not loading — consult `clients/claude-code/troubleshoot.md` (also copied to `<collab>/docs/troubleshoot.md`). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output. Recommend the user re-run this probe after any CLI upgrade, config-directory change, machine change, or project move — these are the events that reset external-import handling.
+Show the probe's raw output verbatim — on both success and failure — then give a one-line plain-language translation. If either marker is reported absent, imports are not loading — consult `clients/claude-code/troubleshoot.md` (also copied to `<collab>/docs/troubleshoot.md`), and explain the problem and fix to the user in plain language (no jargon about markers/imports/config). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output. Recommend the user re-run this probe after any CLI upgrade, config-directory change, machine change, or project move — these are the events that reset external-import handling.
 
 Inform the user that the upgrade is complete and summarise what changed. The upgrade takes effect in the next session (Tier 1 imports load once at session start) — suggest a restart.
 

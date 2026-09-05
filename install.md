@@ -14,6 +14,7 @@ These instructions are for you, the AI assistant. Follow them step by step to in
 collab/                     → (solo: real directory | team: symlink to external location)
 ├── .collab-memory-system   (version marker)
 ├── methodology.md          (your operating instructions)
+├── support.md              (starmem support-ask procedure)
 ├── index.md                (episodic memory index — Tier 1)
 ├── notes.md                (episodic memory — Tier 2)
 ├── index-archive.md        (archived index entries — Tier 2)
@@ -239,11 +240,14 @@ files as a substitute before the user has been told — a silently-patched
 session hides the problem and gives the user a degraded experience without
 them knowing why. Start your report with this exact line:
 ====== COLLABMEM MEMORY SYSTEM FAILED TO LOAD ======
+Explain in plain language (no jargon about markers, imports, symlinks, or
+harness config) — say the memory files did not load, not the internal reason.
 After informing the user, offer to help resolve it. When the user agrees,
 start by consulting the troubleshooting guide:
 
-- Local: `collab/docs/troubleshoot.md`
-- If the local file is unreachable or you can't find it:
+- Local (Claude Code installs): `collab/docs/troubleshoot.md`
+- Otherwise, or if the local file is unreachable or you can't find it, the
+  canonical guide:
   https://raw.githubusercontent.com/visionscaper/collabmem/refs/heads/main/clients/claude-code/troubleshoot.md
 
 When both markers are present, the memory system loaded correctly — report
@@ -372,7 +376,7 @@ Run through this checklist and report results to the user. Paths use `<collab>` 
 claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves." < /dev/null
 ```
 
-**Show the probe's verbatim output to the user** — do not summarise it or just declare success. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing. If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output.
+**Show the probe's raw output to the user verbatim — on both success and failure — then give a one-line plain-language translation.** Do not summarise it away or just declare success. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing, explaining the problem and fix in plain language (no jargon about markers/imports/config). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output.
 
 If any checks fail, report which ones and ask the user how to proceed. For issues that cannot be resolved, the user can file an issue at https://github.com/visionscaper/collabmem/issues.
 
@@ -501,3 +505,5 @@ This helps any AI session understand which system is authoritative during the mi
 ### Step 11: Support the Project (starmem)
 
 After delivering the final installation message from Step 9 — or, when a migration immediately follows in the same session, after the migration outcome message — run the `starmem` procedure: read `<collab>/support.md` and follow it (first ask). It asks the user, on behalf of the collabmem developers, to support the project by starring the GitHub repo, and records the answer in `.collab-config`.
+
+Because the star ask now becomes the last exchange, the closing rule still applies: end this message too with the restart reminder — *"Reminder: the memory system activates in a new session — start one to begin using it."*

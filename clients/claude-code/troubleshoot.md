@@ -29,6 +29,15 @@ concluding you have found something new.
 You are here because a load-check failed or memory content is missing. Before
 diagnosing:
 
+**How to communicate throughout.** Use plain language with the user. Do not
+assume they know what the load check, markers, imports, symlinks,
+external-includes approval, or harness config are. Describe the problem by its
+effect ("the memory files didn't load") and describe any fix by what it
+achieves for them ("this lets this project read its team memory again"), not
+by its internal mechanism. Offer technical detail only if they ask. When you
+run a diagnostic probe, show its raw output verbatim AND give the plain-language
+translation.
+
 1. **Get your bearings — read the local files if reachable:**
    `<collab_dir>/methodology.md` (how the memory system works) and
    `<collab_dir>/world/context.md` (who you are helping, and with what —
@@ -68,10 +77,12 @@ your context automatically on every session; **Tier 2** files are searched on de
 collab/
 ├── .collab-memory-system       ← version marker
 ├── methodology.md              ← AI operating instructions
+├── support.md                  ← starmem support-ask procedure
 ├── index.md                    ← episodic memory index (Tier 1 — always in context)
 ├── notes.md                    ← episodic memory (Tier 2 — searched on demand)
 ├── index-archive.md            ← archived index entries (Tier 2)
 ├── docs/                       ← long-form reference documents (Tier 2)
+│   └── troubleshoot.md         ← this guide, copied here at install (Claude Code)
 └── world/
     ├── index.md                ← world model index (Tier 1)
     ├── context.md              ← personal, project, business context (Tier 1)
