@@ -70,10 +70,12 @@ The system adds a collaboration directory (default `collab/`) to the project:
 collab/
 ├── .collab-memory-system       ← version marker
 ├── methodology.md              ← AI operating instructions
+├── support.md                  ← starmem support-ask procedure
 ├── index.md                    ← episodic memory index (Tier 1 — always in context)
 ├── notes.md                    ← episodic memory (Tier 2 — searched on demand)
 ├── index-archive.md            ← archived index entries (Tier 2)
 ├── docs/                       ← long-form reference documents (Tier 2)
+│   └── troubleshoot.md         ← troubleshooting guide, copied here at install (Claude Code)
 └── world/
     ├── index.md                ← world model index (Tier 1)
     ├── context.md              ← personal, project, business context (Tier 1)

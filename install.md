@@ -242,7 +242,8 @@ them knowing why. Start your report with this exact line:
 ====== COLLABMEM MEMORY SYSTEM FAILED TO LOAD ======
 Explain in plain language (no jargon about markers, imports, symlinks, or
 harness config) — say the memory files did not load, not the internal reason.
-After informing the user, offer to help resolve it. When the user agrees,
+Offer technical detail only if the user asks. After informing the user, offer
+to help resolve it. When the user agrees,
 start by consulting the troubleshooting guide:
 
 - Local (Claude Code installs): `collab/docs/troubleshoot.md`
@@ -376,7 +377,7 @@ Run through this checklist and report results to the user. Paths use `<collab>` 
 claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves." < /dev/null
 ```
 
-**Show the probe's raw output to the user verbatim — on both success and failure — then give a one-line plain-language translation.** Do not summarise it away or just declare success. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing, explaining the problem and fix in plain language (no jargon about markers/imports/config). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output.
+**Show the probe's raw output to the user verbatim — on both success and failure — then give a one-line plain-language translation.** Do not summarise it away or just declare success. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing, explaining the problem and fix in plain language (no jargon about markers/imports/config; offer technical detail only if the user asks). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output.
 
 If any checks fail, report which ones and ask the user how to proceed. For issues that cannot be resolved, the user can file an issue at https://github.com/visionscaper/collabmem/issues.
 
