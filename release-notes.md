@@ -31,7 +31,7 @@ Several *installed* files change. Do all of the following, then run the probe:
 1. **Replace** `collab/methodology.md` (now begins with the line `COLLABMEM-MARKER-METHODOLOGY — load-check marker, do not remove (see System Overview)`).
 2. **Replace the hook.** The source moved to `clients/claude-code/hooks/collab-memory-hook.sh`; copy it over the installed `.claude/hooks/collab-memory-hook.sh`.
 3. **Copy the troubleshooting guide** `clients/claude-code/troubleshoot.md` → `<collab>/docs/troubleshoot.md`.
-4. **Prepend one line to the user-owned `collab/world/context.md`** (do not replace the file): `COLLABMEM-MARKER-CONTEXT — load-check marker, do not remove` as the new first line, leaving all existing content untouched.
+4. **Prepend one line to the user-owned `collab/world/context.md`** (do not replace the file) using an **edit tool** (not shell/`cp` — the change must be a reviewable diff): `COLLABMEM-MARKER-CONTEXT — load-check marker, do not remove` as the new first line, leaving all existing content untouched. Idempotent: if that line is already the first line, skip it.
 5. **Refresh the import block** in the instruction file (CLAUDE.md or equivalent): add the `COLLABMEM-LOAD-CHECK` section from install.md's template just before `<!-- collab-memory-system:end -->`. **Keep the existing install's import paths** (e.g. `@../collab/...`); adjust the block's local `collab/docs/troubleshoot.md` pointer only for a custom collab-dir name or an external directory.
 6. Bump `collab/.collab-memory-system` to `v1.8.5`.
 7. **Verify:** run the probe from install.md Step 8 / upgrade.md Step 5 and show its output. The load-check takes effect in the next session — suggest a restart.

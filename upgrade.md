@@ -15,7 +15,7 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 
 1. Read the installed version from `collab/.collab-memory-system` in the user's project.
 2. Read the latest version from `.collab-memory-system` in this repository.
-3. If the versions match, inform the user that the system is already up to date and stop.
+3. If the versions match, the shared memory files are current — but for **team/symlink installs, do not stop yet.** The version marker lives in the *shared* collab directory, while the instruction file (CLAUDE.md) and the hook are **per-clone** (each teammate has their own). So once one teammate upgrades, the shared marker reads the new version even though other teammates' CLAUDE.md and hook are still old — and a plain version check would wrongly report them "up to date," leaving them without the per-clone changes (e.g. the load-check section and the updated hook). Therefore: if the versions match, also confirm this clone's per-clone parts are current — for the latest release, that the instruction file contains the `COLLABMEM-LOAD-CHECK` section and the hook is the current version. If they are, stop (up to date). If the shared version matches but the per-clone parts are stale, do a **per-clone catch-up**: apply only the instruction-file and hook changes (skip the shared-file copies, which another teammate already did), then run the verify probe. If both the version and the per-clone parts differ, proceed with the full upgrade below.
 
 ### Step 2: Read Release Notes
 
@@ -38,24 +38,32 @@ Summarise the planned changes for the user and ask for confirmation before proce
 
 ### Step 4: Apply Changes
 
+**For team/shared-knowledge installs, `git pull` the shared-knowledge repo first** (only that repo, not the code repo) so you upgrade current memory and avoid conflicts.
+
 Apply all changes in a single pass:
 
-1. Copy updated system files from this repository to the user's installation (e.g., `collab/methodology.md`, `.claude/hooks/collab-memory-hook.sh`) using the `cp` command — this is more stable than copying over changes.
-   - **Marker/anchor lines in user-owned memory files** (e.g. the load-check marker at the top of `world/context.md`): never replace the file — prepend or insert exactly the line specified in the release notes, leaving the user's content untouched.
-   - **When refreshing the import block in the instruction file:** preserve the existing install's path adjustments (e.g. `@../collab/...` for an instruction file in `.claude/`, or absolute paths for external directories) — apply the new block *content* with the old block's *paths*, following the path rules in install.md Step 5. Copying template paths verbatim silently breaks loading on adjusted installs.
+1. Copy updated system files from this repository to the user's installation (e.g., `collab/methodology.md`, and the hook — note its source path may have moved between versions, see the release notes) using the `cp` command — this is more stable than copying over changes. After copying the hook, make it executable (`chmod +x`).
+   - **Marker/anchor lines in user-owned memory files** (e.g. the load-check marker at the top of `world/context.md`): never replace the file — insert exactly the line specified in the release notes with an **edit tool** (not shell/`cp`, so the change is a reviewable diff), leaving the user's content untouched. **Idempotent:** if that line is already present (e.g. a re-run), skip it — do not add it twice.
+   - **When refreshing the import block in the instruction file:** preserve the existing install's path adjustments (e.g. `@../collab/...` for an instruction file in `.claude/`, or absolute paths for a collab directory outside the repo without a symlink) — apply the new block *content* with the old block's *paths*, following the path rules in install.md Step 5. Copying template paths verbatim silently breaks loading on adjusted installs. **Also preserve any user additions inside the markers** — e.g. `## Methodology Domain Extensions` imports (methodology §12); refresh the block by adding/updating the system sections, not by wholesale replacement.
+   - **System support files that are copies** (e.g. `<collab>/docs/troubleshoot.md` on Claude Code): copy/replace them; do NOT add a `world/index.md` entry for them (they are system files, not world knowledge — the index-every-doc rule does not apply).
 2. Add any new configuration settings to `.collab-config`.
 3. If memory data migrations are needed, apply them with the user's approval. Narrate each change to the user's memory files — what is being modified, why, and what the result looks like. If a migration is ambiguous or could lose information, ask the user how to proceed rather than guessing.
 4. Update `collab/.collab-memory-system` to the latest version.
+5. **For team/shared-knowledge installs, commit and push the shared-knowledge repo** after the shared-dir files are updated (only that repo), so teammates pick up the new memory-side files.
 
 If the user has customised a system file (e.g., added project-specific sections to `methodology.md`), flag it and ask how to proceed — do not overwrite customisations silently.
+
+**Team/symlink installs — the durable load fix.** If this upgrade introduces or relies on the load-check (memory imported through a symlink to a shared-knowledge repo), recommend declaring the resolved shared directory via `permissions.additionalDirectories` in `.claude/settings.json` (pointing at the real target, not the symlink). This is the sanctioned way to let imports resolve outside the project and is more durable than the external-includes approval flag, which harness updates have silently reset. See `clients/claude-code/troubleshoot.md`.
 
 ### Step 5: Verify
 
 Confirm that:
 - `collab/.collab-memory-system` contains the latest version string
-- Updated system files match the latest templates
+- Updated system files match the latest templates (including any newly copied support files, e.g. `<collab>/docs/troubleshoot.md`)
+- Any marker/anchor lines added this release are present exactly once at the top of their files (e.g. the load-check markers atop `methodology.md` and `world/context.md`)
+- The instruction file's import block contains any new sections for this release (e.g. `COLLABMEM-LOAD-CHECK`) with the existing paths and any user extensions preserved
 - Any new configuration settings are present in `.collab-config`
-- Hooks are updated (if applicable)
+- Hooks are updated (if applicable) and executable
 - If memory data migrations were applied, verify the migrated files are consistent and complete
 
 **Probe what actually loads (Claude Code).** The checks above verify files on disk; finish by verifying the harness really injects them. Run a fresh, non-interactive probe from the project directory and **show its verbatim output to the user**:

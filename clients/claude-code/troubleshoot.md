@@ -247,6 +247,12 @@ So: if a genuinely fresh interactive start produces no prompt, stop waiting for 
 
 ### Fix
 
+**How to explain this to the user (plain language — do not relay the mechanics below).** The rest of this
+section is for *you* to execute; it is not what you say to the user. Say something like: *"Claude Code's
+settings for this project were blocking it from reading your memory files. I can turn that on for this
+project — OK?"* After applying it: *"Done. Let's start a fresh session so I can confirm the memory loads."*
+Only go into flags, symlinks, or config if the user asks for detail.
+
 Setting the approval flag by hand is equivalent to answering "yes" in the dialog (which writes
 `approved = true` and `warningShown = true`).
 
