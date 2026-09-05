@@ -9,7 +9,7 @@
 - **Upgrade operates on the current install only.** Clarified in upgrade.md: do not drive changes into other installs/projects from one session; multiple installs (multi-scope or multi-teammate) are each upgraded from their own session.
 - **Cumulative upgrade lists.** A note at the top of the newest upgrade list: coming from further back, merge the per-version lists (oldest first) into one pass.
 
-**Upgrade from v1.8.5:** nothing to install — re-clone `main` when next upgrading. Bump `<collab_dir>/.collab-memory-system` to `v1.8.5a` if you want the marker current.
+**Upgrade from v1.8.5:** no methodology/hook change, but **re-copy the updated troubleshooting guide** to the local install — `clients/claude-code/troubleshoot.md` → `<collab_dir>/docs/troubleshoot.md` — so the local copy carries the `additionalDirectories` correction (otherwise the shipped local guide stays stale on the "sanctioned route" wording). Then bump `<collab_dir>/.collab-memory-system` to `v1.8.5a`.
 
 ## v1.8.5
 
