@@ -14,7 +14,7 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 ### Step 1: Compare Versions
 
 1. Read the installed version from `collab/.collab-memory-system` in the user's project.
-2. Read the latest version from `.collab-memory-system` in this repository.
+2. Read the latest version from `collab/.collab-memory-system` in this repository (it is inside `collab/`, not at the repo root).
 3. If the versions match, the shared memory files are current — but for **team/symlink installs, do not stop yet.** The version marker lives in the *shared* collab directory, while the instruction file (CLAUDE.md) and the hook are **per-clone** (each teammate has their own). So once one teammate upgrades, the shared marker reads the new version even though other teammates' CLAUDE.md and hook are still old — and a plain version check would wrongly report them "up to date," leaving them without the per-clone changes (e.g. the load-check section and the updated hook). Therefore: if the versions match, also confirm this clone's per-clone parts are current — for the latest release, that the instruction file contains the `COLLABMEM-LOAD-CHECK` section and the hook is the current version. If they are, stop (up to date). If the shared version matches but the per-clone parts are stale, do a **per-clone catch-up**: apply only the instruction-file and hook changes (skip the shared-file copies, which another teammate already did), then run the verify probe. If both the version and the per-clone parts differ, proceed with the full upgrade below.
 
 ### Step 2: Read Release Notes
@@ -22,6 +22,8 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 Read all sections in [`release-notes.md`](release-notes.md) between the installed version and the latest version, oldest first. This gives you the full picture of what changed and why across all intermediate versions.
 
 ### Step 3: Diff and Plan
+
+**First ensure the clone has full history.** This step diffs against the installed version's baseline commit, so a shallow clone (`git clone --depth 1`, the natural way to grab a branch) will **silently break the customisation check below** — `git fetch <sha>` / `git cat-file` fail with "couldn't find remote ref", and the AI could then wholesale-replace a customised system file without noticing. If the clone is shallow (`git rev-parse --is-shallow-repository` returns `true`), run `git fetch --unshallow` (or re-clone without `--depth`) before proceeding.
 
 Diff from the installed version's commit (listed in the release notes) to HEAD in this repository. Use the release notes as context to understand the changes.
 
@@ -64,6 +66,7 @@ Confirm that:
 - The instruction file's import block contains any new sections for this release (e.g. `COLLABMEM-LOAD-CHECK`) with the existing paths and any user extensions preserved
 - Any new configuration settings are present in `.collab-config`
 - Hooks are updated (if applicable) and executable
+- **Hook freshness (every upgrade, even when the release did not change the hook):** diff the installed hook against this version's template. Installed hooks can drift stale across releases where "hooks unchanged" held, and would otherwise never be caught. If they differ (beyond intentional user customisation), update the hook and flag it to the user.
 - If memory data migrations were applied, verify the migrated files are consistent and complete
 
 **Probe what actually loads (Claude Code).** The checks above verify files on disk; finish by verifying the harness really injects them. Run a fresh, non-interactive probe from the project directory and **show its verbatim output to the user**:
