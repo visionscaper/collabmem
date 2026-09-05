@@ -1,5 +1,16 @@
 # Release Notes
 
+## v1.8.5a
+
+**Documentation patch to v1.8.5 (no behaviour change to the load-check feature itself).** From a real v1.8.3→v1.8.5 field upgrade on a symlinked, multi-scope install. No new version of the methodology or hook — these are `install.md` / `upgrade.md` / `troubleshoot.md` corrections that take effect for anyone cloning `main`.
+
+- **`additionalDirectories` is not sufficient on its own.** v1.8.5 framed `permissions.additionalDirectories` as "the sanctioned, durable route." Field-observed on a real install: with it correctly set, imports still did not resolve until the per-project `hasClaudeMdExternalIncludesApproved` was `true`. All surfaces now say: it states intent and may help across harness updates, but **set both and verify with the probe** — never assume either alone worked. (install.md, upgrade.md, troubleshoot.md.)
+- **Version-marker path uses `<collab_dir>`, not literal `collab/`.** For a custom `collab_dir` (e.g. `collab/<project>`) the old hard-coded path did not exist and the first upgrade command failed. upgrade.md Step 1 / Step 4 / Step 5 now read the path from `.collab-config`.
+- **Upgrade operates on the current install only.** Clarified in upgrade.md: do not drive changes into other installs/projects from one session; multiple installs (multi-scope or multi-teammate) are each upgraded from their own session.
+- **Cumulative upgrade lists.** A note at the top of the newest upgrade list: coming from further back, merge the per-version lists (oldest first) into one pass.
+
+**Upgrade from v1.8.5:** nothing to install — re-clone `main` when next upgrading. Bump `<collab_dir>/.collab-memory-system` to `v1.8.5a` if you want the marker current.
+
 ## v1.8.5
 
 **One feature: the load-check — collabmem now verifies its own memory actually loaded, and says so.**
@@ -8,7 +19,7 @@ Recent Claude Code versions silently stopped expanding `@` imports that resolve 
 
 v1.8.5 adds a **load-check**: a `COLLABMEM-LOAD-CHECK` section in the always-loaded instruction-file block, backed by two plain-text marker lines (top of `methodology.md` and `world/context.md`). At session start the AI confirms the markers are actually in its context and reports the outcome with an unmissable banner — `====== COLLABMEM MEMORY SYSTEM LOADED SUCCESSFULLY ======` or `====== COLLABMEM MEMORY SYSTEM FAILED TO LOAD ======`. On failure it warns the user first, in plain language, and does not silently compensate; it then consults a troubleshooting guide. The check lives in the instruction file (not the methodology) because the methodology is exactly what is missing when loading fails — the bootstrap paradox.
 
-Also new: a symptom-first **troubleshooting guide** (`clients/claude-code/troubleshoot.md`, copied into `<collab>/docs/` at install), a **`clients/<client>/` source layout** (the hook moved to `clients/claude-code/hooks/`), and a documented recommendation to declare the shared-knowledge directory via **`permissions.additionalDirectories`** (the sanctioned, durable route vs. the external-includes approval flag).
+Also new: a symptom-first **troubleshooting guide** (`clients/claude-code/troubleshoot.md`, copied into `<collab>/docs/` at install), a **`clients/<client>/` source layout** (the hook moved to `clients/claude-code/hooks/`), and a documented recommendation to declare the shared-knowledge directory via **`permissions.additionalDirectories`** (states intent through a supported mechanism; see the v1.8.5a note — observed not sufficient by itself, set it alongside the external-includes approval and verify with the probe).
 
 **Changes since v1.8.4 (commit `5c7884b`):**
 
@@ -25,6 +36,8 @@ Also new: a symptom-first **troubleshooting guide** (`clients/claude-code/troubl
 - **collab/.collab-memory-system:** bumped to `v1.8.5`.
 
 **Upgrade from v1.8.4:**
+
+*Coming from further back than v1.8.4? The per-version upgrade lists are cumulative — merge this list with the earlier ones below (oldest first) and apply as a single pass (upgrade.md Steps 2–3).*
 
 Several *installed* files change. Do all of the following, then run the probe:
 

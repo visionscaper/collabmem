@@ -13,8 +13,10 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 
 ### Step 1: Compare Versions
 
-1. Read the installed version from `collab/.collab-memory-system` in the user's project.
-2. Read the latest version from `collab/.collab-memory-system` in this repository (it is inside `collab/`, not at the repo root).
+This upgrade operates on **the current install only** — the one whose instruction file and `.collab-config` govern this session. Do not reach into other projects/installs from here: if the user has multiple installs (multiple scopes, or several teammates sharing a repo), each is upgraded separately from its own session.
+
+1. Read the installed version from `<collab_dir>/.collab-memory-system` in the user's project, where `<collab_dir>` is the value in the project's `.collab-config` (it may be a custom path like `collab/<project>`, not literally `collab/`; a hard-coded `collab/...` will not exist for custom dirs).
+2. Read the latest version from `collab/.collab-memory-system` in this repository (in the repo it is inside `collab/`, not at the repo root).
 3. If the versions match, the shared memory files are current — but for **team/symlink installs, do not stop yet.** The version marker lives in the *shared* collab directory, while the instruction file (CLAUDE.md) and the hook are **per-clone** (each teammate has their own). So once one teammate upgrades, the shared marker reads the new version even though other teammates' CLAUDE.md and hook are still old — and a plain version check would wrongly report them "up to date," leaving them without the per-clone changes (e.g. the load-check section and the updated hook). Therefore: if the versions match, also confirm this clone's per-clone parts are current — for the latest release, that the instruction file contains the `COLLABMEM-LOAD-CHECK` section and the hook is the current version. If they are, stop (up to date). If the shared version matches but the per-clone parts are stale, do a **per-clone catch-up**: apply only the instruction-file and hook changes (skip the shared-file copies, which another teammate already did), then run the verify probe. If both the version and the per-clone parts differ, proceed with the full upgrade below.
 
 ### Step 2: Read Release Notes
@@ -50,17 +52,17 @@ Apply all changes in a single pass:
    - **System support files that are copies** (e.g. `<collab>/docs/troubleshoot.md` on Claude Code): copy/replace them; do NOT add a `world/index.md` entry for them (they are system files, not world knowledge — the index-every-doc rule does not apply).
 2. Add any new configuration settings to `.collab-config`.
 3. If memory data migrations are needed, apply them with the user's approval. Narrate each change to the user's memory files — what is being modified, why, and what the result looks like. If a migration is ambiguous or could lose information, ask the user how to proceed rather than guessing.
-4. Update `collab/.collab-memory-system` to the latest version.
+4. Update `<collab_dir>/.collab-memory-system` (the `collab_dir` from `.collab-config`) to the latest version.
 5. **For team/shared-knowledge installs, commit and push the shared-knowledge repo** after the shared-dir files are updated (only that repo), so teammates pick up the new memory-side files.
 
 If the user has customised a system file (e.g., added project-specific sections to `methodology.md`), flag it and ask how to proceed — do not overwrite customisations silently.
 
-**Team/symlink installs — the durable load fix.** If this upgrade introduces or relies on the load-check (memory imported through a symlink to a shared-knowledge repo), recommend declaring the resolved shared directory via `permissions.additionalDirectories` in `.claude/settings.json` (pointing at the real target, not the symlink). This is the sanctioned way to let imports resolve outside the project and is more durable than the external-includes approval flag, which harness updates have silently reset. See `clients/claude-code/troubleshoot.md`.
+**Team/symlink installs — the load fix.** If this upgrade introduces or relies on the load-check (memory imported through a symlink to a shared-knowledge repo), the imports must be allowed to resolve outside the project. Declaring the resolved shared directory via `permissions.additionalDirectories` in `.claude/settings.json` (pointing at the real target, not the symlink) states that intent through a supported mechanism and may help across harness updates — but it has been observed **not to be sufficient by itself**: on at least one Claude Code version the per-project external-includes approval (`hasClaudeMdExternalIncludesApproved: true`) was still required. **Set both, and verify with the probe** rather than assuming either alone is enough. See `clients/claude-code/troubleshoot.md`.
 
 ### Step 5: Verify
 
 Confirm that:
-- `collab/.collab-memory-system` contains the latest version string
+- `<collab_dir>/.collab-memory-system` (per `.collab-config`) contains the latest version string
 - Updated system files match the latest templates (including any newly copied support files, e.g. `<collab>/docs/troubleshoot.md`)
 - Any marker/anchor lines added this release are present exactly once at the top of their files (e.g. the load-check markers atop `methodology.md` and `world/context.md`)
 - The instruction file's import block contains any new sections for this release (e.g. `COLLABMEM-LOAD-CHECK`) with the existing paths and any user extensions preserved

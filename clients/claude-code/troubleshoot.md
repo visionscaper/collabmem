@@ -283,16 +283,19 @@ Scope this to the single project entry. Do not enable it globally, and never ena
 instruction file you have not read — external includes let a repository pull arbitrary local files into your
 context, which is precisely the vulnerability referenced above.
 
-**Supported alternative (prefer where available).** Rather than approving symlink traversal, declare the
-external directory explicitly:
+**Additional directories (declare intent, but do not rely on it alone).** Alongside the approval flag,
+declare the external directory explicitly:
 
 - `--add-dir <resolved-target-dir>`, or a persistent `permissions.additionalDirectories` entry in settings.
 - From Claude Code v2.1.20, `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` makes instruction files in
   `--add-dir` directories load too.
 
-Point these at the **resolved** target, not the symlink. This route states the intent ("this outside
-directory is part of my workspace") instead of relying on traversal behaviour that upstream is actively
-tightening.
+Point these at the **resolved** target, not the symlink. This states the intent ("this outside directory
+is part of my workspace") through a supported mechanism and may prove more durable across harness updates.
+**However, it has been observed NOT sufficient by itself** (field report 05-09-2026, a symlinked
+org-scoped install): with `additionalDirectories` correctly set, imports still did not resolve until the
+per-project `hasClaudeMdExternalIncludesApproved` was set to `true`. So set **both**, and confirm with a
+Check-3 probe — never assume either one alone did the job.
 
 ### Verify
 
@@ -337,7 +340,7 @@ start. Until then, read Tier 1 files explicitly on `readmem`, and tell the user 
 Two takeaways: (1) Anthropic formally declined the report, then the behaviour changed anyway within
 weeks, unannounced — this code path moves silently; re-verify after every CLI upgrade. (2) The
 "not planned" closure of #15124 means the drop-without-approval behaviour is *intended* — the
-load-check and the additional-directories route are permanent infrastructure, not workarounds
+load-check and the external-includes approval (with additional-directories declared alongside) are permanent infrastructure, not workarounds
 awaiting an upstream fix.
 
 ### If the approval flag does not fix it
