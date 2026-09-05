@@ -1,5 +1,27 @@
 # Release Notes
 
+## v1.8.4
+
+**One feature: the `starmem` procedure — asking the user to support the project by starring the GitHub repo.**
+
+Already running collabmem and like what it does for your collaboration? A star helps new people discover the project: https://github.com/visionscaper/collabmem
+
+New users are now asked once, at the end of installation (or once, at the first upgrade, for existing installations), whether they'd like to star the repo — on behalf of the collabmem developers, with a `gh`-assisted path when available. The ask is governed by strict discipline: at most one ask plus one "maybe later" follow-up (after at least 5 episodic index entries have accumulated), never again after a decline. The user's answer is recorded as `project_starred=done | maybe-later | declined` in `.collab-config`.
+
+**Changes since v1.8.3 (commit `12be053`):**
+
+- **collab/support.md (NEW installed file):** The full `starmem` procedure — ask discipline, the two message formulations (first ask and value-framed follow-up), the `gh` starring path (`gh api -X PUT /user/starred/visionscaper/collabmem`, run only after explicit confirmation, link fallback), and the `project_starred` recording rules. Lives in the memory directory but is read on demand — the procedure fires at most twice in an installation's lifetime, so its text doesn't belong in the always-loaded methodology.
+- **collab/methodology.md §16 (NEW — `starmem`):** Two-sentence pointer section — names the procedure (so references resolve and a user typing `starmem` is handled) and points to `<collab_dir>/support.md` for the instructions.
+- **collab/methodology.md §3 (updatemem):** Post-update Verification checklist item 5 — the `maybe-later` follow-up trigger (`project_starred=maybe-later` + at least 5 episodic index entries).
+- **install.md:** New Step 11 (run `starmem` after the final installation message); Step 4 file listing and Step 8 verification checklist include `support.md` (12 collab files now).
+- **upgrade.md:** New Step 6 (run `starmem` after the upgrade-complete message, only when `.collab-config` has no `project_starred` property — idempotent across all future upgrades); Principle 1 system-files list includes `support.md`.
+- **README.md:** Status → v1.8.4; testing/development model note updated (Claude Opus 4.8 and Fable 5, medium effort).
+- **collab/.collab-memory-system:** bumped to `v1.8.4`.
+
+**Upgrade from v1.8.3:**
+
+Two *installed* files change: `collab/methodology.md` (replace) and `collab/support.md` (new — copy into the memory directory). Plus the version marker. Hooks are unchanged. Per upgrade.md Step 6, the upgrade itself will trigger the first `starmem` ask for existing installations.
+
 ## v1.8.3
 
 **Three features: reference documents as Tier 2, learning routing + cross-episode pattern detection, and the `helpmem` sentinel. Plus a methodology quality pass.**

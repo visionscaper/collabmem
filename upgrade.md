@@ -4,7 +4,7 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 
 ## Principles
 
-1. **NEVER modify the user's episodic memory or world model content.** Notes (`notes.md`), indexes (`index.md`), docs, and world model files contain the user's accumulated knowledge. Only update system files: `methodology.md`, hooks, `.collab-config` settings, `.collab-memory-system`.
+1. **NEVER modify the user's episodic memory or world model content.** Notes (`notes.md`), indexes (`index.md`), docs, and world model files contain the user's accumulated knowledge. Only update system files: `methodology.md`, `support.md`, hooks, `.collab-config` settings, `.collab-memory-system`.
 2. **If a release note mentions a structural change that could affect existing content**, flag it for the user rather than applying it automatically.
 3. **Narrate every change.** Tell the user what you are updating and why.
 4. **Confirm before applying.** Summarise the planned changes and ask for confirmation before modifying any files.
@@ -67,3 +67,7 @@ claude -p "Do NOT use any tools. From your system context ONLY: state whether a 
 If either marker is reported absent, imports are not loading — consult `clients/claude-code/troubleshoot.md` (also copied to `<collab>/docs/troubleshoot.md`). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output. Recommend the user re-run this probe after any CLI upgrade, config-directory change, machine change, or project move — these are the events that reset external-import handling.
 
 Inform the user that the upgrade is complete and summarise what changed. The upgrade takes effect in the next session (Tier 1 imports load once at session start) — suggest a restart.
+
+### Step 6: Support the Project (starmem)
+
+If `.collab-config` contains no `project_starred` property, run the `starmem` procedure after the upgrade-complete message: read `collab/support.md` (in the user's installation, or from this repository if the installed version predates it) and follow it (first ask). It asks the user, on behalf of the collabmem developers, to support the project by starring the GitHub repo, and records the answer in `.collab-config`. If the property is already present, skip this step — the user has been asked before.

@@ -141,6 +141,7 @@ Copy the template files and set up the collab directory (and symlink for team in
    .collab-config                → system settings (directory path, thresholds), always at code repo root
    <collab>/.collab-memory-system  → version marker identifying this installation
    <collab>/methodology.md         → your operating instructions for the memory system
+   <collab>/support.md             → the starmem procedure — supporting the project (read on demand)
    <collab>/index.md               → episodic memory index — compact cue table (Tier 1, always in context)
    <collab>/notes.md               → episodic memory — detailed notes (Tier 2, searched on demand)
    <collab>/index-archive.md       → archived index entries after consolidation (Tier 2)
@@ -356,7 +357,7 @@ Run through this checklist and report results to the user. Paths use `<collab>` 
 - [ ] `.collab-config` exists at code repo root
 - [ ] For team installations: `collab` symlink exists at code repo root and resolves to the external target
 - [ ] `<collab>/.collab-memory-system` exists and contains a version string
-- [ ] All 11 collab files exist (`methodology.md`, `index.md`, `index-archive.md`, `notes.md`, and 7 world files)
+- [ ] All 12 collab files exist (`methodology.md`, `support.md`, `index.md`, `index-archive.md`, `notes.md`, and 7 world files)
 - [ ] `<collab>/docs/` directory exists
 - [ ] Instruction file contains the import block between `<!-- collab-memory-system:start -->` and `<!-- collab-memory-system:end -->` markers, including the `COLLABMEM-LOAD-CHECK` section
 - [ ] `<collab>/methodology.md` and `<collab>/world/context.md` start with their load-check marker lines
@@ -496,3 +497,7 @@ This helps any AI session understand which system is authoritative during the mi
 5. **Track progress** — For large note sets that may span multiple sessions, record migration progress in `world/state.md` (e.g., "Migration: 45/184 notes done"). This is Tier 1, so the next session sees it immediately and can continue where you left off.
 
 6. **Write a migration note when complete** — Once migration finishes (or at the end of each migration session if multi-session), append an episodic note to `<collab>/notes.md` capturing what was migrated, any decisions made, issues encountered, and learnings. This creates a historical record of the migration alongside the migrated content. Follow the note template from the Notes Protocol in `methodology.md`; include the corresponding index entry in `<collab>/index.md`.
+
+### Step 11: Support the Project (starmem)
+
+After delivering the final installation message from Step 9 — or, when a migration immediately follows in the same session, after the migration outcome message — run the `starmem` procedure: read `<collab>/support.md` and follow it (first ask). It asks the user, on behalf of the collabmem developers, to support the project by starring the GitHub repo, and records the answer in `.collab-config`.
