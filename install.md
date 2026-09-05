@@ -204,19 +204,39 @@ The import block template (paths shown for instruction file at project root — 
 At this point the collabmem memory system should be loaded. This section
 describes how to verify that this is true, and what to do when it is not.
 
-Directly after each import statement above, the contents of the imported file
-should have been placed into your context. To verify this, confirm that two
-marker lines are present in your context: the text `COLLABMEM-MARKER-` joined
-with `METHODOLOGY` (from the methodology.md file), and `COLLABMEM-MARKER-`
-joined with `CONTEXT` (from the world model context.md file). The joined marker
-texts themselves do not appear in this instruction file — if you can find them,
-they came from the imported files.
+Each import statement above should have caused the contents of the imported
+file to be placed into your context window (typically as separate labelled
+blocks — the exact layout depends on the harness). To verify this, confirm
+that two marker lines are present in your context window, inside the imported
+file content: the text `COLLABMEM-MARKER-` joined with `METHODOLOGY` (from
+methodology.md), and `COLLABMEM-MARKER-` joined with `CONTEXT` (from the world
+model context.md). "Joined" means the single unbroken token formed by
+concatenating the two parts with no space; the prefix alone — which appears in
+this section — does not count.
+
+Verify by inspecting what is already in your context window — do NOT use tools
+to search for the markers. Marker text found in tool results, your own earlier
+messages, or a compaction summary does not count.
+
+If this instruction file imports `context.md` files from more than one
+collabmem install — for example an organisation-level memory imported
+alongside this project's own — each imported `context.md` carries its own copy
+of the context marker line. In that case confirm one marker occurrence per
+imported file, not just one occurrence overall; a missing occurrence means
+that install's import failed. The same applies to any other imported file
+carrying a marker line.
+
+Perform this check once, in your first response after a session start or a
+compaction (on platforms with a session-start hook, when the hook asks). Do
+not repeat it on later turns. If you are about to perform any memory operation
+and you notice that neither banner line has appeared in the session so far,
+the check has not run yet — perform it now.
 
 If either marker is absent, the memory system did NOT load properly. In that
 case: tell the user before doing anything else, and do not read the memory
-files as a substitute — a silently-patched session hides the problem and gives
-the user a degraded experience without them knowing why. Start your report
-with this exact line:
+files as a substitute before the user has been told — a silently-patched
+session hides the problem and gives the user a degraded experience without
+them knowing why. Start your report with this exact line:
 ====== COLLABMEM MEMORY SYSTEM FAILED TO LOAD ======
 After informing the user, offer to help resolve it. When the user agrees,
 start by consulting the troubleshooting guide:
@@ -298,7 +318,7 @@ Install the lifecycle hook and configure it in the project's settings.
    cp /path/to/collabmem/clients/claude-code/troubleshoot.md <collab>/docs/troubleshoot.md
    ```
 
-   This is the local copy the COLLABMEM-LOAD-CHECK section points to when loading fails. The local copy matches the installed version and stays reachable when network access or fetch permissions are restricted; the URL in the load-check covers the case where the collab directory itself is unreachable (e.g., a dangling symlink).
+   This is the local copy the COLLABMEM-LOAD-CHECK section points to when loading fails. The local copy matches the installed version and stays reachable when network access or fetch permissions are restricted; the URL in the load-check covers the case where the collab directory itself is unreachable (e.g., a dangling symlink). Do NOT add a `world/index.md` entry for it — it is a system support file referenced from the load-check, not world knowledge (the methodology's index-every-doc rule does not apply).
 
 #### Other Platforms
 
@@ -348,10 +368,10 @@ Run through this checklist and report results to the user. Paths use `<collab>` 
 **Final check — probe what actually loads (Claude Code).** The checks above verify files on disk; this one verifies the harness really injects them into context. Run a fresh, non-interactive probe from the project directory:
 
 ```bash
-claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with the two marker names and present/absent for each." < /dev/null
+claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves." < /dev/null
 ```
 
-**Show the probe's verbatim output to the user** — do not summarise it or just declare success. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing.
+**Show the probe's verbatim output to the user** — do not summarise it or just declare success. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing. If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output.
 
 If any checks fail, report which ones and ask the user how to proceed. For issues that cannot be resolved, the user can file an issue at https://github.com/visionscaper/collabmem/issues.
 
@@ -404,6 +424,8 @@ Also add the corresponding index entry to `<collab>/index.md`:
 ```
 | DD-MM-YYYY | @<username> | Collaboration Memory System Installed | Initial collabmem installation: <solo/team>, hooks, world population status. First episodic note and index entry. | installation, setup, v<X.X>, <solo/team> |
 ```
+
+**Closing rule:** conversations rarely end at the install summary — follow-up questions and small tasks (commits, pushes, tweaks) usually come after, and a reminder given earlier gets buried. Whatever the last exchange turns out to be, when the installation completed successfully your final message before parting MUST end by repeating: *"Reminder: the memory system activates in a new session — start one to begin using it."* If the installation did not complete, end instead by stating clearly what is still unfinished.
 
 **Final message to the user** (if Step 1 identified an existing notes/journaling system, do not yet declare the installation complete — continue to Step 10 first, then combine this message with the migration outcome):
 

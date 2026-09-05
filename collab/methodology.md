@@ -79,7 +79,7 @@ A new session is an implicit `readmem` trigger.
 After compaction is an implicit `readmem` trigger.
 
 1. **Do NOT continue from the compaction summary alone** — it loses critical detail
-2. Tier 1 files are reloaded automatically via imports (indexes, world files, state)
+2. Tier 1 files are reloaded automatically via imports, as re-confirmed by the COLLABMEM-LOAD-CHECK (the session-start hook re-runs it after compaction)
 3. Search `notes.md` for the most recent session summary note
 4. Verify with the user what was being worked on before continuing
 

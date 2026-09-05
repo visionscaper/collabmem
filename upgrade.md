@@ -41,6 +41,8 @@ Summarise the planned changes for the user and ask for confirmation before proce
 Apply all changes in a single pass:
 
 1. Copy updated system files from this repository to the user's installation (e.g., `collab/methodology.md`, `.claude/hooks/collab-memory-hook.sh`) using the `cp` command — this is more stable than copying over changes.
+   - **Marker/anchor lines in user-owned memory files** (e.g. the load-check marker at the top of `world/context.md`): never replace the file — prepend or insert exactly the line specified in the release notes, leaving the user's content untouched.
+   - **When refreshing the import block in the instruction file:** preserve the existing install's path adjustments (e.g. `@../collab/...` for an instruction file in `.claude/`, or absolute paths for external directories) — apply the new block *content* with the old block's *paths*, following the path rules in install.md Step 5. Copying template paths verbatim silently breaks loading on adjusted installs.
 2. Add any new configuration settings to `.collab-config`.
 3. If memory data migrations are needed, apply them with the user's approval. Narrate each change to the user's memory files — what is being modified, why, and what the result looks like. If a migration is ambiguous or could lose information, ask the user how to proceed rather than guessing.
 4. Update `collab/.collab-memory-system` to the latest version.
@@ -59,9 +61,9 @@ Confirm that:
 **Probe what actually loads (Claude Code).** The checks above verify files on disk; finish by verifying the harness really injects them. Run a fresh, non-interactive probe from the project directory and **show its verbatim output to the user**:
 
 ```bash
-claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with the two marker names and present/absent for each." < /dev/null
+claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves." < /dev/null
 ```
 
-If either marker is reported absent, imports are not loading — consult `clients/claude-code/troubleshoot.md` (also copied to `<collab>/docs/troubleshoot.md`). Recommend the user re-run this probe after any CLI upgrade, config-directory change, machine change, or project move — these are the events that reset external-import handling.
+If either marker is reported absent, imports are not loading — consult `clients/claude-code/troubleshoot.md` (also copied to `<collab>/docs/troubleshoot.md`). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output. Recommend the user re-run this probe after any CLI upgrade, config-directory change, machine change, or project move — these are the events that reset external-import handling.
 
 Inform the user that the upgrade is complete and summarise what changed. The upgrade takes effect in the next session (Tier 1 imports load once at session start) — suggest a restart.

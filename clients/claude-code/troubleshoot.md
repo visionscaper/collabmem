@@ -37,7 +37,9 @@ diagnosing:
    https://raw.githubusercontent.com/visionscaper/collabmem/refs/heads/main/collab/methodology.md
    and proceed without user context — tell the user you are missing it.
    (`world/context.md` is local-only by nature: it is private and has no
-   canonical URL.)
+   canonical URL.) Note: once you read memory files with tools, the
+   in-context marker check is no longer meaningful for this session — from
+   here on, only the fresh probe (Check 3) is authoritative.
 2. **Route by symptom:**
    - Instruction file loaded but Tier 1 memory files absent (marker check
      failed; imports show as literal `@...` lines or content is missing) →
@@ -98,10 +100,13 @@ instruction file (the `CLAUDE.md`-equivalent) or in this document.
 
 ### Symptoms
 
-- The session-start hook prints something like *"Tier 1 files loaded via imports"*, but you cannot find
-  current-work or index content anywhere in your context.
+- On pre-v1.8.5 installs: the session-start hook prints *"Tier 1 files loaded via imports"*, but you
+  cannot find current-work or index content anywhere in your context. (v1.8.5 hooks no longer assert
+  loading — they instruct a check; a failed check reports the FAILED banner instead.)
 - You have the *instruction file* but the memory files it imports are absent.
-- Where the instruction file should show file contents, it shows a **literal `@path/to/file.md` line**.
+- The contents of the imported memory files appear nowhere in your context — only the **literal
+  `@path/to/file.md` lines** exist (note: literal `@` lines by themselves are normal in some harness
+  renderings; it is the absence of the file contents that matters).
 - A context-usage breakdown lists only the instruction files themselves under "Memory files", not the
   imported memory files.
 - You compensate without noticing: for instance, you read `world/state.md` manually on `readmem`, everything seems fine,
@@ -111,9 +116,12 @@ instruction file (the `CLAUDE.md`-equivalent) or in this document.
 
 ### Fast diagnosis
 
-**Check 1 — inspect your own context.** Look at the instruction file as it was given to you. Is the text
-following an import header a literal `@...` path, or actual file content? A literal path means the import
-was not expanded. Cheapest check, usually conclusive.
+**Check 1 — inspect your own context.** Does the CONTENT of the imported files appear anywhere in your
+context window? Note that harnesses may keep the `@...` lines literal even on success and place the
+imported content elsewhere (e.g. as separate labelled blocks) — a literal `@` line alone proves nothing;
+the absence of the files' content anywhere is what indicates the imports were not expanded. On v1.8.5+
+installs the two `COLLABMEM-MARKER-` lines are the definitive probe targets. Cheapest check, usually
+conclusive.
 
 **Check 2 — what the harness thinks it loaded.** If your CLI exposes a context breakdown (e.g. a
 `/context` command), read its "Memory files" section. Imported memory files should be listed individually.
@@ -349,6 +357,18 @@ Two lessons worth carrying:
   that is a **quality** argument for `maintainmem` (and for honouring `tier_1_max_chars`), *not* a
   correctness one. Be clear about which argument you are making; conflating them sends the user to fix the
   wrong thing.
+
+---
+
+## Note — multiple collabmem installs imported into one session
+
+Setups that import more than one install's Tier 1 files (e.g. an organisation-level and a
+project-level collabmem, cross-imported) put the same marker tokens into context more than once. A
+marker being present therefore does not by itself prove that a *specific* install's import worked —
+another install's copy of the same file may have provided it. The load-check covers this: for each
+imported copy of a marker-carrying file, verify that file's marker appears in your context (see the
+COLLABMEM-LOAD-CHECK section). When it is unclear which install a marker came from, the Check 3 probe
+is authoritative: ask it for the exact file paths whose contents are present.
 
 ---
 

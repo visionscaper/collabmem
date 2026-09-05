@@ -66,13 +66,18 @@ check_health() {
 print_load_check() {
     echo "Tier 1 collabmem memory-system files should be loaded at this point. Verify:"
     echo ""
-    echo "a) Confirm that the COLLABMEM-LOAD-CHECK section — with its verification"
-    echo "   instructions — is present in your context."
+    echo "a) Confirm that the COLLABMEM-LOAD-CHECK section — the section of the project"
+    echo "   instruction file containing the marker-verification instructions and the"
+    echo "   two banner lines — is present in your context (this hook message does not"
+    echo "   count)."
     echo "b) If it is present, execute the COLLABMEM-LOAD-CHECK instructions now."
     echo "c) If it is NOT present, the project instruction file (CLAUDE.md) itself did"
     echo "   not load — the collabmem memory system is not operational. Report this to"
-    echo "   the user before doing anything else — do not read the memory files as a"
-    echo "   substitute — and offer to help resolve it. When the user agrees, start by"
+    echo "   the user before doing anything else, starting your message with this"
+    echo "   exact line:"
+    echo "   ====== COLLABMEM MEMORY SYSTEM FAILED TO LOAD ======"
+    echo "   Do not read the memory files as a substitute before the user has been"
+    echo "   told. Offer to help resolve it; when the user agrees, start by"
     echo "   consulting the troubleshooting guide:"
     echo "   - Local: $COLLAB_DIR/docs/troubleshoot.md"
     echo "   - If the local file is unreachable or you can't find it:"
@@ -101,7 +106,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             check_health
             print_load_check
             echo ""
-            echo "Then follow readmem — New Session:"
+            echo "Only if the load-check passed, follow readmem — New Session:"
             echo "1. Check world/state.md for current work"
             echo "2. Scan recent index.md entries for context"
             echo "3. If unclear, search notes.md for recent notes"
@@ -117,7 +122,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo ""
             print_load_check
             echo ""
-            echo "Then follow readmem — After Compaction:"
+            echo "Only if the load-check passed, follow readmem — After Compaction:"
             echo "1. Search notes.md for the most recent session summary note"
             echo "2. Verify with the user what was being worked on before continuing"
             print_memory_triggers
