@@ -1,3 +1,5 @@
+> ⚠️ **v1.8.5 — important fix for team installs.** Recent Claude Code versions silently stopped loading memory files from shared team directories — sessions ran with **no memory at all, and nothing errored**. v1.8.5 adds a load check that verifies your memory actually reached the AI's context and helps solve any issue when it doesn't. If you run a team install on an older version, please upgrade (type `upgrademem`).
+
 # collabmem
 
 collabmem is a simple, easy-to-use, yet powerful memory system enabling long-term collaboration between
@@ -17,9 +19,11 @@ with Claude Code.
 
 ## Help Us Improve This System
 
-**Status:** v1.8.4 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/collabmem/issues.
+**Status:** v1.8.5 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/collabmem/issues.
 
 All testing and development so far has been done using Claude Opus 4.8 (medium effort) and Fable 5 (medium effort). This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
+
+A note on model choice: collabmem is built around close turn-by-turn collaboration, so it works best with a model that communicates clearly and in context. We currently recommend Opus 4.8 or Fable 5. We'd advise against Opus 5 for this use — in our experience its communication style is less suited to the collaborative, in-context back-and-forth collabmem depends on.
 
 ## Stay in the Loop
 

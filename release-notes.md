@@ -1,5 +1,41 @@
 # Release Notes
 
+## v1.8.5
+
+**One feature: the load-check — collabmem now verifies its own memory actually loaded, and says so.**
+
+Recent Claude Code versions silently stopped expanding `@` imports that resolve outside the project directory (the shared-knowledge **symlink** pattern used by team installs). The effect: a session could run with **zero Tier 1 memory loaded and nothing errored** — the AI would quietly read files on demand and mask the failure for an entire session. The old session-start hook made it worse by asserting *"Tier 1 files loaded via imports"* — a claim it cannot verify, and which was the opposite of the truth on affected installs.
+
+v1.8.5 adds a **load-check**: a `COLLABMEM-LOAD-CHECK` section in the always-loaded instruction-file block, backed by two plain-text marker lines (top of `methodology.md` and `world/context.md`). At session start the AI confirms the markers are actually in its context and reports the outcome with an unmissable banner — `====== COLLABMEM MEMORY SYSTEM LOADED SUCCESSFULLY ======` or `====== COLLABMEM MEMORY SYSTEM FAILED TO LOAD ======`. On failure it warns the user first, in plain language, and does not silently compensate; it then consults a troubleshooting guide. The check lives in the instruction file (not the methodology) because the methodology is exactly what is missing when loading fails — the bootstrap paradox.
+
+Also new: a symptom-first **troubleshooting guide** (`clients/claude-code/troubleshoot.md`, copied into `<collab>/docs/` at install), a **`clients/<client>/` source layout** (the hook moved to `clients/claude-code/hooks/`), and a documented recommendation to declare the shared-knowledge directory via **`permissions.additionalDirectories`** (the sanctioned, durable route vs. the external-includes approval flag).
+
+**Changes since v1.8.4 (commit `5c7884b`):**
+
+- **collab/methodology.md §1:** `starmem` added to the reflection sentinel tokens list; new **Load-check** paragraph (what the markers are, that they must not be removed, warn-first-never-compensate on failure).
+- **collab/methodology.md §2 (readmem) & §7:** New Session / After Compaction now say Tier 1 is trusted "as confirmed by the COLLABMEM-LOAD-CHECK"; World Model Compaction gains a MUST-preserve guard for the `world/context.md` marker line.
+- **collab/methodology.md §3 (updatemem):** New MUST rule — write memory through diff-surfacing edit tools, never shell (heredocs/`sed`/inline scripts hide the content from user review, defeating the approval rule).
+- **collab/methodology.md §14 (helpmem):** load-failure questions routed to the troubleshooting guide (generic `clients/<client-name>/troubleshoot.md`, local copy preferred).
+- **collab/methodology.md (top) & collab/world/context.md (top):** NEW marker lines (see upgrade note below).
+- **clients/claude-code/hooks/collab-memory-hook.sh (MOVED from hooks/claude-code/):** rewritten — stops asserting loading; prints the two-layer a/b/c load-check (a: instruction file present? b: run the marker check; c: instruction file itself absent → FAILED banner + dual pointer); `readmem` steps gated on the check passing.
+- **clients/claude-code/troubleshoot.md (NEW):** symptom-first diagnostics, "Start here" triage with a plain-language communication directive, Issue 1 (silent external-import drop), Issue 2 (hook error), Issue 3 (instruction file itself didn't load), the dated upstream-behaviour timeline, and a solved-case report-back ask.
+- **install.md:** `COLLABMEM-LOAD-CHECK` section in the import-block template; Step 6 copies the guide into `<collab>/docs/`; Step 8 ends with a fresh non-interactive probe (verbatim output shown to the user on success and failure); additional-directories recommendation; structure tree includes `support.md` + `docs/troubleshoot.md`.
+- **upgrade.md:** marker-prepend + keep-existing-import-paths rules; post-upgrade probe; Principle 1 system-file list extended.
+- **README.md:** Status → v1.8.5; team-install fix banner; structure tree updated.
+- **collab/.collab-memory-system:** bumped to `v1.8.5`.
+
+**Upgrade from v1.8.4:**
+
+Several *installed* files change. Do all of the following, then run the probe:
+
+1. **Replace** `collab/methodology.md` (now begins with the line `COLLABMEM-MARKER-METHODOLOGY — load-check marker, do not remove (see System Overview)`).
+2. **Replace the hook.** The source moved to `clients/claude-code/hooks/collab-memory-hook.sh`; copy it over the installed `.claude/hooks/collab-memory-hook.sh`.
+3. **Copy the troubleshooting guide** `clients/claude-code/troubleshoot.md` → `<collab>/docs/troubleshoot.md`.
+4. **Prepend one line to the user-owned `collab/world/context.md`** (do not replace the file): `COLLABMEM-MARKER-CONTEXT — load-check marker, do not remove` as the new first line, leaving all existing content untouched.
+5. **Refresh the import block** in the instruction file (CLAUDE.md or equivalent): add the `COLLABMEM-LOAD-CHECK` section from install.md's template just before `<!-- collab-memory-system:end -->`. **Keep the existing install's import paths** (e.g. `@../collab/...`); adjust the block's local `collab/docs/troubleshoot.md` pointer only for a custom collab-dir name or an external directory.
+6. Bump `collab/.collab-memory-system` to `v1.8.5`.
+7. **Verify:** run the probe from install.md Step 8 / upgrade.md Step 5 and show its output. The load-check takes effect in the next session — suggest a restart.
+
 ## v1.8.4
 
 **One feature: the `starmem` procedure — asking the user to support the project by starring the GitHub repo.**
