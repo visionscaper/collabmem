@@ -401,11 +401,23 @@ hook fires, and the installs drift apart over time (one gets upgraded, the other
 faulty install, not a supported layout: the fix is to **remove the redundant install**, not to bring
 the older one up to date (that only makes the blocks identical while the duplication stays).
 
-**Fix.** Ask the user which install to keep. Project-level is preferred; a user-level install is fine
-if it is the *only* one and the user wants it that way. Then uninstall the other one — instruction-file
-import block and hook only, following the methodology's Uninstallation section; never touch the shared
-memory directory, which both installs point at. Do this only with the user's explicit decision. Run the
-Check 3 probe afterwards to confirm the remaining install loads.
+**Fix.** Nothing below is done without the user's explicit decision — explain the situation, propose
+the fix, and wait for their go-ahead; back up every file you are about to change. Two cases:
+
+- **A user-level install next to a project-level one** — the common case. Propose to keep the
+  project-level install and remove the user-level one; collabmem is always installed at project level
+  (see `setup-options.md`). Removal means, for the user-level install only: delete its import block
+  (everything between the `<!-- collab-memory-system:start -->` and `:end -->` markers, or the whole
+  `~/.claude/CLAUDE.md` if it contains nothing else), remove its `collab-memory-` hook entry from
+  `~/.claude/settings.json`, and delete its collabmem hook script (`~/.claude/hooks/collab-memory-hook.sh`).
+  Do **not** remove `.collab-config` or anything in the memory directory — the surviving install uses
+  them.
+- **Two project-level installs** — this happens when the session starts in a subdirectory of another
+  collabmem project, so both instruction files load. Nothing needs removing: two projects may share a
+  memory, they just must not load in one session. Ask the user which project this session is about and
+  restart the session rooted there.
+
+Run the Check 3 probe afterwards to confirm the remaining install loads.
 
 ---
 

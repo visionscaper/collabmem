@@ -95,15 +95,13 @@ Read `setup-options.md` first — it describes the three setups, where files liv
 
 **If standalone memory project:** `collab/` at the project root, tracked in the repository, instruction file and hooks in the same repository — mechanically identical to solo, so follow the solo path in the steps below. Three things are different from a code project, handle them as you go:
 
-- **A remote is required, not optional.** The remote is the memory's backup, and a standalone memory often becomes shared later (a second machine, a second person) — with a remote in place that is a clone, not a migration. If the repository has no remote yet, offer to create one now (with `gh repo create --private` if available, otherwise give manual instructions), before Step 4. Verify it is private unless the user explicitly wants otherwise.
+- **A git repository with a remote is required, not optional.** The remote is the memory's backup, and a standalone memory often becomes shared later (a second machine, a second person) — with a remote in place that is a clone, not a migration. The starting point may be a plain folder: if it is not a git repository yet, run `git init` in it first. If it has no remote yet, offer to create one now (with `gh repo create --private` if available, otherwise give manual instructions), before Step 4. Verify it is private unless the user explicitly wants otherwise.
 - **The memory is committed and pushed after every `updatemem`** (methodology, shared-knowledge repo rules — a standalone memory repository with a remote follows them). At the end of this installation, commit and push the installed files too.
 - **There is no code to seed from.** World-model population (Step 7) draws on the user's own knowledge and documents, not on a codebase. Use the standalone variant of the Step 7 questions, and if the user has existing documents, consider `docs/`.
 
 Continue to Step 3.
 
 **If solo:** `collab/` at project root, tracked in the code repo. Memory changes are committed after every `updatemem`; pushing goes with the user's normal code workflow (the methodology's pull/push rules apply to shared-knowledge repos only, not to a code repo). Continue to Step 3.
-
-**Terminology for the rest of this document:** the steps below distinguish only two mechanical cases. **"Solo"** means a real `collab/` directory tracked in the repository — this covers both the solo setup and the standalone memory project, which install identically. **"Team"** means the distributed setup — a symlink named `collab` pointing into the shared-knowledge repository.
 
 **If distributed:** Ask:
 
@@ -481,7 +479,7 @@ Append a note to `<collab>/notes.md` (append to the bottom — episodic memory i
 Also add the corresponding index entry to `<collab>/index.md`:
 
 ```
-| DD-MM-YYYY | @<username> | Collaboration Memory System Installed | Initial collabmem installation: <solo/standalone/team>, hooks, world population status. First episodic note and index entry. | installation, setup, v<X.X>, <solo/team> |
+| DD-MM-YYYY | @<username> | Collaboration Memory System Installed | Initial collabmem installation: <solo/standalone/team>, hooks, world population status. First episodic note and index entry. | installation, setup, v<X.X>, <solo/standalone/team> |
 ```
 
 **Closing rule:** conversations rarely end at the install summary — follow-up questions and small tasks (commits, pushes, tweaks) usually come after, and a reminder given earlier gets buried. Whatever the last exchange turns out to be, when the installation completed successfully your final message before parting MUST end by repeating: *"Reminder: the memory system activates in a new session — start one to begin using it."* If the installation did not complete, end instead by stating clearly what is still unfinished.

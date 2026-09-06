@@ -51,7 +51,7 @@ Ask your AI assistant:
 
 > "Install the long-term collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the instructions in it."
 
-The AI will clone the repository, read the installation instructions, and walk you through setup. You'll be asked to confirm before any changes are made. The default installation takes a single confirmation — customization is available if needed.
+The AI will clone the repository, read the installation instructions, and walk you through setup. You'll be asked to choose a setup and to confirm before any changes are made; defaults are offered at every step, and customization is available if needed.
 
 ### Choosing a Setup
 

@@ -62,7 +62,7 @@ Used by teams, by single users working from several machines, and by single user
 
 - The memory lives in a separate shared-knowledge repository.
 - Each clone of the code repository has a git-ignored symlink named `collab` pointing into the shared-knowledge repository. Every developer creates their own.
-- The instruction file and hooks live in the code repository. They are per clone: if the instruction file is git-ignored, each developer has their own copy; if it is committed, all clones share it, but the hooks and settings may still differ per machine.
+- The instruction file and hooks live in the code repository. They are per clone: if the instruction file is git-ignored, each developer has their own copy; if it is committed, all clones share it, but the hooks and settings may still differ per machine. Note what that means for the stamps: a committed instruction file carries one stamp for all clones, so only the hook's stamp then says something about *this* clone. The upgrade procedure checks both.
 
 Two patterns for the shared-knowledge repository:
 

@@ -495,6 +495,7 @@ When the user includes `helpmem` in their message, you MUST provide help about t
 1. **First, try to answer from the in-context methodology.** For most questions this is enough.
 2. **If that's insufficient, fetch supporting docs from the main branch of the collabmem repo.** Fetch only what looks relevant:
    - `README.md` — overview and installation basics
+   - `setup-options.md` — the three setups (solo, standalone memory project, distributed), where files live in each, and what that means for upgrading
    - `install.md` — installation procedure details
    - `upgrade.md` — upgrade procedure
    - `release-notes.md` — change history across versions
