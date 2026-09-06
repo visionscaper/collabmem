@@ -57,9 +57,9 @@ The AI will clone the repository, read the installation instructions, and walk y
 
 The first real decision during installation is where the memory lives. There are three setups:
 
-- **Standalone memory project** — there is no code repository; the memory repository *is* the project. Useful for organisation-level memory, research or business projects, and any working memory that is not tied to code — also for non-technical users.
-- **Distributed** — the memory lives in a separate shared-knowledge repository, and each code repository reaches it through a symlink. Useful for teams building one shared memory, for a single developer working from several machines, and for keeping private memory out of a public code repository.
-- **Solo, memory inside the code repository** — everything in one place. Useful only for a private repository, used by one person, committing on the main branch; discouraged for projects that work with branches, because memory committed on a branch is invisible elsewhere until it merges.
+- **Distributed** — for teams building one shared memory, for a single developer working from several machines, and for keeping private memory out of a public code repository. The memory lives in a separate shared-knowledge repository, and each code repository reaches it through a symlink.
+- **Standalone memory project** — for organisation-level memory, research or business projects, and any working memory that is not tied to code; also for non-technical users. There is no code repository: the memory repository *is* the project.
+- **Solo, memory inside the code repository** — only for a private repository, used by one person, committing on the main branch. Everything in one place, but discouraged for projects that work with branches, because memory committed on a branch is invisible elsewhere until it merges.
 
 The AI will explain the options and help you choose. Details, and what each setup means for upgrading, are further described in [`setup-options.md`](setup-options.md).
 
