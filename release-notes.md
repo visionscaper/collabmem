@@ -1,19 +1,5 @@
 # Release Notes
 
-## v1.8.5b
-
-**Second documentation patch to v1.8.5 (no behaviour change to the methodology or hook).** From two per-clone staleness cases in two days that a plain version check would have missed: a machine with a user-level *and* a project-level install over the same memory directory (one still pre-v1.8.5), and a second machine sharing a memory repo whose own clone had never been caught up. Doc corrections only (`install.md` / `upgrade.md` / `troubleshoot.md`); they take effect for anyone cloning `main`.
-
-- **Per-clone staleness is about the mechanism, not team/symlink installs.** upgrade.md Step 1 now says: whenever *more than one instruction-file/hook pair points at the same collab directory* — teammates, several machines, or multiple scopes (user-level + project-level) on one machine — a version match is not enough; check this install's per-clone parts too. Names the tell-tale sign: the old *"Tier 1 files loaded via imports"* line still in the session-start output.
-- **New troubleshoot.md symptom: two session-start blocks, one asserting and one verifying.** Means one scope is on a pre-v1.8.5 install → per-clone catch-up on the older scope; explains why it matters (the stale global block restores the silent-load-failure mode in every other directory) and that keep/remove of a duplicate scope is the user's decision.
-- **A per-clone catch-up may cross the project's write boundary.** upgrade.md Step 4: the stale scope is often the global `~/.claude/` one, which write-boundary rules fence off — surface it and ask for explicit authorisation (back up first), rather than a routine copy or a refusal.
-- **A probe that fails to authenticate is not a load-check result.** upgrade.md Step 5 + install.md Step 8: a `401` / CLI error before an answer says nothing about the markers — re-run or have the user run it after re-authenticating; do not route into import diagnostics.
-- **Troubleshoot-pointer rule gains the global-instruction-file case.** install.md Step 5: for a user-level `~/.claude/CLAUDE.md`, "the project root" is undefined → make the local `troubleshoot.md` pointer absolute (same remedy as an external collab directory).
-
-Registered for v1.8.6 (not in this patch, they change every install's hook and import block): a **per-clone version stamp** so staleness becomes a string comparison, and **duplicate-scope detection** at install/upgrade.
-
-**Upgrade from v1.8.5 / v1.8.5a:** no methodology/hook change. **Re-copy the updated troubleshooting guide** to the local install — `clients/claude-code/troubleshoot.md` → `<collab_dir>/docs/troubleshoot.md` — then bump `<collab_dir>/.collab-memory-system` to `v1.8.5b`. If your session start shows both an old "loaded via imports" line and the newer "Verify" block, run the per-clone catch-up (Step 1) on the older scope.
-
 ## v1.8.5a
 
 **Documentation patch to v1.8.5 (no behaviour change to the load-check feature itself).** From a real v1.8.3→v1.8.5 field upgrade on a symlinked, multi-scope install. No new version of the methodology or hook — these are `install.md` / `upgrade.md` / `troubleshoot.md` corrections that take effect for anyone cloning `main`.
