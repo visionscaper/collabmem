@@ -1,5 +1,46 @@
 # Release Notes
 
+## v1.8.6
+
+**A new setup option — the standalone memory project — plus two robustness features: duplicate-install detection and per-clone version stamps.** Also folds in the v1.8.5a doc patch as an official release.
+
+**New: the standalone memory project (#42).** collabmem is no longer only for code repositories. A **standalone memory project** is a repository that *is* the project: the memory is the work, and there is no code. That fits organisation-level memory, research and business projects, and non-technical users who want long-term memory with their AI — the memory repo is all they need.
+
+Until now this setup was possible but undescribed, and it went wrong in practice: an AI treated a memory-only repo like a code repo and never pushed it. It is now fully integrated in install, upgrade, and methodology. `install.md` Step 2 offers it as an explicit choice and handles what is different: a remote is required, the memory is pushed after every `updatemem`, and the world-model population questions ask about the person and the purpose rather than a codebase. The methodology's pull/push rules cover it.
+
+The setups themselves now have a home. New `setup-options.md` describes all three side by side — standalone memory project, distributed (shared-knowledge repo + symlink), and solo with memory inside the code repo — where files live in each, how many copies exist, and what that means for upgrading. `install.md`, `upgrade.md`, the troubleshooting guide, and the README all point to it.
+
+Two decisions come with it. Memory inside a code repo is now **discouraged** for anything but main-only solo work: memory committed on a branch is invisible elsewhere until it merges, and is lost if the branch is abandoned. And the shared-knowledge layout convention is `<shared-knowledge-repo>/projects/<project>/collab/`, leaving room for other project material next to the memory.
+
+**Duplicate-install detection (#47).** If two collabmem installs are active over the same memory — typically a user-level `~/.claude/` install left in place next to a project-level one — the memory sits in context twice, both hooks fire, and one of the two quietly stops getting upgraded. The AI now detects this at session start and tells the user before doing anything else, so the redundant install can be removed instead of lingering for months. How: the session-start hook and the `COLLABMEM-LOAD-CHECK` block both check whether the methodology marker appears more than once in context, or more than one collabmem hook block appears at session start; a new "duplicate installs" note in the troubleshooting guide walks through keep-one-remove-the-other. `install.md` now also says plainly: always install at project level, never in a user-level instruction file.
+
+**Per-clone version stamps (#46).** In a distributed setup, upgrading the shared memory once does not upgrade the instruction block and hook in every clone — and until now nothing could tell a clone that its own copy was behind, because the only version marker lives in the shared directory. Every clone can now check itself: the import block and the hook each carry a stamp, `checked and updated up to: vX.Y.Z`, that `upgrade.md` Step 1 compares against the installed version. The stamp is bumped on every upgrade, even when nothing per-clone changed, so "checked" is what it says. This replaces the previous workaround of looking for the newest release's section by name.
+
+**Also:** a probe that fails to authenticate or errors before answering is not a load-check result — the AI now finds the cause, helps fix it, and re-runs; without a CLI at all, a fresh session's banner is the fallback (`install.md` Step 8, `upgrade.md` Step 5).
+
+**Changes since v1.8.5a (commit `19230c3`):**
+
+- **setup-options.md (NEW):** the three setups, where the instruction file and hooks go (always project level), the two parts of an install and their version stamps, quick-comparison table.
+- **clients/claude-code/hooks/collab-memory-hook.sh:** header version stamp; load-check step d) — duplicate-install check.
+- **install.md:** Step 2 rewritten ("Which Setup?", read `setup-options.md`, explain and help choose, standalone branch with its three specifics, solo/team terminology mapping); Step 5 project-level-always rule + version-stamp note + `<version>` placeholder in the template; `COLLABMEM-LOAD-CHECK` block gains the duplicate-install paragraph; Step 6 hook stays project-level; Step 7 standalone variant of the population questions; Step 8 probe-failure clause; verification checklist + install-note template updated; path convention swept.
+- **upgrade.md:** new "What an Install Consists Of" section (pointer to `setup-options.md`); Step 1 compares the stamps and checks per-clone contents; Step 4 sets the block stamp; Step 5 verifies the three versions agree + probe-failure clause.
+- **clients/claude-code/troubleshoot.md:** "duplicate installs" note + routing line; setups reference; Applies-to → v1.8.6.
+- **collab/methodology.md §1:** standalone memory project with a remote counts as a shared-knowledge repo for all pull/push rules; memory-inside-code-repo excluded.
+- **README.md:** "Choosing a Setup" subsection; Distributed Collaboration mentions single-user and standalone cases; path convention; Status → v1.8.6.
+- **collab/.collab-memory-system:** bumped to `v1.8.6`.
+
+**Upgrade from v1.8.5 / v1.8.5a:**
+
+*Coming from further back? The per-version upgrade lists are cumulative — merge this list with the earlier ones below (oldest first) and apply as a single pass.*
+
+1. **Replace** `collab/methodology.md`.
+2. **Replace the hook** (`clients/claude-code/hooks/collab-memory-hook.sh` → the installed `.claude/hooks/collab-memory-hook.sh`, `chmod +x`).
+3. **Re-copy the troubleshooting guide** `clients/claude-code/troubleshoot.md` → `<collab_dir>/docs/troubleshoot.md`.
+4. **Refresh the import block:** add the duplicate-install paragraph to the `COLLABMEM-LOAD-CHECK` section (from install.md's template, after the multi-install paragraph), and add the version-stamp line `collabmem instruction block, checked and updated up to: v1.8.6` as the first line after `<!-- collab-memory-system:start -->`. Keep the existing paths and user additions.
+5. Bump `<collab_dir>/.collab-memory-system` to `v1.8.6`.
+6. **Verify:** the three versions agree (block stamp, hook stamp, marker); run the probe (install.md Step 8 / upgrade.md Step 5). Takes effect next session.
+7. **Distributed installs:** shared part once (steps 1, 3, 5, then push the shared-knowledge repo); per-clone part (steps 2, 4, 6) in every clone, from a session in that clone.
+
 ## v1.8.5a
 
 **Documentation patch to v1.8.5 (no behaviour change to the load-check feature itself).** From a real v1.8.3→v1.8.5 field upgrade on a symlinked, multi-scope install. No new version of the methodology or hook — these are `install.md` / `upgrade.md` / `troubleshoot.md` corrections that take effect for anyone cloning `main`.

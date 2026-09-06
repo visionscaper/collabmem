@@ -8,7 +8,7 @@ not collabmem bugs — they are *harness* problems (the agent CLI failing to loa
 *layout* problems (paths, symlinks, config). This document covers those, because from the user's side they
 are indistinguishable from a memory failure.
 
-**Applies to:** collabmem v1.8.5 (compare with the installed version in
+**Applies to:** collabmem v1.8.6 (compare with the installed version in
 `<collab_dir>/.collab-memory-system`; if they differ, prefer the copy shipped
 with your installed version — see the version-lookup procedure in the
 methodology's helpmem section).
