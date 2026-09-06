@@ -56,6 +56,9 @@ translation.
    - The COLLABMEM-LOAD-CHECK section itself is absent (the instruction file
      never loaded) → **Issue 3**.
    - Session-start hook prints an error → **Issue 2**.
+   - Session start shows **two** collabmem blocks — one asserting *"Tier 1
+     files loaded via imports"*, one asking you to *verify* — → **Note —
+     two session-start blocks** (one scope is on a pre-v1.8.5 install).
    - Which marker is missing is a signal: only one missing → likely a single
      broken import line (check the import paths, Issue 1 fix list); both
      missing → whole-block failure (approval flag, symlink, directory —
@@ -377,6 +380,38 @@ Two lessons worth carrying:
   that is a **quality** argument for `maintainmem` (and for honouring `tier_1_max_chars`), *not* a
   correctness one. Be clear about which argument you are making; conflating them sends the user to fix the
   wrong thing.
+
+---
+
+## Note — two session-start blocks, one asserting and one verifying (a stale scope)
+
+**Symptom.** At session start the hook output contains *both* of these, one after the other:
+
+- `Tier 1 files loaded via imports. Follow readmem — New Session:` (the pre-v1.8.5 hook)
+- `Tier 1 collabmem memory-system files should be loaded at this point. Verify: ...` (the v1.8.5+ hook)
+
+**What it means.** Two collabmem instruction-file/hook pairs are live in this session — typically a
+user-level install (`~/.claude/CLAUDE.md` + `~/.claude/hooks/`) and a project-level one — and one of
+them is still on a pre-v1.8.5 version. The shared collab directory (and its version marker) may be
+fully current; the instruction file and hook are per-clone, so one scope can be upgraded while the
+other silently is not. This is a free, unmistakable diagnostic: if you see both lines, one scope is
+stale.
+
+**Why it matters beyond tidiness.** The stale scope's block loads in *every* session where that
+instruction file applies — for a user-level install, every directory on the machine — importing
+memory (often by absolute path, the pattern most exposed to the silent external-import drop) with no
+load-check and a hook asserting the imports succeeded. That is the v1.8.5 failure mode restored
+wherever the current scope does not also apply.
+
+**Fix.** Run the **per-clone catch-up** from `upgrade.md` Step 1 on the older scope: replace its
+hook with the current template and add the `COLLABMEM-LOAD-CHECK` section to its instruction file
+(keeping that install's import paths; for a global instruction file make the local troubleshoot
+pointer absolute — see `install.md` Step 5). Note the older scope is often *outside* the project's
+permitted write area — ask the user for explicit authorisation and back the files up first (see
+`upgrade.md` Step 4). Then run the Check 3 probe. Separately, having two installs import the same
+collab directory means the memory is in context twice and both hooks always fire; whether to keep
+both scopes or remove the redundant one is the user's decision (uninstall per methodology §11) —
+raise it, do not act on it silently.
 
 ---
 
