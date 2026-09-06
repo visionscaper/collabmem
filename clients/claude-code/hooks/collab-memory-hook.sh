@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # collab-memory-hook.sh — Lifecycle hook for the Collaboration Memory System
+# collabmem hook, checked and updated up to: v1.8.6
 #
 # Handles two Claude Code hook events:
 #   - SessionStart: Context recovery, health check, and memory triggers
@@ -82,6 +83,12 @@ print_load_check() {
     echo "   - Local: $COLLAB_DIR/docs/troubleshoot.md"
     echo "   - If the local file is unreachable or you can't find it:"
     echo "     https://raw.githubusercontent.com/visionscaper/collabmem/refs/heads/main/clients/claude-code/troubleshoot.md"
+    echo "d) If the collabmem methodology marker (COLLABMEM-MARKER- joined with"
+    echo "   METHODOLOGY) or the collabmem hook output appears more than once, then"
+    echo "   more than one collabmem install is active over the same memory. Tell"
+    echo "   the user before doing anything else and consult the \"duplicate"
+    echo "   installs\" note in the troubleshooting guide (same locations as above);"
+    echo "   do not proceed as if this were a single install."
 }
 
 # --- Memory triggers ---

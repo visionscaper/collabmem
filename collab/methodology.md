@@ -10,6 +10,8 @@ All memory files live in a single directory tree. The directory path and system 
 
 **Shared-knowledge repo:** For distributed collaboration scenarios a separate git repository is used to build up shared memory — across the user's own devices, across multiple users (teams), or both. The memory directory points into this repo, not into the project's code repo. When a shared-knowledge repo is used, it is the source of truth for memory; your in-context Tier 1 files may be stale relative to it.
 
+A **standalone memory project** — a repository that *is* the memory, with no code worked on independently — counts as a shared-knowledge repo for every pull and push rule in this document as soon as it has a remote, even when a single person uses it: the remote is the memory's backup, and a solo memory often becomes a shared one later. The one setup these rules do **not** apply to is memory living inside a code repository: there the memory is committed together with the code, and pushing is part of the user's normal code workflow, not something you do on your own. (The setups are described in `setup-options.md` in the collabmem repository.)
+
 **Three memory types:**
 
 | Type | Purpose | Files |

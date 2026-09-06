@@ -30,7 +30,7 @@ collab/                     → (solo: real directory | team: symlink to externa
     └── factoids.md         (specific facts and references — Tier 2)
 ```
 
-**Note on solo vs team:** For **solo** installations, `collab/` is a real directory in the code repo. For **team** installations, `collab/` is a symlink pointing to an external shared-knowledge repo (e.g., `../shared-knowledge/collab/project-x/`). The solo/team choice is made in Step 2 and explained in the README's "Distributed Collaboration" section.
+**Note on setups:** collabmem has three setups — solo (memory inside the code repo), standalone memory project (the memory repo is the project), and distributed (memory in a shared-knowledge repo, reached through a symlink). They are described in `setup-options.md`; the choice is made in Step 2. Mechanically this document distinguishes two cases: **solo** (`collab/` is a real, tracked directory — also how a standalone memory project installs) and **team** (`collab/` is a symlink into the external shared-knowledge repo).
 
 ## Principles
 
@@ -72,26 +72,37 @@ Before doing anything, examine the target project:
 
 5. **Report findings** — Tell the user what you found: instruction file status, existing hooks, existing notes/journals, any conflicts. If there are conflicts, ask how to proceed before continuing.
 
-### Step 2: Solo or Team Use?
+### Step 2: Which Setup?
 
-Before installing, ask the user:
+Read `setup-options.md` first — it describes the three setups, where files live in each, and why. Then explain the options to the user in a short and simple way, in plain language, and ask which one fits. Offer to answer any questions before they choose — the user may not know what a shared-knowledge repository or a symlink is, or which setup fits their situation; help them decide rather than assuming. A starting point:
 
-> "Is this memory system for solo use, or will it be shared with a team or organisation? This choice matters because it determines where the memory lives:
+> "How will this memory be used? This determines where it lives:
 >
-> - **Solo** — The collab memory can live inside the project's code repository (default). Simple, everything in one place.
-> - **Team** — The collab memory lives in a separate repository shared across the team. This avoids branch-divergence merge conflicts, keeps private project knowledge out of public code repos, and gives memory its own commit history separate from code churn. See 'Distributed Collaboration' in the README for the full rationale."
+> - **Standalone memory project** — There is no code repository: this repository *is* the project, and the memory is the work. The collab memory lives inside it, together with the instruction file and hooks. Examples: an organisation-level memory, a research or business project, a non-technical working memory.
+> - **Distributed** — The collab memory lives in a separate shared-knowledge repository, and this code repository reaches it through a symlink. For teams, for working from several machines, and for keeping private memory out of a public code repository. Memory gets its own commit history, separate from code churn and branches.
+> - **Solo, memory inside the code repository** — Simple, everything in one place, but discouraged for software projects that work with branches: memory committed on a branch is invisible elsewhere until it merges, and is lost if the branch is abandoned. Only for a private repository, used by you alone, committing on the main branch only."
 
-**If solo:** Default installation — `collab/` at project root, tracked in the code repo. Continue to Step 3.
+**If standalone memory project:** `collab/` at the repository root, tracked in the repository, instruction file and hooks in the same repository — mechanically identical to solo, so follow the solo path in the steps below. Three things are different from a code project, handle them as you go:
 
-**If team:** Ask:
+- **A remote is required, not optional.** The remote is the memory's backup, and a standalone memory often becomes shared later (a second machine, a second person) — with a remote in place that is a clone, not a migration. If the repository has no remote yet, offer to create one now (with `gh repo create --private` if available, otherwise give manual instructions), before Step 4. Verify it is private unless the user explicitly wants otherwise.
+- **The memory is committed and pushed after every `updatemem`** (methodology, shared-knowledge repo rules — a standalone memory repository with a remote follows them). At the end of this installation, commit and push the installed files too.
+- **There is no code to seed from.** World-model population (Step 7) draws on the user's own knowledge and documents, not on a codebase. Use the standalone variant of the Step 7 questions, and if the user has existing documents, consider `docs/`.
+
+Continue to Step 3.
+
+**If solo:** `collab/` at project root, tracked in the code repo. Memory changes are committed after every `updatemem`; pushing goes with the user's normal code workflow (the methodology's pull/push rules apply to shared-knowledge repos only, not to a code repo). Continue to Step 3.
+
+**Terminology for the rest of this document:** the steps below distinguish only two mechanical cases. **"Solo"** means a real `collab/` directory tracked in the repository — this covers both the solo setup and the standalone memory project, which install identically. **"Team"** means the distributed setup — a symlink named `collab` pointing into the shared-knowledge repository.
+
+**If distributed:** Ask:
 
 > "Do you already have a shared-knowledge repository for this team?"
 
-- **Yes** — Ask the user for its location (local path). Explain that the typical team pattern is `<shared-knowledge-repo>/collab/<project-name>/` — confirm with the user where the new project's memory directory should go.
+- **Yes** — Ask the user for its location (local path). Explain that the typical team pattern is `<shared-knowledge-repo>/projects/<project-name>/collab/` — confirm with the user where the new project's memory directory should go.
 - **No** — Explain the two patterns (paraphrase from the README "Distributed Collaboration" section): single shared-knowledge repo containing all projects, or per-project memory repos. Recommend the single shared-knowledge repo as the default unless the user has access-control reasons for per-project repos. Offer to help create it:
   - If `gh` is available, offer to create a new GitHub repo (e.g., `gh repo create <org>/shared-knowledge --private`) and clone it locally. Confirm the org/name with the user before creating.
   - Otherwise, give the user manual instructions to create the repo and clone it. Wait for the user to confirm it's ready.
-  - Once the shared repo exists, the new project's memory will live at `<shared-repo>/collab/<project-name>/`.
+  - Once the shared repo exists, the new project's memory will live at `<shared-repo>/projects/<project-name>/collab/`.
 
 **How team installations work:** The collab directory lives in the external shared-knowledge repo. In the code repo, a symlink named `collab` points to the external location. This keeps `.collab-config`, the import block, and all `@collab/...` paths identical between solo and team installations — the symlink handles the redirection transparently. The symlink is git-ignored (each dev creates their own after cloning the code repo).
 
@@ -124,13 +135,13 @@ Copy the template files and set up the collab directory (and symlink for team in
 
 2. **Copy the `collab/` directory contents to the target location.** Use a single recursive copy — do NOT create files one by one.
    - For **solo**: `cp -r /path/to/collabmem/collab ./collab`
-   - For **team**: first ensure the parent directory exists (`mkdir -p /path/to/shared-knowledge/collab`), then copy: `cp -r /path/to/collabmem/collab /path/to/shared-knowledge/collab/<project-name>`
+   - For **team**: first ensure the parent directory exists (`mkdir -p /path/to/shared-knowledge/projects/<project-name>`), then copy: `cp -r /path/to/collabmem/collab /path/to/shared-knowledge/projects/<project-name>/collab`
 
 3. **For team installations, create the symlink in the code repo root:**
    ```bash
-   ln -s /path/to/shared-knowledge/collab/<project-name> collab
+   ln -s /path/to/shared-knowledge/projects/<project-name>/collab collab
    ```
-   Use a relative path if the shared-knowledge repo is a sibling of the code repo (e.g., `../shared-knowledge/collab/<project-name>`) — this makes the symlink portable across machines that follow the same layout convention. Otherwise use an absolute path.
+   Use a relative path if the shared-knowledge repo is a sibling of the code repo (e.g., `../shared-knowledge/projects/<project-name>/collab`) — this makes the symlink portable across machines that follow the same layout convention. Otherwise use an absolute path.
 
 4. **Apply git tracking choices:**
    - For **solo** without git tracking: add `collab/` and `.collab-config` to the code repo's `.gitignore`. The trailing slash matches the directory name anywhere in the tree.
@@ -164,6 +175,8 @@ Copy the template files and set up the collab directory (and symlink for team in
 
 Insert the import block into the project's instruction file at the chosen placement (default: end of file). If no instruction file exists, create one (e.g., `CLAUDE.md`).
 
+**Always install at project level** — the instruction file in the repository the session is rooted in (`./CLAUDE.md` or `.claude/CLAUDE.md`): the code repository for the solo and distributed setups, the memory repository for a standalone memory project (see `setup-options.md`). Never a user-level file such as `~/.claude/CLAUDE.md`: it loads in every session on the machine, so one project's memory, hooks, and load-check would fire in every other directory too, and relative paths would have no fixed project root to resolve from.
+
 **Never overwrite existing content.** Insert the block at the chosen position, preserving everything else.
 
 **Before inserting, check the following:**
@@ -172,17 +185,19 @@ Insert the import block into the project's instruction file at the chosen placem
   - Instruction file at project root (`./CLAUDE.md`): use `@collab/...` as in the template below
   - Instruction file in `.claude/` (`.claude/CLAUDE.md`): use `@../collab/...` — the `../` navigates up from `.claude/` to the project root where `collab/` lives (as a real directory or symlink)
   - Instruction file in another location of the repo: adjust the relative path accordingly so it navigates from the instruction file's directory to the `collab/` directory
-  - **External collab directory (outside the repo root):** Relative paths cannot reach outside the repository root — this is a security restriction. Use absolute paths instead (e.g., `@~/workspace/shared-knowledge/collab/project-x/methodology.md`). Note that absolute paths are not portable across machines or team members — each developer would need their own instruction file (git-ignored) with their local absolute paths. The symlink approach (see Step 2) avoids this by keeping the collab directory reachable via a relative path within the repo.
+  - **External collab directory (outside the repo root):** Relative paths cannot reach outside the repository root — this is a security restriction. Use absolute paths instead (e.g., `@~/workspace/shared-knowledge/projects/project-x/collab/methodology.md`). Note that absolute paths are not portable across machines or team members — each developer would need their own instruction file (git-ignored) with their local absolute paths. The symlink approach (see Step 2) avoids this by keeping the collab directory reachable via a relative path within the repo.
   - **Recommended for team/symlink and external-directory installs (Claude Code):** declare the resolved external directory in `.claude/settings.json` under `permissions.additionalDirectories` (pointing at the real target, not the symlink) — it states the intent through a supported mechanism and may help across harness updates. But it has been observed **not sufficient on its own**: the per-project external-includes approval was still required. Set both, and **verify with the probe** (Step 8) rather than assuming either alone works. Details and diagnostics: `clients/claude-code/troubleshoot.md`.
 - **Directory name:** If the user chose a custom directory name in Step 3, replace `collab/` throughout the template below with the chosen name.
 - **Troubleshooting-guide path (in the COLLABMEM-LOAD-CHECK section):** two different mechanisms resolve the paths in this block. `@` import paths are expanded by the harness at session start, **relative to the instruction file's location** — that is what the adjustment rule above is for. The local path `collab/docs/troubleshoot.md` is not an import: it is plain text the AI will later open with its file-reading tools, which resolve **from the project root**. So the import-path adjustment does NOT apply to it — leave it as-is even when the instruction file lives in `.claude/`. Only adapt it for a custom collab directory name, or make it absolute when the collab directory lives outside the repo without a symlink. The guide itself is client-specific — the URL fallback in the template points to the Claude Code guide (`clients/claude-code/troubleshoot.md` in the source repo); for other platforms, point to that platform's guide if one exists.
 - **Import syntax:** The `@path` syntax in the template below is Claude Code-specific. For other AI platforms, ask the user how their platform handles file imports or file-inclusion, and adapt the template accordingly. The heading structure (`##` grouping) applies regardless of platform — it ensures files compose into a consistent hierarchy when loaded into context.
 - **Blank line:** If inserting at the end of an existing file, add a blank line before `<!-- collab-memory-system:start -->` to visually separate the collab block from the user's existing content.
+- **Version stamp:** the first line inside the markers records the collabmem version this block was checked and updated up to. Replace `<version>` with the value in this repository's `collab/.collab-memory-system`. The instruction file and the hook are per-clone files — every clone, machine, or scope that imports the same memory has its own copy — so the shared version marker cannot tell whether *this* copy is current; the stamp can. `upgrade.md` compares it against the installed version. Keep it as plain text, not an HTML comment. (The hook carries its own stamp in its header; it is copied as-is.)
 
 The import block template (paths shown for instruction file at project root — adjust as described above):
 
 ```markdown
 <!-- collab-memory-system:start -->
+collabmem instruction block, checked and updated up to: <version>
 
 ## Collab Config
 @collab/.collab-config
@@ -227,6 +242,15 @@ of the context marker line. In that case confirm one marker occurrence per
 imported file, not just one occurrence overall; a missing occurrence means
 that install's import failed. The same applies to any other imported file
 carrying a marker line.
+
+If the collabmem methodology marker (`COLLABMEM-MARKER-` joined with
+`METHODOLOGY`) or the collabmem hook output appears more than once, then more
+than one collabmem install is active over the same memory. Tell the user
+before doing anything else and consult the "duplicate installs" note in the
+troubleshooting guide (see below); do not proceed as if this were a single
+install. Unlike `context.md`, `methodology.md` is never cross-imported, so a
+second occurrence always means a second install — for example a user-level
+install left in place next to a project-level one.
 
 Perform this check once, in your first response after a session start or a
 compaction (on platforms with a session-start hook, when the hook asks). Do
@@ -316,7 +340,7 @@ Install the lifecycle hook and configure it in the project's settings.
    - **Keep both:** Install the collab-memory hook alongside existing hooks. Both fire on the same events. Simple, but may produce duplicate output (e.g., two timestamps).
    - **Replace:** If the existing hook's functionality is a subset of the collab-memory hook, the user may prefer to replace it entirely.
 
-   Discuss the options with the user and let them choose. If hooks exist at the user level rather than the project level, note this — the user may prefer to integrate the collab-memory hook into their user-level script rather than adding a separate project-level hook.
+   Discuss the options with the user and let them choose. If hooks exist at the user level rather than the project level, note this — but keep the collab-memory hook **project-level** regardless (do not integrate it into a user-level script: it would fire in every project on the machine, for the same reason the instruction block is always project-level, see Step 5). The merge strategies above apply to existing *project-level* hooks; a user-level hook simply keeps firing alongside.
 
 4. **Copy the troubleshooting guide into the memory directory:**
 
@@ -340,6 +364,16 @@ Ask the user:
 > - Do you have any preferences for how we collaborate (communication style, level of detail, etc.)?
 >
 > Anything else you'd like me to know? You can also skip this — the system will learn naturally as we collaborate."
+
+For a **standalone memory project** there is no codebase to anchor these questions, so ask about the person and the purpose instead:
+
+> "To give this memory a good start, could you tell me a bit about:
+> - yourself — who you are and what you do or work on?
+> - what you want to use this long-term memory for?
+> - the project, study, or business it is about — anything you'd like me to know from the start?
+> - how you like to collaborate (communication style, level of detail)?
+>
+> You can also skip this — the memory will grow as we work together."
 
 **If the user responds with information:**
 - Parse their free-form answer
@@ -365,6 +399,7 @@ Run through this checklist and report results to the user. Paths use `<collab>` 
 - [ ] All 12 collab files exist (`methodology.md`, `support.md`, `index.md`, `index-archive.md`, `notes.md`, and 7 world files)
 - [ ] `<collab>/docs/` directory exists
 - [ ] Instruction file contains the import block between `<!-- collab-memory-system:start -->` and `<!-- collab-memory-system:end -->` markers, including the `COLLABMEM-LOAD-CHECK` section
+- [ ] The block's first line is the version stamp (`collabmem instruction block, checked and updated up to: <version>`) with `<version>` replaced by the installed version, and the hook's header stamp (`collabmem hook, checked and updated up to:`) shows the same version — all three (block, hook, `<collab>/.collab-memory-system`) agree
 - [ ] `<collab>/methodology.md` and `<collab>/world/context.md` start with their load-check marker lines
 - [ ] (Claude Code) `<collab>/docs/troubleshoot.md` exists (the load-check's local pointer target)
 - [ ] (Claude Code) Hook script exists at `.claude/hooks/collab-memory-hook.sh` and is executable
@@ -378,6 +413,10 @@ claude -p "Do NOT use any tools. From your system context ONLY: state whether a 
 ```
 
 **Show the probe's raw output to the user verbatim — on both success and failure — then give a one-line plain-language translation.** Do not summarise it away or just declare success. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing, explaining the problem and fix in plain language (no jargon about markers/imports/config; offer technical detail only if the user asks). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output.
+
+**A probe that fails to authenticate or errors out before answering is not a load-check result** — it says nothing about the markers, so do not treat it as a missing marker and do not start diagnosing imports. Find out why it failed. If the user can fix it, tell them how in plain language (e.g. an expired CLI login: run `claude login` in a terminal; a missing CLI: install it), then re-run the probe.
+
+If the CLI is not available at all — e.g. the Claude native app without a terminal install, and the user does not want to install it — fall back to a fresh session: the load-check block prints the `LOADED SUCCESSFULLY` or `FAILED TO LOAD` banner in its first response, which establishes the same fact.
 
 If any checks fail, report which ones and ask the user how to proceed. For issues that cannot be resolved, the user can file an issue at https://github.com/visionscaper/collabmem/issues.
 
@@ -402,8 +441,8 @@ Append a note to `<collab>/notes.md` (append to the bottom — episodic memory i
 
 **What We Did:**
 - Installed collabmem version <vX.X> (from `<collab>/.collab-memory-system`)
-- Installation type: <solo | team>
-- Collab directory location: <actual path, e.g. `./collab/` or `/path/to/shared-knowledge/collab/project-x/`>
+- Installation type: <solo | standalone memory project | team (distributed)>
+- Collab directory location: <actual path, e.g. `./collab/` or `/path/to/shared-knowledge/projects/project-x/collab/`>
 - For team installations: symlink `collab` → `<target>` created in code repo root
 - Import placement: <at end of file | at start | after specific section> in <instruction file name>
 - Git tracking: `.collab-config` <committed | git-ignored>; collab directory <tracked | git-ignored | external repo>
@@ -428,7 +467,7 @@ Append a note to `<collab>/notes.md` (append to the bottom — episodic memory i
 Also add the corresponding index entry to `<collab>/index.md`:
 
 ```
-| DD-MM-YYYY | @<username> | Collaboration Memory System Installed | Initial collabmem installation: <solo/team>, hooks, world population status. First episodic note and index entry. | installation, setup, v<X.X>, <solo/team> |
+| DD-MM-YYYY | @<username> | Collaboration Memory System Installed | Initial collabmem installation: <solo/standalone/team>, hooks, world population status. First episodic note and index entry. | installation, setup, v<X.X>, <solo/team> |
 ```
 
 **Closing rule:** conversations rarely end at the install summary — follow-up questions and small tasks (commits, pushes, tweaks) usually come after, and a reminder given earlier gets buried. Whatever the last exchange turns out to be, when the installation completed successfully your final message before parting MUST end by repeating: *"Reminder: the memory system activates in a new session — start one to begin using it."* If the installation did not complete, end instead by stating clearly what is still unfinished.
@@ -448,12 +487,12 @@ Also add the corresponding index entry to `<collab>/index.md`:
 >
 > **macOS/Linux:**
 > ```bash
-> ln -s <relative or absolute path to shared-knowledge/collab/project-name> collab
+> ln -s <relative or absolute path to shared-knowledge/projects/project-name/collab> collab
 > ```
 >
 > **Windows (PowerShell, requires developer mode or admin):**
 > ```powershell
-> New-Item -ItemType SymbolicLink -Path collab -Target <path to shared-knowledge/collab/project-name>
+> New-Item -ItemType SymbolicLink -Path collab -Target <path to shared-knowledge/projects/project-name/collab>
 > ```
 >
 > **Windows (cmd, requires admin):**

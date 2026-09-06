@@ -51,6 +51,16 @@ Ask your AI assistant:
 
 The AI will clone the repository, read the installation instructions, and walk you through setup. You'll be asked to confirm before any changes are made. The default installation takes a single confirmation — customization is available if needed.
 
+### Choosing a Setup
+
+The first real decision during installation is where the memory lives. There are three setups:
+
+- **Standalone memory project** — there is no code repository; the memory repository *is* the project. Useful for organisation-level memory, research or business projects, and any working memory that is not tied to code — also for non-technical users.
+- **Distributed** — the memory lives in a separate shared-knowledge repository, and each code repository reaches it through a symlink. Useful for teams building one shared memory, for a single developer working from several machines, and for keeping private memory out of a public code repository.
+- **Solo, memory inside the code repository** — everything in one place. Useful only for a private repository, used by one person, committing on the main branch; discouraged for projects that work with branches, because memory committed on a branch is invisible elsewhere until it merges.
+
+The AI will explain the options and help you choose. Details, and what each setup means for upgrading, are further described in [`setup-options.md`](setup-options.md).
+
 ## How to Upgrade
 
 ### For AI Assistants
@@ -204,10 +214,12 @@ An interesting use case of this memory system is building up shared memory in a 
 
 **Two patterns for distributed memory:**
 
-- **Single shared-knowledge repo** — one repo containing all projects, e.g. `shared-knowledge/collab/project-x/`, `shared-knowledge/collab/project-y/`. The top-level `collab/` directory groups all collab memory, leaving room for other organisational content (architecture docs, team playbooks, policies) alongside it. Centralises team knowledge, simplifies cross-project awareness, single ACL to manage. Good default for most teams.
+- **Single shared-knowledge repo** — one repo containing all projects, e.g. `shared-knowledge/projects/project-x/collab/`, `shared-knowledge/projects/project-y/collab/`. Each project gets its own directory, with its `collab/` memory inside — leaving room for other project material (docs, plans, assets) next to the memory, and for organisational content (architecture docs, team playbooks, policies) at the top level. Centralises team knowledge, simplifies cross-project awareness, single ACL to manage. Good default for most teams.
 - **Per-project memory repo** — one memory repo per project. Use this when different projects have different teams with different access levels, or when projects must stay fully isolated (e.g., client confidentiality, regulatory boundaries).
 
-In both patterns, the code repo contains a symlink named `collab` (git-ignored; each dev creates their own) pointing to the external memory directory. This keeps `.collab-config`, the import block, and all `@collab/...` paths identical between solo and team installations. The installation procedure guides the user through the team/solo decision, repo setup (including `gh` assistance if available), and symlink creation.
+In both patterns, the code repo contains a symlink named `collab` (git-ignored; each dev creates their own) pointing to the external memory directory. This keeps `.collab-config`, the import block, and all `@collab/...` paths identical between solo and team installations. The installation procedure guides the user through the setup decision, repo setup (including `gh` assistance if available), and symlink creation.
+
+The distributed setup also fits a single user: working from several machines, or keeping private memory out of a public code repository. And when there is no code repository at all — the memory *is* the project — the **standalone memory project** setup applies. All three setups, and what each means for where files live and how upgrades work, are described in [`setup-options.md`](setup-options.md).
 
 ### Memory Growth and Sustainability
 

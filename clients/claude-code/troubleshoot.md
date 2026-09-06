@@ -56,6 +56,9 @@ translation.
    - The COLLABMEM-LOAD-CHECK section itself is absent (the instruction file
      never loaded) → **Issue 3**.
    - Session-start hook prints an error → **Issue 2**.
+   - The methodology marker appears **more than once**, or session start
+     shows **two or more** collabmem hook blocks (identical or not) → **Note —
+     duplicate installs** (more than one install imports the same memory).
    - Which marker is missing is a signal: only one missing → likely a single
      broken import line (check the import paths, Issue 1 fix list); both
      missing → whole-block failure (approval flag, symlink, directory —
@@ -93,8 +96,10 @@ collab/
     └── factoids.md             ← specific facts, numbers, references (Tier 2)
 ```
 
-`collab/` is the memory directory; its location comes from `collab_dir` in `.collab-config` and it is often
-a **symlink to a shared-knowledge repo outside the project** — which is what makes Issue 1 possible.
+`collab/` is the memory directory; its location comes from `collab_dir` in `.collab-config`. Depending on the
+setup it is a real directory in the repository, or a **symlink to a shared-knowledge repo outside the project** —
+the distributed setup, which is what makes Issue 1 possible. The setups and where files live in each are
+described in `setup-options.md` in the collabmem repository.
 
 The project **instruction file** (`CLAUDE.md` or your CLI's equivalent) is *not* part of this tree. It
 contains the `@` import lines that pull the Tier 1 files in. It loads normally even when every import
@@ -377,6 +382,30 @@ Two lessons worth carrying:
   that is a **quality** argument for `maintainmem` (and for honouring `tier_1_max_chars`), *not* a
   correctness one. Be clear about which argument you are making; conflating them sends the user to fix the
   wrong thing.
+
+---
+
+## Note — duplicate installs (two or more hook blocks at session start)
+
+**Symptom.** The collabmem methodology marker (`COLLABMEM-MARKER-` joined with `METHODOLOGY`) appears
+more than once in your context, or the session-start output contains more than one collabmem hook
+block. The hook blocks may be identical, or differ — e.g. an old *"Tier 1 files loaded via imports"*
+line next to the newer *"should be loaded at this point. Verify"* block, which additionally tells you
+the installs are on different versions. (Unlike `context.md`, `methodology.md` is never
+cross-imported, so a second methodology marker always means a second install.)
+
+**What it means.** More than one collabmem install is active in this session, all importing the
+same memory — typically a **user-level** install (`~/.claude/CLAUDE.md` + `~/.claude/hooks/`) left in
+place next to a later **project-level** one. The memory is then in context more than once, every
+hook fires, and the installs drift apart over time (one gets upgraded, the other does not). This is a
+faulty install, not a supported layout: the fix is to **remove the redundant install**, not to bring
+the older one up to date (that only makes the blocks identical while the duplication stays).
+
+**Fix.** Ask the user which install to keep. Project-level is preferred; a user-level install is fine
+if it is the *only* one and the user wants it that way. Then uninstall the other one — instruction-file
+import block and hook only, following the methodology's Uninstallation section; never touch the shared
+memory directory, which both installs point at. Do this only with the user's explicit decision. Run the
+Check 3 probe afterwards to confirm the remaining install loads.
 
 ---
 
