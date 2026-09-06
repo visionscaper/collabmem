@@ -7,7 +7,7 @@
 #   - SessionStart: Context recovery, health check, and memory triggers
 #   - UserPromptSubmit: Timestamp
 #
-# Install by adding to .claude/settings.json (see README for configuration).
+# Install by adding to .claude/settings.json (see install.md Step 6 for the configuration).
 # The script reads .collab-config from the project root for the collab directory path.
 #
 
@@ -16,8 +16,18 @@ set -e
 # Read hook input from stdin
 INPUT=$(cat)
 
+# Extract a flat string field from the hook's JSON input without depending on
+# jq (absent on macOS before Sequoia and on many Linux installs). The fields
+# we need are simple strings set by the harness; first match wins. Quotes
+# inside JSON strings are always escaped (\"), so user text cannot spoof a key.
+json_field() {
+    printf '%s' "$INPUT" | tr -d '\n' \
+        | grep -o "\"$1\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" | head -n 1 \
+        | sed 's/^"[^"]*"[[:space:]]*:[[:space:]]*"//; s/"$//'
+}
+
 # Extract hook event name
-HOOK_EVENT=$(echo "$INPUT" | jq -r '.hook_event_name // empty')
+HOOK_EVENT=$(json_field hook_event_name)
 
 # Read .collab-config for collab directory path
 CONFIG_FILE=".collab-config"
@@ -96,14 +106,15 @@ print_load_check() {
 # Sentinel token names create attention matches to methodology headings.
 print_memory_triggers() {
     echo ""
-    echo "IMPORTANT: The user may include readmem, updatemem, maintainmem, upgrademem, or helpmem in their messages — when present, you MUST perform the corresponding operation."
+    echo "IMPORTANT: The user may include readmem, updatemem, maintainmem, upgrademem, helpmem, or starmem in their messages — when present, you MUST perform the corresponding operation."
     echo "The methodology also defines word cues and conceptual triggers for automatic memory operations."
     echo "When searching for information, check your context window for World Model Index or Episodic Memory Index entries before searching files."
 }
 
 # --- SessionStart ---
 if [ "$HOOK_EVENT" = "SessionStart" ]; then
-    SOURCE=$(echo "$INPUT" | jq -r '.source // "unknown"')
+    SOURCE=$(json_field source)
+    SOURCE="${SOURCE:-unknown}"
 
     case "$SOURCE" in
         "startup"|"clear")
