@@ -263,9 +263,14 @@ carrying a marker line.
 If this COLLABMEM-LOAD-CHECK section, the collabmem methodology marker
 (`COLLABMEM-MARKER-` joined with `METHODOLOGY`), or the collabmem hook output
 appears more than once in your context, then more than one collabmem install
-is active over the same memory. Tell the user before doing anything else and
-consult the "duplicate installs" note in the troubleshooting guide (see
-below); do not proceed as if this were a single install. The section count is
+is active over the same memory. Tell the user before doing anything else, in
+plain language, first what it means and what to do: the memory system is
+installed twice on this machine, once for this project and once for all
+projects, and the extra copy should be removed. Then say which copy you
+recommend keeping (the project-level one) and ask for the go-ahead before
+consulting the "duplicate installs" note in the troubleshooting guide (see
+below) and removing anything. Technical detail only if asked. Do not proceed
+as if this were a single install. The section count is
 the most reliable of the three signals: instruction files are never merged,
 so this section appears once per active install, whereas the harness may
 merge two imports of the same memory file into one. A second occurrence of
