@@ -93,12 +93,13 @@ print_load_check() {
     echo "   - Local: $COLLAB_DIR/docs/troubleshoot.md"
     echo "   - If the local file is unreachable or you can't find it:"
     echo "     https://raw.githubusercontent.com/visionscaper/collabmem/refs/heads/main/clients/claude-code/troubleshoot.md"
-    echo "d) If the collabmem methodology marker (COLLABMEM-MARKER- joined with"
-    echo "   METHODOLOGY) or the collabmem hook output appears more than once, then"
-    echo "   more than one collabmem install is active over the same memory. Tell"
-    echo "   the user before doing anything else and consult the \"duplicate"
-    echo "   installs\" note in the troubleshooting guide (same locations as above);"
-    echo "   do not proceed as if this were a single install."
+    echo "d) If the COLLABMEM-LOAD-CHECK section, the collabmem methodology marker"
+    echo "   (COLLABMEM-MARKER- joined with METHODOLOGY), or this collabmem hook"
+    echo "   output appears more than once in your context, then more than one"
+    echo "   collabmem install is active over the same memory. Tell the user before"
+    echo "   doing anything else and consult the \"duplicate installs\" note in the"
+    echo "   troubleshooting guide (same locations as above); do not proceed as if"
+    echo "   this were a single install."
 }
 
 # --- Memory triggers ---

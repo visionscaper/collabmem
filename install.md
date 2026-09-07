@@ -260,13 +260,16 @@ imported file, not just one occurrence overall; a missing occurrence means
 that install's import failed. The same applies to any other imported file
 carrying a marker line.
 
-If the collabmem methodology marker (`COLLABMEM-MARKER-` joined with
-`METHODOLOGY`) or the collabmem hook output appears more than once, then more
-than one collabmem install is active over the same memory. Tell the user
-before doing anything else and consult the "duplicate installs" note in the
-troubleshooting guide (see below); do not proceed as if this were a single
-install. Unlike `context.md`, `methodology.md` is never cross-imported, so a
-second occurrence always means a second install — for example a user-level
+If this COLLABMEM-LOAD-CHECK section, the collabmem methodology marker
+(`COLLABMEM-MARKER-` joined with `METHODOLOGY`), or the collabmem hook output
+appears more than once in your context, then more than one collabmem install
+is active over the same memory. Tell the user before doing anything else and
+consult the "duplicate installs" note in the troubleshooting guide (see
+below); do not proceed as if this were a single install. The section count is
+the most reliable of the three signals: instruction files are never merged,
+so this section appears once per active install, whereas the harness may
+merge two imports of the same memory file into one. A second occurrence of
+any of the three always means a second install — for example a user-level
 install left in place next to a project-level one.
 
 Perform this check once, in your first response after a session start or a

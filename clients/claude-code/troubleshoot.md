@@ -56,9 +56,10 @@ translation.
    - The COLLABMEM-LOAD-CHECK section itself is absent (the instruction file
      never loaded) → **Issue 3**.
    - Session-start hook prints an error → **Issue 2**.
-   - The methodology marker appears **more than once**, or session start
-     shows **two or more** collabmem hook blocks (identical or not) → **Note —
-     duplicate installs** (more than one install imports the same memory).
+   - The COLLABMEM-LOAD-CHECK section or the methodology marker appears
+     **more than once**, or session start shows **two or more** collabmem hook
+     blocks (identical or not) → **Note — duplicate installs** (more than one
+     install imports the same memory).
    - Which marker is missing is a signal: only one missing → likely a single
      broken import line (check the import paths, Issue 1 fix list); both
      missing → whole-block failure (approval flag, symlink, directory —
@@ -382,12 +383,18 @@ Two lessons worth carrying:
 
 ## Note — duplicate installs (two or more hook blocks at session start)
 
-**Symptom.** The collabmem methodology marker (`COLLABMEM-MARKER-` joined with `METHODOLOGY`) appears
-more than once in your context, or the session-start output contains more than one collabmem hook
-block. The hook blocks may be identical, or differ — e.g. an old *"Tier 1 files loaded via imports"*
-line next to the newer *"should be loaded at this point. Verify"* block, which additionally tells you
-the installs are on different versions. (Unlike `context.md`, `methodology.md` is never
-cross-imported, so a second methodology marker always means a second install.)
+**Symptom.** Any of these appears more than once in your context: the `COLLABMEM-LOAD-CHECK` section
+(one per loaded instruction file that carries a collabmem block), the collabmem methodology marker
+(`COLLABMEM-MARKER-` joined with `METHODOLOGY`), or the collabmem session-start hook output. The hook
+blocks may be identical, or differ — e.g. an old *"Tier 1 files loaded via imports"* line next to the
+newer *"should be loaded at this point. Verify"* block, which additionally tells you the installs are on
+different versions.
+
+Do not expect all three signals at once. Verified on Claude Code `2.1.263` (07-09-2026): with a user-level
+block importing the same memory by absolute paths next to a project-level block using relative paths,
+the harness merged the two imports of `methodology.md` into one — the marker appeared once — while the
+`COLLABMEM-LOAD-CHECK` section appeared twice and both hooks fired. Instruction files are never merged,
+so the section count is the signal that always holds.
 
 **What it means.** More than one collabmem install is active in this session, all importing the
 same memory — typically a **user-level** install (`~/.claude/CLAUDE.md` + `~/.claude/hooks/`) left in
