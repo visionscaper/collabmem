@@ -198,8 +198,9 @@ Insert the import block into the project's instruction file at the chosen placem
 **Before inserting, check the following:**
 
 - **Import path resolution — CRITICAL:** Import paths (e.g., `@collab/methodology.md`) resolve **relative to the instruction file where they appear**, not relative to the project root. If the instruction file is at the project root (e.g., `./CLAUDE.md`), then `@collab/...` correctly reaches `./collab/...`. If the instruction file is in a subdirectory (e.g., `.claude/CLAUDE.md`), then `@collab/...` would look for `.claude/collab/...` which does not exist — **the import silently fails and no content is loaded**. Adjust the paths based on the instruction file's location:
-  - Instruction file at project root (`./CLAUDE.md`): use `@collab/...` as in the template below
-  - Instruction file in `.claude/` (`.claude/CLAUDE.md`): use `@../collab/...` — the `../` navigates up from `.claude/` to the project root where `collab/` lives (as a real directory or symlink)
+  - Instruction file at project root (`./CLAUDE.md`): use `@collab/...` as in the template below, and `@.collab-config` for the config file
+  - Instruction file in `.claude/` (`.claude/CLAUDE.md`): use `@../collab/...` — the `../` navigates up from `.claude/` to the project root where `collab/` lives (as a real directory or symlink) — and `@../.collab-config` for the config file
+  - **`.collab-config` is at the project root, not inside the collab directory.** Its import line is the one line in the block that does not go through `collab/`; keep that distinction when adjusting paths.
   - Instruction file in another location of the repo: adjust the relative path accordingly so it navigates from the instruction file's directory to the `collab/` directory
   - **External collab directory (outside the repo root):** Relative paths cannot reach outside the project root — this is a security restriction. Use absolute paths instead (e.g., `@~/workspace/shared-knowledge/projects/project-x/collab/methodology.md`). Note that absolute paths are not portable across machines or team members — each developer would need their own instruction file (git-ignored) with their local absolute paths. The symlink approach (see Step 2) avoids this by keeping the collab directory reachable via a relative path within the repo.
   - **Team/symlink and external-directory installs (Claude Code):** imports that resolve outside the project need the per-project external-includes approval; the probe in Step 8 shows whether it is in place, and the troubleshooting guide (`clients/claude-code/troubleshoot.md`, Issue 1) has the fix. Do **not** add a `permissions.additionalDirectories` entry for this: tested on Claude Code 2.1.263, it has no effect on import loading either way, and it puts a machine-specific path into `settings.json`.
@@ -216,7 +217,7 @@ The import block template (paths shown for instruction file at project root — 
 collabmem instruction block, checked and updated up to: <version>
 
 ## Collab Config
-@collab/.collab-config
+@.collab-config
 
 ## Methodology
 @collab/methodology.md
