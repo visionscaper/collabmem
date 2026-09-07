@@ -66,7 +66,7 @@ Apply all changes in a single pass:
 
 If the user has customised a system file (e.g., added project-specific sections to `methodology.md`), flag it and ask how to proceed — do not overwrite customisations silently.
 
-**Team/symlink installs — the load fix.** If this upgrade introduces or relies on the load-check (memory imported through a symlink to a shared-knowledge repo), the imports must be allowed to resolve outside the project. Declaring the resolved shared directory via `permissions.additionalDirectories` in `.claude/settings.json` (pointing at the real target, not the symlink) states that intent through a supported mechanism and may help across harness updates — but it has been observed **not to be sufficient by itself**: on at least one Claude Code version the per-project external-includes approval (`hasClaudeMdExternalIncludesApproved: true`) was still required. **Set both, and verify with the probe** rather than assuming either alone is enough. See `clients/claude-code/troubleshoot.md`.
+**Team/symlink installs — the load fix.** If this upgrade introduces or relies on the load-check (memory imported through a symlink to a shared-knowledge repo), the imports must be allowed to resolve outside the project. That is the per-project external-includes approval (`hasClaudeMdExternalIncludesApproved: true`); verify with the probe. A `permissions.additionalDirectories` entry does not help — tested on Claude Code 2.1.263, no effect either way — so do not add one, and if an earlier install added one you may remove it. See `clients/claude-code/troubleshoot.md`.
 
 ### Step 5: Verify
 

@@ -42,6 +42,8 @@ collabmem can be set up in three ways. The choice is made in Step 2, and `setup-
 
 **Project root.** Throughout this document, "project root" means the root of the repository the AI session is rooted in: the code repository, or the memory repository for a standalone memory project. In the distributed setup it never means the separate shared-knowledge repository.
 
+**Memory-system traces.** The files collabmem puts in the project *besides* the memory itself: `.collab-config` at the project root, the import block in the instruction file, and `.claude/` with the hook script and its `settings.json` entries. In a distributed setup these are the only collabmem files in the code repository, and the user chooses in Step 3 whether they are committed or git-ignored.
+
 ## Principles
 
 These are hard rules. Follow them without exception.
@@ -132,7 +134,12 @@ Once the solo/team decision is made, summarise for the user what you found in St
   - (a) At the end of the file (default — existing project instructions establish context; the collab system appends below)
   - (b) At the start of the file
   - (c) After a specific section the user indicates
-- **Git tracking** — For **solo**: default tracked (add nothing to `.gitignore`). If the user prefers not to track, add `collab/` and `.collab-config` to `.gitignore` — except for a **standalone memory project**, where the memory is the repository's content and must be tracked (do not offer the option there). For **team**: the `collab` symlink must always be git-ignored (each dev creates their own). Ask the user about `.collab-config`: it can be committed (simpler — same on every machine since it only contains a relative path) or git-ignored (keeps the code repo free of any memory system traces, useful for public repos or when teams prefer full separation). If git-ignored, each dev creates `.collab-config` manually after cloning — the final installation note (see Step 9) will include the full `.collab-config` contents for easy reproduction.
+- **Git tracking** — what gets committed differs per setup:
+  - **Solo:** default tracked (add nothing to `.gitignore`). If the user prefers not to track, add `collab/` and `.collab-config` to `.gitignore`.
+  - **Standalone memory project:** always tracked — the memory is the repository's content. Do not offer the ignore option.
+  - **Team:** the `collab` symlink is always git-ignored. Committed symlinks do not survive on Windows, and every developer creates their own after cloning anyway. Then ask the user one question: **track the memory-system traces in the code repo, or not?** (See "The Three Setups" for what the traces are.)
+    - **Committed (default for a private repo the whole team works on):** teammates get a working install on clone, after the two per-machine steps (create the symlink; approve external imports once). Nothing in these files is machine-specific.
+    - **Git-ignored (for a public repo, or when the team prefers full separation):** each developer keeps their own copies; only `.gitignore` is committed. The final installation note (Step 9) includes the full `.collab-config` contents so a teammate can reproduce it. Note: files that already exist and are tracked (an existing `CLAUDE.md`, an existing `.claude/settings.json`) keep their tracked status — only new files can be ignored; say so if that applies.
 
 Wait for the user's choices before proceeding.
 
@@ -154,7 +161,7 @@ Copy the template files and set up the collab directory (and symlink for team in
 
 4. **Apply git tracking choices:**
    - For **solo** without git tracking: add `collab/` and `.collab-config` to the code repo's `.gitignore`. The trailing slash matches the directory name anywhere in the tree.
-   - For **team**: always add `/collab` to the code repo's `.gitignore` (it's a symlink at the project root, each dev creates their own). The leading slash anchors the entry to the repo root specifically. If the user chose to git-ignore `.collab-config`, also add it to `.gitignore`.
+   - For **team**: always add `/collab` to the code repo's `.gitignore` (it's a symlink at the project root, each dev creates their own). The leading slash anchors the entry to the repo root specifically. If the user chose to git-ignore the memory-system traces (Step 3), also add `.collab-config` and the new files among `CLAUDE.md` and `.claude/` to `.gitignore`.
 
 5. **After copying**, narrate to the user what was created — briefly explain each file's purpose. Paths below use `<collab>` to denote the collab directory (actual location depends on solo/team choice; `.collab-config` is always at the project root):
 
@@ -195,7 +202,7 @@ Insert the import block into the project's instruction file at the chosen placem
   - Instruction file in `.claude/` (`.claude/CLAUDE.md`): use `@../collab/...` — the `../` navigates up from `.claude/` to the project root where `collab/` lives (as a real directory or symlink)
   - Instruction file in another location of the repo: adjust the relative path accordingly so it navigates from the instruction file's directory to the `collab/` directory
   - **External collab directory (outside the repo root):** Relative paths cannot reach outside the project root — this is a security restriction. Use absolute paths instead (e.g., `@~/workspace/shared-knowledge/projects/project-x/collab/methodology.md`). Note that absolute paths are not portable across machines or team members — each developer would need their own instruction file (git-ignored) with their local absolute paths. The symlink approach (see Step 2) avoids this by keeping the collab directory reachable via a relative path within the repo.
-  - **Recommended for team/symlink and external-directory installs (Claude Code):** declare the resolved external directory in `.claude/settings.json` under `permissions.additionalDirectories` (pointing at the real target, not the symlink) — it states the intent through a supported mechanism and may help across harness updates. But it has been observed **not sufficient on its own**: the per-project external-includes approval was still required. Set both, and **verify with the probe** (Step 8) rather than assuming either alone works. Details and diagnostics: `clients/claude-code/troubleshoot.md`.
+  - **Team/symlink and external-directory installs (Claude Code):** imports that resolve outside the project need the per-project external-includes approval; the probe in Step 8 shows whether it is in place, and the troubleshooting guide (`clients/claude-code/troubleshoot.md`, Issue 1) has the fix. Do **not** add a `permissions.additionalDirectories` entry for this: tested on Claude Code 2.1.263, it has no effect on import loading either way, and it puts a machine-specific path into `settings.json`.
 - **Directory name:** If the user chose a custom directory name in Step 3, replace `collab/` throughout the template below with the chosen name.
 - **Troubleshooting-guide path (in the COLLABMEM-LOAD-CHECK section):** two different mechanisms resolve the paths in this block. `@` import paths are expanded by the harness at session start, **relative to the instruction file's location** — that is what the adjustment rule above is for. The local path `collab/docs/troubleshoot.md` is not an import: it is plain text the AI will later open with its file-reading tools, which resolve **from the project root**. So the import-path adjustment does NOT apply to it — leave it as-is even when the instruction file lives in `.claude/`. Only adapt it for a custom collab directory name, or make it absolute when the collab directory lives outside the repo without a symlink. The guide itself is client-specific — the URL fallback in the template points to the Claude Code guide (`clients/claude-code/troubleshoot.md` in the source repo); for other platforms, point to that platform's guide if one exists.
 - **Import syntax:** The `@path` syntax in the template below is Claude Code-specific. For other AI platforms, ask the user how their platform handles file imports or file-inclusion, and adapt the template accordingly. The heading structure (`##` grouping) applies regardless of platform — it ensures files compose into a consistent hierarchy when loaded into context.
@@ -430,7 +437,10 @@ If the CLI is not available at all — e.g. the Claude native app without a term
 
 If any checks fail, report which ones and ask the user how to proceed. For issues that cannot be resolved, the user can file an issue at https://github.com/visionscaper/collabmem/issues.
 
-**Commit the installation** once all checks pass, with the user's approval: for a standalone memory project, commit and push (the remote from Step 2); for a team install, commit and push the shared-knowledge repo (only that repo) so teammates receive the new memory files; for solo, commit in the code repo, pushing is the user's normal workflow.
+**Commit the installation** once all checks pass, with the user's approval:
+- **Standalone memory project:** commit and push (the remote from Step 2).
+- **Team:** commit and push the shared-knowledge repo (only that repo) so teammates receive the new memory files. In the code repo, commit whatever the Step 3 tracking choice tracks — at minimum the `.gitignore` change. Tell the user these changes are committed but not yet pushed; pushing the code repo is their normal workflow.
+- **Solo:** commit in the code repo; pushing is the user's normal workflow.
 
 Continue to Step 9 if all checks pass.
 

@@ -288,19 +288,13 @@ Scope this to the single project entry. Do not enable it globally, and never ena
 instruction file you have not read — external includes let a repository pull arbitrary local files into your
 context, which is precisely the vulnerability referenced above.
 
-**Additional directories (declare intent, but do not rely on it alone).** Alongside the approval flag,
-declare the external directory explicitly:
-
-- `--add-dir <resolved-target-dir>`, or a persistent `permissions.additionalDirectories` entry in settings.
-- From Claude Code v2.1.20, `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` makes instruction files in
-  `--add-dir` directories load too.
-
-Point these at the **resolved** target, not the symlink. This states the intent ("this outside directory
-is part of my workspace") through a supported mechanism and may prove more durable across harness updates.
-**However, it has been observed NOT sufficient by itself** (field report 05-09-2026, a symlinked
-org-scoped install): with `additionalDirectories` correctly set, imports still did not resolve until the
-per-project `hasClaudeMdExternalIncludesApproved` was set to `true`. So set **both**, and confirm with a
-Check-3 probe — never assume either one alone did the job.
+**Additional directories — tested, no effect.** Earlier versions of this guide recommended declaring the
+external directory via `permissions.additionalDirectories` (or `--add-dir`) alongside the approval flag.
+Tested on Claude Code `2.1.263` (07-09-2026, four probes on a fresh distributed install): with the
+approval flag `true` the imports load with or without the entry; with the flag `false` they fail with or
+without it, absolute or relative path. The entry has no effect on import loading on this version, and it
+puts a machine-specific path into `settings.json`. So: do not add it; the approval flag is the fix.
+If a later Claude Code version changes this, re-test the same four combinations before changing the advice.
 
 ### Verify
 
@@ -345,7 +339,7 @@ start. Until then, read Tier 1 files explicitly on `readmem`, and tell the user 
 Two takeaways: (1) Anthropic formally declined the report, then the behaviour changed anyway within
 weeks, unannounced — this code path moves silently; re-verify after every CLI upgrade. (2) The
 "not planned" closure of #15124 means the drop-without-approval behaviour is *intended* — the
-load-check and the external-includes approval (with additional-directories declared alongside) are permanent infrastructure, not workarounds
+load-check and the external-includes approval are permanent infrastructure, not workarounds
 awaiting an upstream fix.
 
 ### If the approval flag does not fix it
