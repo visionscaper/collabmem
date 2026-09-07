@@ -213,8 +213,9 @@ upstream is actively tightening, and will keep breaking. See the supported alter
 
 ### Confirming it
 
-Locate the CLI config and read the per-project entry. For Claude Code the file is `.claude.json` inside the
-config directory (`~/.claude` by default, or `$CLAUDE_CONFIG_DIR` if set), with these keys:
+Locate the CLI config and read the per-project entry. For Claude Code the file is `~/.claude.json` — in the
+home directory itself, **not** inside `~/.claude/` — or `$CLAUDE_CONFIG_DIR/.claude.json` when that
+variable is set (verified on 2.1.263). It has these keys:
 
 ```
 hasClaudeMdExternalIncludesApproved     # false -> external imports dropped
@@ -224,7 +225,7 @@ hasClaudeMdExternalIncludesWarningShown # false -> user has not been asked yet
 ```bash
 python3 - <<'EOF'
 import json, os
-cfg = os.path.join(os.environ.get("CLAUDE_CONFIG_DIR", os.path.expanduser("~/.claude")), ".claude.json")
+cfg = os.path.join(os.environ.get("CLAUDE_CONFIG_DIR", os.path.expanduser("~")), ".claude.json")
 proj = os.getcwd()
 p = json.load(open(cfg)).get("projects", {}).get(proj, {})
 print(cfg, "\n", proj)
@@ -267,13 +268,13 @@ it exits.
 
 ```bash
 # 1. back up
-CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.claude.json"
+CFG="${CLAUDE_CONFIG_DIR:-$HOME}/.claude.json"
 cp "$CFG" "$CFG.bak-extimports-$(date +%Y%m%d)"
 
 # 2. set the flags for this project only
 python3 - <<'EOF'
 import json, os
-cfg = os.path.join(os.environ.get("CLAUDE_CONFIG_DIR", os.path.expanduser("~/.claude")), ".claude.json")
+cfg = os.path.join(os.environ.get("CLAUDE_CONFIG_DIR", os.path.expanduser("~")), ".claude.json")
 proj = os.getcwd()
 d = json.load(open(cfg))
 p = d.setdefault("projects", {}).setdefault(proj, {})

@@ -50,7 +50,7 @@ These are hard rules. Follow them without exception.
 
 1. **NEVER destroy or modify existing user content.** Do not overwrite, delete, or alter any existing files, instructions, or data without explicit user approval. All additions are clearly marked and placed alongside existing content.
 2. **Flag conflicts, don't resolve them.** If you detect potential issues (existing instructions that contradict the methodology, duplicate hooks, conflicting file structures), report them to the user and ask how to proceed. Do not resolve conflicts unilaterally.
-3. **Narrate every action.** Tell the user what you are doing at every step — what file you are creating, what content you are adding, what hook you are installing.
+3. **Narrate every action.** Tell the user what you are doing at every step — what file you are creating, what content you are adding, what hook you are installing. And when a turn ends with a question or a result, open that closing message with one sentence on what was done in the turn: the user may only see your final message, not the narration in between, so it must stand on its own.
 4. **Confirm before executing.** Describe what you will install, explain what each component is for, and ask for confirmation before making any changes.
 5. **Suggest filing issues for unresolvable problems.** If you encounter a problem during installation that cannot be resolved without changes to the system itself (the methodology, templates, hooks, or installation procedure), suggest the user file an issue at https://github.com/visionscaper/collabmem/issues. Help draft the issue if the user wants.
 
