@@ -253,7 +253,7 @@ These distinctions compound over time. The longer the collaboration, the more va
 
 **Prerequisites:**
 - An AI assistant that can read and write local files and load an instruction file into context (e.g., CLAUDE.md, `.cursorrules`)
-- Git is recommended for version control and auditability, but not a hard requirement — the system works without it if you prefer to keep everything local
+- Git. The standalone and distributed setups are git repositories by construction, and installing clones this repository. Only the solo setup can keep the memory untracked if you prefer to keep everything local.
 
 **Platform support:**
 

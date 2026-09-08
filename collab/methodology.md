@@ -503,7 +503,7 @@ When the user includes `helpmem` in their message, you MUST provide help about t
 
    Base URL: `https://raw.githubusercontent.com/visionscaper/collabmem/refs/heads/main/<filename>`.
 
-3. **If the answer from main-branch docs appears inconsistent with the installed methodology's actual behaviour,** the installed version may be older than main. Find the installed version in `.collab-memory-system` and look up its commit in `release-notes.md`. Clone the repo to a temporary location, check out that commit, and answer from the version-specific docs.
+3. **If the answer from main-branch docs appears inconsistent with the installed methodology's actual behaviour,** the installed version may be older than main. Find the installed version in `.collab-memory-system` and look up its commit in `release-notes.md`: it is the hash in the "Changes since <installed version> (commit …)" line of the *next newer* version's section (each section states its predecessor's commit). Clone the repo to a temporary location, check out that commit, and answer from the version-specific docs.
 
 **Download fallback.** If the web fetch fails, try cloning. If both fail (network, platform, git availability), ask the user to check the GitHub repo directly at `https://github.com/visionscaper/collabmem`.
 

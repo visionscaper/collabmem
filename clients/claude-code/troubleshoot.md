@@ -13,8 +13,9 @@ are indistinguishable from a memory failure.
 with your installed version — see the version-lookup procedure in the
 methodology's helpmem section).
 
-**Verified against:** Claude Code `2.1.246` on macOS (darwin), 26-08-2026 — every observation, config key,
-and probe below was checked on that build. The regression in Issue 1 appeared between `2.1.177` (working)
+**Verified against:** Claude Code `2.1.246` on macOS (darwin), 26-08-2026, for Issue 1 and the load-check
+diagnostics; the v1.8.6 additions (duplicate installs, the withdrawal of additional directories, the config
+path) were verified on `2.1.263`, 07-09-2026. The regression in Issue 1 appeared between `2.1.177` (working)
 and `2.1.246` (broken). Treat behaviour on other versions or other CLIs as unconfirmed: the diagnostic
 *method* is portable, the specific key names and flags are not.
 

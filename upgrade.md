@@ -54,7 +54,7 @@ Summarise the planned changes for the user and ask for confirmation before proce
 
 ### Step 4: Apply Changes
 
-**For team/shared-knowledge installs, `git pull` the shared-knowledge repo first** (only that repo, not the code repo) so you upgrade current memory and avoid conflicts.
+**For team/shared-knowledge installs and standalone memory projects with a remote, `git pull` the memory repository first** (only that repo, not a code repo) so you upgrade current memory and avoid conflicts.
 
 Apply all changes in a single pass:
 
@@ -79,7 +79,7 @@ Confirm that:
 - Updated system files match the latest templates (including any newly copied support files, e.g. `<collab>/docs/troubleshoot.md`)
 - Any marker/anchor lines added this release are present exactly once at the top of their files (e.g. the load-check markers atop `methodology.md` and `world/context.md`)
 - The instruction file's import block contains any new sections for this release (e.g. `COLLABMEM-LOAD-CHECK`) with the existing paths and any user extensions preserved
-- **The three versions agree:** the block's stamp (`collabmem instruction block, checked and updated up to:`), the hook's header stamp (`collabmem hook, checked and updated up to:`), and `<collab_dir>/.collab-memory-system` all show the version just installed
+- **The three versions agree:** the block's stamp (`collabmem instruction block, checked and updated up to:`), the hook's header stamp (`collabmem hook, checked and updated up to:`), and `<collab_dir>/.collab-memory-system` all show the version just installed (on platforms without hooks: block and marker)
 - Any new configuration settings are present in `.collab-config`
 - Hooks are updated (if applicable) and executable
 - **Hook freshness (every upgrade, even when the release did not change the hook):** diff the installed hook against this version's template. Installed hooks can drift stale across releases where "hooks unchanged" held, and would otherwise never be caught. If they differ (beyond intentional user customisation), update the hook and flag it to the user.

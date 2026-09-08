@@ -72,7 +72,7 @@ Before doing anything, examine the target project:
    - Does it already contain collab-memory-system markers (`<!-- collab-memory-system:start -->`)? If yes, the system is already installed — inform the user and stop.
 
      **One exception: a teammate's fresh clone.** If the markers are present but there is no `collab` symlink or directory at the project root, this is a clone of a distributed install whose traces were committed. Nothing needs installing. Only the two per-machine steps are missing:
-     1. Create the `collab` symlink to the project's directory in the shared-knowledge repository. Ask the user where their clone of that repository is; the command is in Step 4 point 3.
+     1. Create the `collab` symlink to the project's directory in the shared-knowledge repository. Ask the user where their clone of that repository is. If they do not have one yet, they need its location from a teammate and clone it first, as a sibling of the code repository. The symlink command is in Step 4 point 3.
      2. Run the Step 8 probe. It will most likely need the external-includes approval; the troubleshooting guide's Issue 1 covers that.
 
      Then stop.
@@ -214,6 +214,7 @@ Insert the import block into the project's instruction file at the chosen placem
 - **Troubleshooting-guide path (in the COLLABMEM-LOAD-CHECK section):** two different mechanisms resolve the paths in this block. `@` import paths are expanded by the harness at session start, **relative to the instruction file's location** — that is what the adjustment rule above is for. The local path `collab/docs/troubleshoot.md` is not an import: it is plain text the AI will later open with its file-reading tools, which resolve **from the project root**. So the import-path adjustment does NOT apply to it — leave it as-is even when the instruction file lives in `.claude/`. Only adapt it for a custom collab directory name, or make it absolute when the collab directory lives outside the repo without a symlink. The guide itself is client-specific — the URL fallback in the template points to the Claude Code guide (`clients/claude-code/troubleshoot.md` in the source repo); for other platforms, point to that platform's guide if one exists.
 - **Import syntax:** The `@path` syntax in the template below is Claude Code-specific. For other AI platforms, ask the user how their platform handles file imports or file-inclusion, and adapt the template accordingly. The heading structure (`##` grouping) applies regardless of platform — it ensures files compose into a consistent hierarchy when loaded into context.
 - **Blank line:** If inserting at the end of an existing file, add a blank line before `<!-- collab-memory-system:start -->` to visually separate the collab block from the user's existing content.
+- **The load-check does not apply to the installing session.** The check in the template below is for sessions that *start* with this block in place. The session doing the installation never loaded the memory imports and cannot; do not run the check on it, and do not report a FAILED banner for it. The Step 8 probe, a fresh session, is the verification.
 - **Version stamp:** the first line inside the markers records the collabmem version this block was checked and updated up to. Replace `<version>` with the value in this repository's `collab/.collab-memory-system`. The instruction file and the hook are per-clone files — every clone, machine, or scope that imports the same memory has its own copy — so the shared version marker cannot tell whether *this* copy is current; the stamp can. `upgrade.md` compares it against the installed version. Keep it as plain text, not an HTML comment. (The hook carries its own stamp in its header; it is copied as-is.)
 
 The import block template (paths shown for instruction file at project root — adjust as described above):
@@ -269,13 +270,15 @@ carrying a marker line.
 If this COLLABMEM-LOAD-CHECK section, the collabmem methodology marker
 (`COLLABMEM-MARKER-` joined with `METHODOLOGY`), or the collabmem hook output
 appears more than once in your context, then more than one collabmem install
-is active over the same memory. Tell the user before doing anything else, in
-plain language: the memory system is active twice in this session, and the
-extra copy should be removed. Ask whether they want to clean this up. If they
-agree, discuss with them which copy to remove — recommend keeping the
-project-level one — and only then consult the "duplicate installs" note in
-the troubleshooting guide (see below) and remove anything. Technical detail
-only if asked. Do not proceed as if this were a single install. The section count is
+is active over the same memory. Occurrences that appear only in a compaction
+summary do not count. Tell the user before doing anything else, in plain
+language: the memory system is active twice in this session, and this needs
+resolving — usually by removing the extra copy. Ask whether they want to
+clean this up. If they agree, discuss with them which copy to remove —
+recommend keeping the project-level one — and only then consult the
+"duplicate installs" note in the troubleshooting guide (see below) and remove
+anything. Technical detail only if asked. Do not proceed as if this were a
+single install. The section count is
 the most reliable of the three signals: instruction files are never merged,
 so this section appears once per active install, whereas the harness may
 merge two imports of the same memory file into one. A second occurrence of
@@ -430,12 +433,12 @@ Run through this checklist and report results to the user. Paths use `<collab>` 
 - [ ] All 12 collab files exist (`methodology.md`, `support.md`, `index.md`, `index-archive.md`, `notes.md`, and 7 world files)
 - [ ] `<collab>/docs/` directory exists
 - [ ] Instruction file contains the import block between `<!-- collab-memory-system:start -->` and `<!-- collab-memory-system:end -->` markers, including the `COLLABMEM-LOAD-CHECK` section
-- [ ] The block's first line is the version stamp (`collabmem instruction block, checked and updated up to: <version>`) with `<version>` replaced by the installed version, and the hook's header stamp (`collabmem hook, checked and updated up to:`) shows the same version — all three (block, hook, `<collab>/.collab-memory-system`) agree
+- [ ] The block's first line is the version stamp (`collabmem instruction block, checked and updated up to: <version>`) with `<version>` replaced by the installed version, and the hook's header stamp (`collabmem hook, checked and updated up to:`) shows the same version — all three (block, hook, `<collab>/.collab-memory-system`) agree. On platforms without hooks: block and marker agree.
 - [ ] `<collab>/methodology.md` and `<collab>/world/context.md` start with their load-check marker lines
 - [ ] (Claude Code) `<collab>/docs/troubleshoot.md` exists (the load-check's local pointer target)
 - [ ] (Claude Code) Hook script exists at `.claude/hooks/collab-memory-hook.sh` and is executable
 - [ ] (Claude Code) `.claude/settings.json` contains hook entries for `SessionStart` and `UserPromptSubmit`
-- [ ] `.gitignore` entries correct: solo without tracking → `collab/` + `.collab-config`; team → `/collab` + (optionally `.collab-config`)
+- [ ] `.gitignore` entries correct: solo without tracking → `collab/` + `.collab-config`; team → `/collab`, plus `.collab-config` and the new `CLAUDE.md` / `.claude/` files if the user chose to git-ignore the memory-system traces (Step 3)
 
 **Final check — probe what actually loads (Claude Code).** The checks above verify files on disk; this one verifies the harness really injects them into context. Run a fresh, non-interactive probe from the project directory:
 

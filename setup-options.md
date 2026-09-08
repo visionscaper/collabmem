@@ -145,6 +145,6 @@ The stamp means: this copy was checked, and updated where needed, up to that ver
 | Memory lives in | the code repo | its own repo, or a project directory in a shared-knowledge repo | a shared-knowledge repo |
 | Session rooted in | the code repo | the memory project's directory | the code repo |
 | Instruction file and hooks in | the code repo | the memory repo, committed | each code-repo clone |
-| Copies of the per-clone part | one | one | one per clone |
+| Copies of the per-clone part | one | one | one per clone (identical when the traces are committed) |
 | Upgrade | single pass | single pass | shared part once, per-clone part per clone |
 | After `updatemem` | commit; push with your code | commit and push | commit and push, the shared-knowledge repo only |
