@@ -278,12 +278,12 @@ clean this up. If they agree, discuss with them which copy to remove —
 recommend keeping the project-level one — and only then consult the
 "duplicate installs" note in the troubleshooting guide (see below) and remove
 anything. Technical detail only if asked. Do not proceed as if this were a
-single install. The section count is
-the most reliable of the three signals: instruction files are never merged,
-so this section appears once per active install, whereas the harness may
-merge two imports of the same memory file into one. A second occurrence of
-any of the three always means a second install — for example a user-level
-install left in place next to a project-level one.
+single install. The section count is the most reliable of the three signals:
+instruction files are never merged, so this section appears once per active
+install, whereas the harness may merge two imports of the same memory file
+into one. A second occurrence of any of the three always means a second
+install — for example a user-level install left in place next to a
+project-level one.
 
 Perform this check once, in your first response after a session start or a
 compaction (on platforms with a session-start hook, when the hook asks). Do
