@@ -210,7 +210,7 @@ Code (working on 2.1.177, broken on 2.1.246, flag `false` throughout):
 
 **So do not assume "the upgrade reset my approval."** Check whether it was ever `true`. The fix is the same
 either way; the story matters because it tells you the symlink-traversal install pattern sits on a code path
-upstream is actively tightening, and will keep breaking. See the supported alternative under *Fix*.
+upstream is actively tightening, and will keep breaking — re-verify with the probe after every CLI upgrade.
 
 ### Confirming it
 
@@ -353,8 +353,7 @@ awaiting an upstream fix.
 3. **Import paths.** Confirm each `@` path resolves from the instruction file's own location (relative
    imports resolve relative to the importing file, not the cwd), and that the block sits between the
    `<!-- collab-memory-system:start -->` / `:end` markers.
-4. **Additional-directories route.** See the supported alternative above.
-5. **Last resort — remove the symlink from the equation.** Replace it with a real directory inside the
+4. **Last resort — remove the symlink from the equation.** Replace it with a real directory inside the
    project, or run the CLI from a directory containing both project and knowledge repo. This trades away
    the shared-repo pattern; treat as a workaround and record why.
 
@@ -408,7 +407,7 @@ the fix, and wait for their go-ahead; back up every file you are about to change
 
 - **A user-level install next to a project-level one** — the common case. Propose to keep the
   project-level install and remove the user-level one; collabmem is always installed at project level
-  (see `setup-options.md`). Removal means, for the user-level install only: delete its import block
+  (see `setup-options.md` in the collabmem repository). Removal means, for the user-level install only: delete its import block
   (everything between the `<!-- collab-memory-system:start -->` and `:end -->` markers, or the whole
   `~/.claude/CLAUDE.md` if it contains nothing else), remove its `collab-memory-` hook entry from
   `~/.claude/settings.json`, and delete its collabmem hook script (`~/.claude/hooks/collab-memory-hook.sh`).

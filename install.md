@@ -40,7 +40,7 @@ collabmem can be set up in three ways. The choice is made in Step 2, and `setup-
 
 **Terminology in the steps below.** The installation steps distinguish only two mechanical cases. **Solo** means `collab/` is a real, tracked directory; this covers both the solo setup and the standalone memory project, which install identically. **Team** means `collab/` is a symlink into the shared-knowledge repository; this is the distributed setup.
 
-**Project root.** Throughout this document, "project root" means the root of the repository the AI session is rooted in: the code repository, or the memory repository for a standalone memory project. In the distributed setup it never means the separate shared-knowledge repository.
+**Project root.** Throughout this document, "project root" means the directory the AI session is rooted in. For the solo and distributed setups that is the root of the code repository. For a standalone memory project it is the memory project's own directory: the repository root when the project has its own repository, or `projects/<name>/` when it lives inside a shared-knowledge repository that holds several memory projects. In the distributed setup it never means the separate shared-knowledge repository.
 
 **Memory-system traces.** The files collabmem puts in the project *besides* the memory itself: `.collab-config` at the project root, the import block in the instruction file, and `.claude/` with the hook script and its `settings.json` entries. In a distributed setup these are the only collabmem files in the code repository, and the user chooses in Step 3 whether they are committed or git-ignored.
 
@@ -69,7 +69,13 @@ git clone https://github.com/visionscaper/collabmem.git /tmp/collabmem
 Before doing anything, examine the target project:
 
 1. **Instruction file** — Check if the project has an instruction file (e.g., `CLAUDE.md`, `.cursorrules`, or equivalent). Read its contents. Note:
-   - Does it already contain collab-memory-system markers (`<!-- collab-memory-system:start -->`)?  If yes, the system is already installed — inform the user and stop.
+   - Does it already contain collab-memory-system markers (`<!-- collab-memory-system:start -->`)? If yes, the system is already installed — inform the user and stop.
+
+     **One exception: a teammate's fresh clone.** If the markers are present but there is no `collab` symlink or directory at the project root, this is a clone of a distributed install whose traces were committed. Nothing needs installing. Only the two per-machine steps are missing:
+     1. Create the `collab` symlink to the project's directory in the shared-knowledge repository. Ask the user where their clone of that repository is; the command is in Step 4 point 3.
+     2. Run the Step 8 probe. It will most likely need the external-includes approval; the troubleshooting guide's Issue 1 covers that.
+
+     Then stop.
    - Does it contain instructions that contradict the methodology (e.g., "never write notes", "don't ask questions")?  Flag these for the user.
 
 2. **Existing hooks and user-level installs** — Check for hooks at two levels:
@@ -97,7 +103,7 @@ Read `setup-options.md` first — it describes the three setups, where files liv
 
 **If standalone memory project:** `collab/` at the project root, tracked in the repository, instruction file and hooks in the same repository — mechanically identical to solo, so follow the solo path in the steps below. Three things are different from a code project, handle them as you go:
 
-- **A git repository with a remote is required, not optional.** The remote is the memory's backup, and a standalone memory often becomes shared later (a second machine, a second person) — with a remote in place that is a clone, not a migration. The starting point may be a plain folder: if it is not a git repository yet, run `git init` in it first. If it has no remote yet, offer to create one now (with `gh repo create --private` if available, otherwise give manual instructions), before Step 4. Verify it is private unless the user explicitly wants otherwise.
+- **A git repository with a remote is required, not optional.** The remote is the memory's backup, and a standalone memory often becomes shared later (a second machine, a second person) — with a remote in place that is a clone, not a migration. If the project is a directory inside an existing shared-knowledge repository (see `setup-options.md`, "Multiple memory projects in one repository"), that repository and its remote already serve; nothing to create. Otherwise the starting point may be a plain folder: if it is not a git repository yet, run `git init` in it first, and if it has no remote yet, offer to create one now (with `gh repo create --private` if available, otherwise give manual instructions), before Step 4. Verify it is private unless the user explicitly wants otherwise.
 - **The memory is committed and pushed after every `updatemem`** (methodology, shared-knowledge repo rules — a standalone memory repository with a remote follows them). At the end of this installation, commit and push the installed files too.
 - **There is no code to seed from.** World-model population (Step 7) draws on the user's own knowledge and documents, not on a codebase. Use the standalone variant of the Step 7 questions, and if the user has existing documents, consider `docs/`.
 
@@ -434,12 +440,12 @@ Run through this checklist and report results to the user. Paths use `<collab>` 
 **Final check — probe what actually loads (Claude Code).** The checks above verify files on disk; this one verifies the harness really injects them into context. Run a fresh, non-interactive probe from the project directory:
 
 ```bash
-claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation or anything else." < /dev/null
+claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Begin your reply with the exact banner line your load-check instructions specify, then answer present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation." < /dev/null
 ```
 
 **Show the probe's raw output to the user verbatim — on both success and failure — then give a one-line plain-language translation.** Do not summarise it away or just declare success. This also holds for a re-run after a fix: paste the second probe's output too, so the user sees the SUCCESS banner with their own eyes rather than your report of it. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing, explaining the problem and fix in plain language (no jargon about markers/imports/config; offer technical detail only if the user asks). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output.
 
-**The probe's result is the banner.** If the output contains `LOADED SUCCESSFULLY` or `FAILED TO LOAD`, that is the load-check result; anything the CLI prints around it (warnings about connectors, API keys, trust) is noise. Only a probe that produced *no banner* — because it failed to authenticate or errored out before answering — is not a load-check result: it says nothing about the markers, so do not treat it as a missing marker and do not start diagnosing imports. Find out why it failed. If the user can fix it, tell them how in plain language (e.g. an expired CLI login: run `claude login` in a terminal; a missing CLI: install it), then re-run the probe.
+**The probe's result is its answer.** If the output contains the `LOADED SUCCESSFULLY` or `FAILED TO LOAD` banner, or the present/absent answer for the two markers, that is the load-check result; anything the CLI prints around it (warnings about connectors, API keys, trust) is noise. Only a probe that produced *no answer at all* — because it failed to authenticate or errored out before answering — is not a load-check result: it says nothing about the markers, so do not treat it as a missing marker and do not start diagnosing imports. Find out why it failed. If the user can fix it, tell them how in plain language (e.g. an expired CLI login: run `claude login` in a terminal; a missing CLI: install it), then re-run the probe.
 
 If the CLI is not available at all — e.g. the Claude native app without a terminal install, and the user does not want to install it — fall back to a fresh session: the load-check block prints the `LOADED SUCCESSFULLY` or `FAILED TO LOAD` banner in its first response, which establishes the same fact.
 
@@ -477,7 +483,7 @@ Append a note to `<collab>/notes.md` (append to the bottom — episodic memory i
 - Import placement: <at end of file | at start | after specific section> in <instruction file name>
 - Git tracking: `.collab-config` <committed | git-ignored>; collab directory <tracked | git-ignored | external repo>
 - Hooks installed: <yes (Claude Code: SessionStart, UserPromptSubmit) | skipped (other platform)>
-- Hook overlap handling: <none | integrated | kept both | replaced>
+- Hook overlap handling: <none | kept both | called from existing hook | replaced>
 - Initial world population: <done | skipped>. If done, summarise what kinds of context the user provided and which world files were populated.
 - Anything else relevant: issues encountered and how they were resolved, user decisions made during install, deviations from defaults.
 

@@ -95,7 +95,7 @@ Used by teams, by single users working from several machines, and by single user
 
 - The memory lives in a separate shared-knowledge repository.
 - Each clone of the code repository has a git-ignored symlink named `collab` pointing into the shared-knowledge repository. Every developer creates their own.
-- The instruction file and hooks live in the code repository. They are per clone: if the instruction file is git-ignored, each developer has their own copy; if it is committed, all clones share it, but the hooks and settings may still differ per machine. Note what that means for the stamps: a committed instruction file carries one stamp for all clones, so only the hook's stamp then says something about *this* clone. The upgrade procedure checks both.
+- The instruction file and hooks live in the code repository. They are per clone: if the instruction file is git-ignored, each developer has their own copy; if it is committed, all clones share it, but the hooks and settings may still differ per machine. Note what that means for the stamps: committed files carry one stamp for all clones — with the default of committing all traces, both the block's and the hook's stamp are shared, and a clone is behind only until it pulls. Only git-ignored copies have a stamp of their own. The upgrade procedure checks both stamps either way.
 
 Two patterns for the shared-knowledge repository:
 
@@ -143,7 +143,7 @@ The stamp means: this copy was checked, and updated where needed, up to that ver
 | | Solo | Standalone memory project | Distributed |
 |---|---|---|---|
 | Memory lives in | the code repo | its own repo, or a project directory in a shared-knowledge repo | a shared-knowledge repo |
-| Session rooted in | the code repo | the memory repo | the code repo |
+| Session rooted in | the code repo | the memory project's directory | the code repo |
 | Instruction file and hooks in | the code repo | the memory repo, committed | each code-repo clone |
 | Copies of the per-clone part | one | one | one per clone |
 | Upgrade | single pass | single pass | shared part once, per-clone part per clone |
