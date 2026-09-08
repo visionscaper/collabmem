@@ -97,14 +97,13 @@ print_load_check() {
     echo "   (COLLABMEM-MARKER- joined with METHODOLOGY), or this collabmem hook"
     echo "   output appears more than once in your context, then more than one"
     echo "   collabmem install is active over the same memory. Tell the user before"
-    echo "   doing anything else, in plain language, first what it means and what"
-    echo "   to do: the memory system is installed twice on this machine, once for"
-    echo "   this project and once for all projects, and the extra copy should be"
-    echo "   removed. Say which copy you recommend keeping (the project-level one)"
-    echo "   and ask for the go-ahead before consulting the \"duplicate installs\""
-    echo "   note in the troubleshooting guide (same locations as above) and"
-    echo "   removing anything. Technical detail only if asked. Do not proceed as"
-    echo "   if this were a single install."
+    echo "   doing anything else, in plain language: the memory system is active"
+    echo "   twice in this session, and the extra copy should be removed. Ask"
+    echo "   whether they want to clean this up. If they agree, discuss with them"
+    echo "   which copy to remove (recommend keeping the project-level one) and"
+    echo "   only then consult the \"duplicate installs\" note in the troubleshooting"
+    echo "   guide (same locations as above) and remove anything. Technical detail"
+    echo "   only if asked. Do not proceed as if this were a single install."
 }
 
 # --- Memory triggers ---

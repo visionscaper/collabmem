@@ -264,13 +264,12 @@ If this COLLABMEM-LOAD-CHECK section, the collabmem methodology marker
 (`COLLABMEM-MARKER-` joined with `METHODOLOGY`), or the collabmem hook output
 appears more than once in your context, then more than one collabmem install
 is active over the same memory. Tell the user before doing anything else, in
-plain language, first what it means and what to do: the memory system is
-installed twice on this machine, once for this project and once for all
-projects, and the extra copy should be removed. Then say which copy you
-recommend keeping (the project-level one) and ask for the go-ahead before
-consulting the "duplicate installs" note in the troubleshooting guide (see
-below) and removing anything. Technical detail only if asked. Do not proceed
-as if this were a single install. The section count is
+plain language: the memory system is active twice in this session, and the
+extra copy should be removed. Ask whether they want to clean this up. If they
+agree, discuss with them which copy to remove — recommend keeping the
+project-level one — and only then consult the "duplicate installs" note in
+the troubleshooting guide (see below) and remove anything. Technical detail
+only if asked. Do not proceed as if this were a single install. The section count is
 the most reliable of the three signals: instruction files are never merged,
 so this section appears once per active install, whereas the harness may
 merge two imports of the same memory file into one. A second occurrence of
@@ -435,12 +434,12 @@ Run through this checklist and report results to the user. Paths use `<collab>` 
 **Final check — probe what actually loads (Claude Code).** The checks above verify files on disk; this one verifies the harness really injects them into context. Run a fresh, non-interactive probe from the project directory:
 
 ```bash
-claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves." < /dev/null
+claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Answer with present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation or anything else." < /dev/null
 ```
 
 **Show the probe's raw output to the user verbatim — on both success and failure — then give a one-line plain-language translation.** Do not summarise it away or just declare success. This also holds for a re-run after a fix: paste the second probe's output too, so the user sees the SUCCESS banner with their own eyes rather than your report of it. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing, explaining the problem and fix in plain language (no jargon about markers/imports/config; offer technical detail only if the user asks). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output.
 
-**A probe that fails to authenticate or errors out before answering is not a load-check result** — it says nothing about the markers, so do not treat it as a missing marker and do not start diagnosing imports. Find out why it failed. If the user can fix it, tell them how in plain language (e.g. an expired CLI login: run `claude login` in a terminal; a missing CLI: install it), then re-run the probe.
+**The probe's result is the banner.** If the output contains `LOADED SUCCESSFULLY` or `FAILED TO LOAD`, that is the load-check result; anything the CLI prints around it (warnings about connectors, API keys, trust) is noise. Only a probe that produced *no banner* — because it failed to authenticate or errored out before answering — is not a load-check result: it says nothing about the markers, so do not treat it as a missing marker and do not start diagnosing imports. Find out why it failed. If the user can fix it, tell them how in plain language (e.g. an expired CLI login: run `claude login` in a terminal; a missing CLI: install it), then re-run the probe.
 
 If the CLI is not available at all — e.g. the Claude native app without a terminal install, and the user does not want to install it — fall back to a fresh session: the load-check block prints the `LOADED SUCCESSFULLY` or `FAILED TO LOAD` banner in its first response, which establishes the same fact.
 

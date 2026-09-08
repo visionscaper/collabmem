@@ -477,7 +477,7 @@ Extensions follow the same patterns as the core system: append-only episodic fil
 
 When the user includes `upgrademem` in their message, first confirm that they want to upgrade the collabmem memory system — `upgrademem` and `updatemem` are easy to confuse.
 
-If the user confirms, upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the instructions in `upgrade.md` from the clone.
+If the user confirms, upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location (a full clone, not a shallow `--depth 1` one — the upgrade compares against older commits) and following the instructions in `upgrade.md` from the clone.
 
 ### 14. helpmem — Help with the Memory System
 

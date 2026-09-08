@@ -10,16 +10,49 @@ collabmem is a set of files. Where those files live depends on how you use it: a
 - where the instruction file and the hooks are placed
 - whether upgrading once upgrades everything, or whether some parts must be upgraded per copy
 
+## Terms
+
+The rest of this document uses these terms, and only these, for the things involved.
+
+**Memory project.** One collabmem memory: a collab directory with its notes, indexes, and world files, plus the settings that make the AI load it. Every setup below is about where one memory project lives.
+
+**Code (or other work) repository** — short: *code repository*. The git repository holding the work the memory is about: code, but just as well documents, research, or anything else worked on in a repository. A memory project has one code repository in the distributed and solo setup options, and none in the standalone option.
+
+**Shared-knowledge repository.** A git repository whose purpose is memory: it holds one or more memory projects and no code. This is the methodology's term; "memory repository" means the same thing.
+
+**Clone.** One checked-out copy of a repository on one machine. Several people, or one person on several machines, means several clones of the same repository.
+
+**Project root.** The directory the AI session is rooted in, also called the session root: the root of the code repository, or the memory project's own directory. The instruction file and the hooks always live here.
+
+**Shared part and per-clone part.** The two parts every install is made of, defined fully in "The two parts of an install" at the end. In short: the shared part is what lives in the collab directory; the per-clone part is what lives at the project root to load it, and it exists once per clone.
+
 ## Where the instruction file and hooks go
 
-Always at **project level**, in the repository the session is rooted in:
+Always at **project level**, at the project root (see Terms):
 
 - `./CLAUDE.md` or `.claude/CLAUDE.md` for the instruction file
 - `.claude/hooks/` and `.claude/settings.json` for the hooks
 
-Which repository that is depends on the setup. It is the code repository in the solo and distributed setups, and the memory repository in the standalone setup, see the next section.
+Which repository that is depends on the setup. It is the code repository in the solo and distributed setups, and the memory project's own directory in the standalone setup, see "The three setups" below.
 
 Never install into a user-level instruction file such as `~/.claude/CLAUDE.md`. A user-level file loads in every session on the machine. One project's memory, hooks, and load-check would then fire in every other directory too, and relative paths would have no fixed project root to resolve from. A user-level install next to a project-level one is a duplicate install; see the troubleshooting guide.
+
+## Multiple memory projects in one repository
+
+A shared-knowledge repository does not have to serve a single memory project. One repository can hold many, each under its own directory:
+
+```
+shared-knowledge/
+├── projects/project-x/collab/
+├── projects/project-y/collab/
+└── projects/project-z/collab/
+```
+
+Each memory project decides for itself which of the setups below it uses. A memory project with a code repository is a distributed project: the code repository reaches this directory through its `collab` symlink. A memory project without a code repository is a standalone memory project: sessions are rooted in its directory, and its instruction file and hooks live in that directory's `.claude/`, committed with the memory. Mixing the two in one repository is normal. An organisation's shared-knowledge repository typically has both: some projects are code, some are not.
+
+The advantage: all your memories are together, in one place to back up, search, and reason across.
+
+The cost: pulls and pushes cover the whole repository. Before you can push your project's changes you pull everyone's, including changes to projects you do not work on, and merge friction in one project is felt by all. Commits should be scoped to the project directory being worked on.
 
 ## The three setups
 
@@ -46,12 +79,12 @@ Why it is discouraged:
 
 Used when there is no code repository, or when the memory is the work itself. Examples: an organisation-level memory, a research or business project, a non-technical user's working memory.
 
-- The repository contains the collab directory and nothing else that is worked on independently.
-- The instruction file and hooks live in this repository's own `.claude/`, and are committed with it.
-- Sessions are started inside this repository.
+- The memory project has its own repository, or is a project directory inside a shared-knowledge repository that holds several memory projects (see "Multiple memory projects in one repository" above). Either way it contains the collab directory and nothing else that is worked on independently.
+- The instruction file and hooks live in the project's own `.claude/`, and are committed with it.
+- Sessions are started inside the project: the repository root, or the project directory in a shared repository. Commits are scoped to that project.
 - Because the per-clone part is committed, every clone of the repository gets the same copy on pull. There is one copy of everything, as in the solo setup, even when several people or machines use it.
 
-Give the repository a remote, and commit and push after every `updatemem`. With a remote in place, a standalone memory repository is by default a shared-knowledge repository in the methodology's sense, and its pull and push rules apply. Two reasons for the remote:
+Give the repository a remote, and commit and push after every `updatemem`. With a remote in place, a standalone memory project's repository is by default a shared-knowledge repository in the methodology's sense, and its pull and push rules apply. Two reasons for the remote:
 
 - the remote is the backup of the memory
 - a solo memory often becomes a shared one later, when a second machine or a second person joins; with a remote in place, that is a clone, not a migration
@@ -66,7 +99,7 @@ Used by teams, by single users working from several machines, and by single user
 
 Two patterns for the shared-knowledge repository:
 
-- **One repository for all projects** — for example `shared-knowledge/projects/project-x/collab/` and `shared-knowledge/projects/project-y/collab/`, leaving room for other project material next to each `collab/`. Centralises team knowledge, simplifies cross-project awareness, one access list to manage. The good default for most teams.
+- **One repository for all projects** — for example `shared-knowledge/projects/project-x/collab/` and `shared-knowledge/projects/project-y/collab/`, leaving room for other project material next to each `collab/`. Centralises team knowledge, simplifies cross-project awareness, one access list to manage. The good default for most teams. Such a repository may also hold standalone memory projects next to the distributed ones; see "Multiple memory projects in one repository" above.
 - **One repository per project** — when projects have different teams with different access, or must stay fully isolated, for example for client confidentiality or regulatory reasons.
 
 Consequences for upgrading:
@@ -109,7 +142,7 @@ The stamp means: this copy was checked, and updated where needed, up to that ver
 
 | | Solo | Standalone memory project | Distributed |
 |---|---|---|---|
-| Memory lives in | the code repo | its own repo | a shared-knowledge repo |
+| Memory lives in | the code repo | its own repo, or a project directory in a shared-knowledge repo | a shared-knowledge repo |
 | Session rooted in | the code repo | the memory repo | the code repo |
 | Instruction file and hooks in | the code repo | the memory repo, committed | each code-repo clone |
 | Copies of the per-clone part | one | one | one per clone |
