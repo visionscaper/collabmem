@@ -221,31 +221,42 @@ Use a relative path when the shared-knowledge repository sits next to the code r
 
 **Tell the user what now exists.** In a few sentences, not as a file listing. The memory directory and where it is. That it holds two kinds of memory: notes on what happened and why, and a world model, the current understanding of the project and the user. And the config file. In a distributed setup also the symlink.
 
-### Step 5: Configure Instruction File
+### 5 - Adding the collabmem block to the instruction file
 
-Insert the import block into the project's instruction file at the chosen placement (default: end of file). If no instruction file exists, create one (e.g., `CLAUDE.md`).
+The block below makes the AI load the memory at the start of every session. It goes into the project's instruction file for the AI, such as `CLAUDE.md`. If there is none, create `CLAUDE.md`.
 
-**Always install at project level** — the instruction file in the repository the session is rooted in (`./CLAUDE.md` or `.claude/CLAUDE.md`): the code repository for the solo and distributed setups, the memory repository for a standalone memory project (see `setup-options.md`). Never a user-level file such as `~/.claude/CLAUDE.md`: it loads in every session on the machine, so one project's memory, hooks, and load-check would fire in every other directory too, and relative paths would have no fixed project root to resolve from.
+#### 5.1 - Where the block goes
 
-**Never overwrite existing content.** Insert the block at the chosen position, preserving everything else.
+Always in the instruction file of the project the session is rooted in: `./CLAUDE.md` or `.claude/CLAUDE.md`. Never in a user-level file such as `~/.claude/CLAUDE.md`. That file loads in every session on the machine, so one project's memory would load everywhere.
 
-**Before inserting, check the following:**
+Within the file: at the end, unless the user chose another place.
 
-- **Import path resolution — CRITICAL:** Import paths (e.g., `@collab/methodology.md`) resolve **relative to the instruction file where they appear**, not relative to the project root. If the instruction file is at the project root (e.g., `./CLAUDE.md`), then `@collab/...` correctly reaches `./collab/...`. If the instruction file is in a subdirectory (e.g., `.claude/CLAUDE.md`), then `@collab/...` would look for `.claude/collab/...` which does not exist — **the import silently fails and no content is loaded**. Adjust the paths based on the instruction file's location:
-  - Instruction file at project root (`./CLAUDE.md`): use `@collab/...` as in the template below, and `@.collab-config` for the config file
-  - Instruction file in `.claude/` (`.claude/CLAUDE.md`): use `@../collab/...` — the `../` navigates up from `.claude/` to the project root where `collab/` lives (as a real directory or symlink) — and `@../.collab-config` for the config file
-  - **`.collab-config` is at the project root, not inside the collab directory.** Its import line is the one line in the block that does not go through `collab/`; keep that distinction when adjusting paths.
-  - Instruction file in another location of the repo: adjust the relative path accordingly so it navigates from the instruction file's directory to the `collab/` directory
-  - **External collab directory (outside the repo root):** Relative paths cannot reach outside the project root — this is a security restriction. Use absolute paths instead (e.g., `@~/workspace/shared-knowledge/projects/project-x/collab/methodology.md`). Note that absolute paths are not portable across machines or team members — each developer would need their own instruction file (git-ignored) with their local absolute paths. The symlink approach (see Step 2) avoids this by keeping the collab directory reachable via a relative path within the repo.
-  - **Team/symlink and external-directory installs (Claude Code):** imports that resolve outside the project need the per-project external-includes approval; the probe in Step 8 shows whether it is in place, and the troubleshooting guide (`clients/claude-code/troubleshoot.md`, Issue 1) has the fix. Do **not** add a `permissions.additionalDirectories` entry for this: tested on Claude Code 2.1.263, it has no effect on import loading either way, and it puts a machine-specific path into `settings.json`.
-- **Directory name:** If the user chose a custom directory name in Step 3, replace `collab/` throughout the template below with the chosen name.
-- **Troubleshooting-guide path (in the COLLABMEM-LOAD-CHECK section):** two different mechanisms resolve the paths in this block. `@` import paths are expanded by the harness at session start, **relative to the instruction file's location** — that is what the adjustment rule above is for. The local path `collab/docs/troubleshoot.md` is not an import: it is plain text the AI will later open with its file-reading tools, which resolve **from the project root**. So the import-path adjustment does NOT apply to it — leave it as-is even when the instruction file lives in `.claude/`. Only adapt it for a custom collab directory name, or make it absolute when the collab directory lives outside the repo without a symlink. The guide itself is client-specific — the URL fallback in the template points to the Claude Code guide (`clients/claude-code/troubleshoot.md` in the source repo); for other platforms, point to that platform's guide if one exists.
-- **Import syntax:** The `@path` syntax in the template below is Claude Code-specific. For other AI platforms, ask the user how their platform handles file imports or file-inclusion, and adapt the template accordingly. The heading structure (`##` grouping) applies regardless of platform — it ensures files compose into a consistent hierarchy when loaded into context.
-- **Blank line:** If inserting at the end of an existing file, add a blank line before `<!-- collab-memory-system:start -->` to visually separate the collab block from the user's existing content.
-- **The load-check does not apply to the installing session.** The check in the template below is for sessions that *start* with this block in place. The session doing the installation never loaded the memory imports and cannot; do not run the check on it, and do not report a FAILED banner for it. The Step 8 probe, a fresh session, is the verification.
-- **Version stamp:** the first line inside the markers records the collabmem version this block was checked and updated up to. Replace `<version>` with the value in this repository's `collab/.collab-memory-system`. The instruction file and the hook are per-clone files — every clone, machine, or scope that imports the same memory has its own copy — so the shared version marker cannot tell whether *this* copy is current; the stamp can. `upgrade.md` compares it against the installed version. Keep it as plain text, not an HTML comment. (The hook carries its own stamp in its header; it is copied as-is.)
+#### 5.2 - The import paths depend on where the instruction file is
 
-The import block template (paths shown for instruction file at project root — adjust as described above):
+The lines starting with `@` are imports. They are resolved relative to the instruction file, not to the project root. A wrong path fails silently: nothing loads, and nothing warns you.
+
+| Instruction file | Memory files | Config file |
+|---|---|---|
+| `./CLAUDE.md` | `@collab/...` | `@.collab-config` |
+| `.claude/CLAUDE.md` | `@../collab/...` | `@../.collab-config` |
+
+The config file is at the project root, not inside the memory directory. Its line is the only one that does not go through `collab/`.
+
+The `@` syntax is specific to Claude Code. On another platform, ask the user how it includes files, and adapt the lines.
+
+#### 5.3 - Three more things to adjust
+
+- **The directory name.** If the user chose another name than `collab`, use it throughout the block.
+- **The version stamp.** Replace `<version>` in the block's first line with the value in `<collabmem>/collab/.collab-memory-system`. Keep it as plain text. It tells a later upgrade whether this copy of the block is current.
+- **The troubleshooting-guide path** in the load-check section, `collab/docs/troubleshoot.md`. It is not an import: the AI opens it later with its file tools, which start from the project root. So do not adjust it along with the import paths. Change it only for another directory name.
+
+#### 5.4 - The load check in the block is not for this session
+
+The block contains a load check. It is meant for sessions that start with the block in place. This session never loaded the memory and cannot. Do not run the check on yourself, and do not report its failure banner. The load check of a fresh session comes later, under "Verifying the installation".
+
+#### 5.5 - The block
+
+The paths are shown for an instruction file at the project root.
 
 ```markdown
 <!-- collab-memory-system:start -->
