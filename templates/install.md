@@ -427,42 +427,7 @@ From now on the hook's output appears in your own context, with every user messa
 
 Skip this step. The memory system works without hooks; they add the load check at session start and the date and time.
 
-### Step 7: Initial World Population
-
-Ask the user:
-
-> "Would you like to provide some initial context? For example:
-> - What is this project about and what is your role in it?
-> - Are there things you are currently working on?
-> - Do you have any preferences for how we collaborate (communication style, level of detail, etc.)?
->
-> Anything else you'd like me to know? You can also skip this — the system will learn naturally as we collaborate."
-
-For a **standalone memory project** there is no codebase to anchor these questions, so ask about the person and the purpose instead:
-
-> "To give this memory a good start, could you tell me a bit about:
-> - yourself — who you are and what you do or work on?
-> - what you want to use this long-term memory for?
-> - the project, study, or business it is about — anything you'd like me to know from the start?
-> - how you like to collaborate (communication style, level of detail)?
->
-> You can also skip this — the memory will grow as we work together."
-
-**If the user responds with information:**
-- Parse their free-form answer
-- Distribute relevant content across the appropriate world files, in this order:
-  1. Personal background, project description, business context, constraints, tech stack → `world/context.md` (frames everything else)
-  2. Communication preferences, code style, working approach → `world/preferences.md`
-  3. Domain knowledge, procedures, specific facts → Tier 2 files (`world/domain.md`, `world/how-tos.md`, `world/factoids.md`), with doc references where applicable
-  4. Current work in progress, active tasks, open questions → `world/state.md` (last — depends on knowing what exists)
-- Replace the HTML comment placeholders with the actual content, keeping the section headings
-- Show the user what you wrote in each file
-
-**If the user skips:** leave the template files as they are. The word cues and conceptual triggers in the methodology will help populate these files organically during normal collaboration.
-
-**Existing documentation:** If the project has existing documentation (design docs, analysis reports, reference material), discuss with the user whether project-specific docs should be moved to `collab/docs/`. This makes the collab directory self-contained and enables simple relative references (`docs/filename.md`). Non-project docs (shared across projects, owned by other teams) should stay in their original location and be referenced with absolute paths. After moving or identifying docs, add references to them in the relevant world model files (see the doc reference convention in the World Model Protocol in `methodology.md`).
-
-### Step 8: Verify Installation
+### 7 - Verifying the installation
 
 Run through this checklist and report results to the user. Paths use `<collab>` for the collab directory (actual location depends on solo/team choice):
 
@@ -499,6 +464,35 @@ If any checks fail, report which ones and ask the user how to proceed. For issue
 - **Solo:** commit in the code repo; pushing is the user's normal workflow.
 
 Continue to Step 9 if all checks pass.
+
+### 8 - Seeding the memory with the user's context
+
+The memory starts empty. Ask the user for some high-level context, and strongly recommend giving it. Say why: it frames everything the AI does from now on, and high-level context rarely comes up by itself later in the work.
+
+Ask this:
+
+> "To give the memory a good start, could you tell me in a few sentences:
+>
+> - what this project is about, and what your role in it is?
+> - what you are currently working on?
+> - how you like to collaborate: communication style, level of detail?
+>
+> Anything else you want me to know is welcome too."
+
+For a standalone memory project there is no code to start from. Ask about the person and the purpose instead: who they are and what they do, what they want to use this memory for, and the project, study or business it is about.
+
+If the user does not want to do this now, accept that. But do not present skipping as just as good.
+
+**Writing it down.** Put the answers where they belong, in this order:
+
+1. `world/context.md`: who the user is, the project, the business, constraints, technology. It frames the rest.
+2. `world/preferences.md`: how they like to communicate and work.
+3. `world/domain.md`, `world/how-tos.md`, `world/factoids.md`: domain knowledge, procedures and specific facts, if any came up.
+4. `world/state.md`: what they are working on now.
+
+Replace the placeholder comments in those files with the content, and keep the headings. Then show the user what you wrote, so they can correct it.
+
+**Existing documents.** If the project has documents the AI should know, such as design documents or analyses, tell the user they can be brought into the memory's `docs/` directory, and offer to do that now or later.
 
 ### Step 9: Record Installation Note
 
