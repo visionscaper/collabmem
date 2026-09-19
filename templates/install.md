@@ -185,49 +185,41 @@ The defaults, and what they can be changed to:
 - **Where the collabmem block goes in the instruction file.** At the end by default, so the project's own instructions come first. It can also go at the start, or after a section the user names.
 - **In a solo setup: whether the memory is tracked in git.** Tracked by default. Untracked means adding `collab/` and `.collab-config` to `.gitignore`.
 
-### Step 4: Create Files
+### 4 - Creating the memory directory and the config file
 
-Copy the template files and set up the collab directory (and symlink for team installations).
+`<collabmem>` below is the folder where you cloned collabmem.
 
-1. **Copy `.collab-config` from `/path/to/collabmem/.collab-config` to the project root.** Set the `collab_dir=` value to the directory name chosen in Step 3 (defaults to `collab`). For team installations, this is the symlink name in the code repo (always relative) — the symlink handles redirection to the external location.
+**The config file.** Copy `<collabmem>/.collab-config` to the project root. Set `collab_dir=` to the name of the memory directory: `collab`, unless the user chose another name.
 
-2. **Copy the `collab/` directory contents to the target location.** Use a single recursive copy — do NOT create files one by one.
-   - For **solo**: `cp -r /path/to/collabmem/collab ./collab`
-   - For **team**: first ensure the parent directory exists (`mkdir -p /path/to/shared-knowledge/projects/<project-name>`), then copy: `cp -r /path/to/collabmem/collab /path/to/shared-knowledge/projects/<project-name>/collab`
+**The memory directory.** Copy it in one recursive copy, not file by file.
 
-3. **For team installations, create the symlink in the project root:**
-   ```bash
-   ln -s /path/to/shared-knowledge/projects/<project-name>/collab collab
-   ```
-   Use a relative path if the shared-knowledge repo is a sibling of the code repo (e.g., `../shared-knowledge/projects/<project-name>/collab`) — this makes the symlink portable across machines that follow the same layout convention. Otherwise use an absolute path.
+- Solo and standalone:
 
-4. **Apply git tracking choices:**
-   - For **solo** without git tracking: add `collab/` and `.collab-config` to the code repo's `.gitignore`. The trailing slash matches the directory name anywhere in the tree.
-   - For **team**: always add `/collab` to the code repo's `.gitignore` (it's a symlink at the project root, each dev creates their own). The leading slash anchors the entry to the repo root specifically. If the user chose to git-ignore the memory-system traces (Step 3), also add `.collab-config` and the new files among `CLAUDE.md` and `.claude/` to `.gitignore`.
+  ```bash
+  cp -r <collabmem>/collab ./collab
+  ```
 
-5. **After copying**, narrate to the user what was created — briefly explain each file's purpose. Paths below use `<collab>` to denote the collab directory (actual location depends on solo/team choice; `.collab-config` is always at the project root):
+- Distributed:
 
-   ```
-   .collab-config                → system settings (directory path, thresholds), always at project root
-   <collab>/.collab-memory-system  → version marker identifying this installation
-   <collab>/methodology.md         → your operating instructions for the memory system
-   <collab>/support.md             → the starmem procedure — supporting the project (read on demand)
-   <collab>/index.md               → episodic memory index — compact cue table (Tier 1, always in context)
-   <collab>/notes.md               → episodic memory — detailed notes (Tier 2, searched on demand)
-   <collab>/index-archive.md       → archived index entries after consolidation (Tier 2)
-   <collab>/docs/.gitkeep          → directory for long-form reference documents (Tier 2)
-   <collab>/world/index.md         → world model index — cue table to world knowledge (Tier 1)
-   <collab>/world/context.md       → personal, project, and business context (Tier 1)
-   <collab>/world/preferences.md   → user working preferences and communication style (Tier 1)
-   <collab>/world/state.md         → current mutable state — work in progress, todos (Tier 1)
-   <collab>/world/how-tos.md       → procedures for recurring tasks (Tier 2)
-   <collab>/world/domain.md        → domain-specific knowledge and decisions (Tier 2)
-   <collab>/world/factoids.md      → specific facts, numbers, references (Tier 2)
-   ```
+  ```bash
+  mkdir -p <shared-knowledge-repo>/projects/<project-name>
+  cp -r <collabmem>/collab <shared-knowledge-repo>/projects/<project-name>/collab
+  ```
 
-   For team installations, also narrate: "Created symlink `collab` → `<target path>` in the project root."
+**In a distributed setup: the symlink.** In the project root:
 
-   If the repository was not cloned locally (e.g., files were read via web fetch), read each template file from the remote repository and create it locally.
+```bash
+ln -s <shared-knowledge-repo>/projects/<project-name>/collab collab
+```
+
+Use a relative path when the shared-knowledge repository sits next to the code repository, for example `../shared-knowledge/projects/<project-name>/collab`. The symlink then also works on a teammate's machine with the same layout. Otherwise use an absolute path.
+
+**The `.gitignore` entries.**
+
+- Distributed: always add `/collab`. The symlink is never committed: committed symlinks do not survive on Windows, and every developer creates their own. If the user chose to git-ignore the memory-system traces, also add `.collab-config`, and whichever of `CLAUDE.md` and `.claude/` are new.
+- Solo, when the user chose not to track the memory: add `collab/` and `.collab-config`.
+
+**Tell the user what now exists.** In a few sentences, not as a file listing. The memory directory and where it is. That it holds two kinds of memory: notes on what happened and why, and a world model, the current understanding of the project and the user. And the config file. In a distributed setup also the symlink.
 
 ### Step 5: Configure Instruction File
 
