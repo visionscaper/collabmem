@@ -10,3 +10,6 @@
 # OS files
 .DS_Store
 Thumbs.db
+
+# Python bytecode (development tools)
+__pycache__/
