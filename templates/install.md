@@ -84,36 +84,48 @@ git clone https://github.com/visionscaper/collabmem.git /tmp/collabmem
 
 ## Installation Steps
 
-### Step 1: Assess Existing Setup
+### 1 - Finding out what the project has already
 
-Before doing anything, examine the target project:
+Before you change anything, look at what is there. Four checks, then tell the user.
 
-1. **Instruction file** — Check if the project has an instruction file (e.g., `CLAUDE.md`, `.cursorrules`, or equivalent). Read its contents. Note:
-   - Does it already contain collab-memory-system markers (`<!-- collab-memory-system:start -->`)? If yes, the system is already installed — inform the user and stop.
+#### 1.1 - Is collabmem installed here already?
 
-     **One exception: a teammate's fresh clone.** If the markers are present but there is no `collab` symlink or directory at the project root, this is a clone of a distributed install whose traces were committed. Nothing needs installing. Only the two per-machine steps are missing:
-     1. Create the `collab` symlink to the project's directory in the shared-knowledge repository. Ask the user where their clone of that repository is. If they do not have one yet, they need its location from a teammate and clone it first, as a sibling of the code repository. The symlink command is in Step 4 point 3.
-     2. Run the Step 8 probe. It will most likely need the external-includes approval; the troubleshooting guide's Issue 1 covers that.
+Look for an instruction file for the AI, such as `CLAUDE.md`, and read it.
 
-     Then stop.
-   - Does it contain instructions that contradict the methodology (e.g., "never write notes", "don't ask questions")?  Flag these for the user.
+If it contains the collabmem markers (`<!-- collab-memory-system:start -->`), collabmem is installed. Tell the user and stop.
 
-2. **Existing hooks and user-level installs** — Check for hooks at two levels:
-   - **User level:** Check `~/.claude/CLAUDE.md` (or the platform's equivalent) for `collab-memory-system` markers, and `~/.claude/settings.json` for a `collab-memory-` hook. If found, a user-level collabmem install exists — it would load in this project too, making the new install a duplicate (see `setup-options.md`, "Where the instruction file and hooks go"). Report it and ask the user how to proceed. Project-level installs are preferred over user-level ones; offer to remove the user-level install (its import block and hook only, never the memory it points at) so this project-level install can take its place. Installing project-level next to it, without removing it, is not an option.
-   - **Project level:** Check if `.claude/settings.json` (or equivalent) exists and contains hook definitions.
-   - **Already running:** Look at `system-reminder` output in the current session for evidence of hooks already firing (e.g., timestamps, prompts, or other injected text on `SessionStart` or `UserPromptSubmit`). These may come from user-level or organization-level settings that are not visible in project files.
+**One case looks the same but is unfinished: a teammate's fresh clone.** The markers are there, but there is no `collab` symlink or directory at the project root. This is a clone of a distributed install whose memory-system traces were committed. Nothing needs installing. Two steps on this machine are missing:
 
-   Note any hooks on `SessionStart` or `UserPromptSubmit` events — these overlap with the collab system's hooks. See `clients/claude-code/hooks/collab-memory-hook.sh` in this repository for the hooks that will be installed.
+1. Create the `collab` symlink to the project's directory in the shared-knowledge repository. Ask the user where their clone of that repository is. If they have none yet, they need its location from a teammate, and clone it next to the code repository.
+2. Run the load check described under "Verifying the installation". It will most likely need the approval for external imports; Issue 1 of the troubleshooting guide covers that.
 
-3. **Directory conflicts** — Check if `collab/` already exists at the project root (as a directory or a symlink). Check if `.collab-config` already exists at the project root.
+Then stop.
 
-4. **Existing notes or journaling** — Check if there are instructions that indicate the project uses a notes or journaling system (e.g., instructions to write notes, maintain a journal, update an index, or log experiments). Look for referenced files like `notes.md`, `dev-notes.md`, `journal.md`, `experiment-logs.md`, or sections in the instruction file that serve as a history of past work. Also check whether the instruction file acts as an index (keyword-rich summaries pointing to detailed files). If the user mentions an existing system, investigate its structure.
+Also note instructions that contradict collabmem, such as "never write notes".
 
-5. **Report findings** — Tell the user what you found: instruction file status, existing hooks, existing notes/journals, any conflicts. If there are conflicts, ask how to proceed before continuing.
+#### 1.2 - Hooks and other collabmem installs that could clash
 
-### Step 2: Which Setup?
+- **A user-level collabmem install.** Check `~/.claude/CLAUDE.md` for the collabmem markers, and `~/.claude/settings.json` for a `collab-memory-` hook. A user-level install loads in every project, so installing here as well would make a duplicate. Installing next to it is not an option. Offer to remove the user-level install: its block and its hook only, never the memory it points at.
+- **Project-level hooks.** Check `.claude/settings.json` for hook definitions.
+- **Hooks that are running already.** Their output shows up in your own context, as text injected at the start of the session or with each user message. They can come from settings you cannot see in the project.
 
-Read `setup-options.md` first — it describes the three setups, where files live in each, and why. Then explain the options to the user in a short and simple way, in plain language, and ask which one fits. **For each option, say first who it is for and when to choose it; the technical shape (where the memory lives, symlinks) comes second, briefly.** The user decides by their situation, not by file layout. Offer to answer any questions before they choose — the user may not know what a shared-knowledge repository or a symlink is; help them decide rather than assuming. A starting point:
+Note every hook on the `SessionStart` or `UserPromptSubmit` event. collabmem's hook uses the same two events.
+
+#### 1.3 - Names that are taken
+
+Check whether `collab/` or `.collab-config` exists already at the project root.
+
+#### 1.4 - An existing notes system
+
+Check whether the project already keeps notes or a journal for the AI: instructions to write notes, or files such as `notes.md` or `journal.md`. The instruction file itself can be one, when it holds summaries that point to detailed files. Such a system can be migrated later.
+
+#### 1.5 - Telling the user what you found
+
+Tell the user what you found in each of the four checks, and what it means for the installation. When something is in the way, ask how to proceed.
+
+### 2 - Choosing the setup that fits the user
+
+collabmem can be set up in three ways. Ask the user which one fits, with this text:
 
 > "How will this memory be used? Three options:
 >
@@ -121,53 +133,57 @@ Read `setup-options.md` first — it describes the three setups, where files liv
 > - **Standalone memory project** — for when there is no code at all: an organisation's memory, a research or business project, a non-technical working memory. This repository *is* the project, and the memory lives inside it.
 > - **Solo, memory inside the code repository** — only for a private repository used by you alone, committing on the main branch. Everything in one place, but discouraged as soon as branches are involved: memory committed on a branch is invisible elsewhere until it merges."
 
-**If standalone memory project:** `collab/` at the project root, tracked in the repository, instruction file and hooks in the same repository — mechanically identical to solo, so follow the solo path in the steps below. Three things are different from a code project, handle them as you go:
+Then continue with the part below that matches the user's choice.
 
-- **A git repository with a remote is required, not optional.** The remote is the memory's backup, and a standalone memory often becomes shared later (a second machine, a second person) — with a remote in place that is a clone, not a migration. If the project is a directory inside an existing shared-knowledge repository (see `setup-options.md`, "Multiple memory projects in one repository"), that repository and its remote already serve; nothing to create. Otherwise the starting point may be a plain folder: if it is not a git repository yet, run `git init` in it first, and if it has no remote yet, offer to create one now (with `gh repo create --private` if available, otherwise give manual instructions), before Step 4. Verify it is private unless the user explicitly wants otherwise.
-- **The memory is committed and pushed after every `updatemem`** (methodology, shared-knowledge repo rules — a standalone memory repository with a remote follows them). At the end of this installation, commit and push the installed files too.
-- **There is no code to seed from.** World-model population (Step 7) draws on the user's own knowledge and documents, not on a codebase. Use the standalone variant of the Step 7 questions, and if the user has existing documents, consider `docs/`.
+**Standalone memory project**
 
-Continue to Step 3.
+A git repository with a private remote is required. The remote is the memory's backup, and it makes sharing the memory later a matter of cloning.
 
-**If solo:** `collab/` at project root, tracked in the code repo. Memory changes are committed after every `updatemem`; pushing goes with the user's normal code workflow (the methodology's pull/push rules apply to shared-knowledge repos only, not to a code repo). Continue to Step 3.
+If the folder is not part of a repository already, run `git init` and offer to create a private remote, before you create any files.
 
-**If distributed:** Ask:
+**Solo**
 
-> "Do you already have a shared-knowledge repository for this team?"
+Nothing more to settle here.
 
-- **Yes** — Ask the user for its location (local path). Explain that the typical team pattern is `<shared-knowledge-repo>/projects/<project-name>/collab/` — confirm with the user where the new project's memory directory should go.
-- **No** — Explain the two patterns (paraphrase from the README "Distributed Collaboration" section): single shared-knowledge repo containing all projects, or per-project memory repos. Recommend the single shared-knowledge repo as the default unless the user has access-control reasons for per-project repos. Offer to help create it:
-  - If `gh` is available, offer to create a new GitHub repo (e.g., `gh repo create <org>/shared-knowledge --private`) and clone it locally. Confirm the org/name with the user before creating.
-  - Otherwise, give the user manual instructions to create the repo and clone it. Wait for the user to confirm it's ready.
-  - Once the shared repo exists, the new project's memory will live at `<shared-repo>/projects/<project-name>/collab/`.
+**Distributed**
 
-**How team installations work:** The collab directory lives in the external shared-knowledge repo. In the code repo, a symlink named `collab` points to the external location. This keeps `.collab-config`, the import block, and all `@collab/...` paths identical between solo and team installations — the symlink handles the redirection transparently. The symlink is git-ignored (each dev creates their own after cloning the code repo).
+The memory will live in a shared-knowledge repository, at `<shared-knowledge-repo>/projects/<project-name>/collab/`. Settle two things with the user.
 
-Once the shared repo is in place and the target path is confirmed, continue to Step 3.
+1. **The shared-knowledge repository.** Ask whether the team already has one.
 
-### Step 3: Confirm Installation Details
+   - If yes: ask where its local clone is.
+   - If no: explain the two ways to organise it, and recommend the first.
+     - One shared-knowledge repository for all the team's memory projects.
+     - One shared-knowledge repository per memory project, for when projects need separate access control.
 
-Once the solo/team decision is made, summarise for the user what you found in Step 1 (instruction file, existing hooks, conflicts) and the solo/team choice from Step 2, then describe what you are about to install (directory location, import placement, hooks). Then ask:
+     Then offer to create it: with `gh repo create <org>/shared-knowledge --private` when the `gh` tool is available, otherwise by giving the user the steps.
 
-> "Shall I proceed with recommended defaults, or would you prefer to review customization options first?"
+2. **The project name.** Propose one, for example the name of the code repository, and ask the user to confirm it.
 
-**If the user chooses defaults:** proceed to Step 4.
+### 3 - Agreeing on what will be installed
 
-**If the user wants to customize**, present these options:
+Before you create or change anything, the user must know what will be installed, and agree to it.
 
-- **Directory location** — For solo use: default `collab/` at project root, customisable name/location. For team use: the shared-knowledge path was already chosen in Step 2; the symlink in the code repo is named `collab` (not customisable — all team members must use the same symlink name for the `@collab/...` import paths in the shared instruction file to work consistently across their machines).
-- **Import placement** — Where to insert the import block in the instruction file. Options:
-  - (a) At the end of the file (default — existing project instructions establish context; the collab system appends below)
-  - (b) At the start of the file
-  - (c) After a specific section the user indicates
-- **Git tracking** — what gets committed differs per setup:
-  - **Solo:** default tracked (add nothing to `.gitignore`). If the user prefers not to track, add `collab/` and `.collab-config` to `.gitignore`.
-  - **Standalone memory project:** always tracked — the memory is the repository's content. Do not offer the ignore option.
-  - **Team:** the `collab` symlink is always git-ignored. Committed symlinks do not survive on Windows, and every developer creates their own after cloning anyway. Then ask the user one question: **track the memory-system traces in the code repo, or not?** (See "The Three Setups" for what the traces are.)
-    - **Committed (default for a private repo the whole team works on):** teammates get a working install on clone, after the two per-machine steps (create the symlink; approve external imports once). Nothing in these files is machine-specific.
-    - **Git-ignored (for a public repo, or when the team prefers full separation):** each developer keeps their own copies; only `.gitignore` is committed. The final installation note (Step 9) includes the full `.collab-config` contents so a teammate can reproduce it. Note: files that already exist and are tracked (an existing `CLAUDE.md`, an existing `.claude/settings.json`) keep their tracked status — only new files can be ignored; say so if that applies.
+**First, in a distributed setup: one choice that is always the user's.**
 
-Wait for the user's choices before proceeding.
+Ask whether the memory-system traces should be committed to the code repository, or git-ignored. Only the user knows whether the code repository is public, and what the team prefers.
+
+- **Committed** is the default for a private repository the whole team works on. A teammate who clones the code repository gets a working install after two steps on their own machine: creating the symlink, and approving external imports once. Nothing in these files is machine-specific.
+- **Git-ignored** fits a public repository, or a team that prefers to keep collabmem out of the code repository. Each developer then keeps their own copies.
+
+Files that exist already and are tracked, such as an existing `CLAUDE.md`, stay tracked: only new files can be git-ignored. Say so when it applies.
+
+**Then, in every setup: describe, name the defaults, and ask.**
+
+Tell the user what you are about to install and where: the memory directory, the collabmem block in the instruction file, and the hooks. In a distributed setup also the symlink, and what goes into `.gitignore`.
+
+Name every default, and say that each can be changed. Without that the user cannot decide whether they want anything different. Then ask whether to proceed.
+
+The defaults, and what they can be changed to:
+
+- **The name of the memory directory.** `collab` by default. In a distributed setup it cannot be changed: the symlink must have the same name on every teammate's machine.
+- **Where the collabmem block goes in the instruction file.** At the end by default, so the project's own instructions come first. It can also go at the start, or after a section the user names.
+- **In a solo setup: whether the memory is tracked in git.** Tracked by default. Untracked means adding `collab/` and `.collab-config` to `.gitignore`.
 
 ### Step 4: Create Files
 
