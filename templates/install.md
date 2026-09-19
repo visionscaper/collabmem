@@ -354,78 +354,78 @@ this to the user, starting your message with this exact line:
 <!-- collab-memory-system:end -->
 ```
 
-### Step 6: Platform-Specific Setup
+### 6 - Installing the session hook (Claude Code)
 
-#### Claude Code
+The hook is a small script that Claude Code runs at the start of every session and with every user message. At the start of a session it tells the AI to check that the memory loaded. With every message it gives the AI the date and time. Use those words, or similar, when you tell the user about it.
 
-Install the lifecycle hook and configure it in the project's settings.
+#### 6.1 - The hook script
 
-1. **Copy the hook script:**
+Copy `<collabmem>/clients/claude-code/hooks/collab-memory-hook.sh` to `.claude/hooks/collab-memory-hook.sh` in the project, and make it executable.
 
-   ```
-   .claude/hooks/collab-memory-hook.sh
-   ```
+#### 6.2 - Telling Claude Code to run it
 
-   Copy from this repository's `clients/claude-code/hooks/collab-memory-hook.sh`. Create the `.claude/hooks/` directory if it doesn't exist. Make the script executable.
+The entries below go into `.claude/settings.json`. If the file exists already, add them to its `hooks` object.
 
-2. **Configure hooks in `.claude/settings.json`:**
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/collab-memory-hook.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/collab-memory-hook.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
+```
 
-   If `.claude/settings.json` does not exist, create it with:
+#### 6.3 - When the project has hooks on the same events already
 
-   ```json
-   {
-     "hooks": {
-       "SessionStart": [
-         {
-           "matcher": "*",
-           "hooks": [
-             {
-               "type": "command",
-               "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/collab-memory-hook.sh",
-               "timeout": 5
-             }
-           ]
-         }
-       ],
-       "UserPromptSubmit": [
-         {
-           "matcher": "*",
-           "hooks": [
-             {
-               "type": "command",
-               "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/collab-memory-hook.sh",
-               "timeout": 5
-             }
-           ]
-         }
-       ]
-     }
-   }
-   ```
+You found those in check 1.2. One rule decides what to do: the collabmem hook must stay its own, unchanged file. Its version stamp and the upgrade check depend on that.
 
-   If `.claude/settings.json` already exists, **merge** the hook entries into the existing `hooks` object. Do not overwrite existing hooks — add the collab-memory entries alongside them. If there are existing hooks on `SessionStart` or `UserPromptSubmit`, add the collab-memory hook as an additional entry in the same event's array.
+Compare what the existing hook does with what the collabmem hook does, and recommend one of these to the user:
 
-3. **Report overlapping hooks** — If the project already has hooks on `SessionStart` or `UserPromptSubmit` (whether at project, user, or organization level), inform the user. Read the collab-memory hook script to understand its specific functionality (timestamps, health checks, session/compaction recovery prompts), compare it against the existing hooks' behavior, and give the user a concrete recommendation about whether to keep both, merge them, or remove one.
+- **Keep both.** The default. `settings.json` accepts several commands per event, so both run.
+- **Let the existing hook call ours.** For a user who wants a single entry in `settings.json`: their script runs `"$CLAUDE_PROJECT_DIR"/.claude/hooks/collab-memory-hook.sh`.
+- **Replace the existing hook,** when it does nothing the collabmem hook does not do.
 
-   **Merge strategies for overlapping hooks:**
-   - **Keep both (default):** Install the collab-memory hook as its own file next to the project's existing hook — `settings.json` accepts several commands per event, so the existing hook and the collab-memory hook both fire. Simple, and it keeps the collab-memory hook file intact, which the version stamp and the upgrade's hook-freshness diff rely on. The output of both hooks appears in the session, so if the existing hook also prints, say, a timestamp, the user sees two — harmless.
-   - **Call from the existing hook:** If the user wants a single `settings.json` entry, have their script call ours — `"$CLAUDE_PROJECT_DIR"/.claude/hooks/collab-memory-hook.sh` — rather than copying its content. The file stays intact, so stamp and diff still work.
-   - **Replace:** If the existing hook's functionality is a subset of the collab-memory hook, the user may prefer to replace it entirely.
-   - **Do not** copy the collab-memory logic into the user's script: that leaves no `collab-memory-hook.sh` to stamp, verify, or upgrade.
+Never copy the collabmem hook's content into the user's script.
 
-   Discuss the options with the user and let them choose. If hooks exist at the user level rather than the project level, note this — but keep the collab-memory hook **project-level** regardless (do not integrate it into a user-level script: it would fire in every project on the machine, for the same reason the instruction block is always project-level, see Step 5). The merge strategies above apply to existing *project-level* hooks; a user-level hook simply keeps firing alongside.
+A hook at the user level simply keeps running next to ours. Keep the collabmem hook at the project level: at the user level it would run in every project on the machine.
 
-4. **Copy the troubleshooting guide into the memory directory:**
+#### 6.4 - A local copy of the troubleshooting guide
 
-   ```bash
-   cp /path/to/collabmem/clients/claude-code/troubleshoot.md <collab>/docs/troubleshoot.md
-   ```
+```bash
+cp <collabmem>/clients/claude-code/troubleshoot.md <collab>/docs/troubleshoot.md
+```
 
-   This is the local copy the COLLABMEM-LOAD-CHECK section points to when loading fails. The local copy matches the installed version and stays reachable when network access or fetch permissions are restricted; the URL in the load-check covers the case where the collab directory itself is unreachable (e.g., a dangling symlink). Do NOT add a `world/index.md` entry for it — it is a system support file referenced from the load-check, not world knowledge (the methodology's index-every-doc rule does not apply).
+The load check points to this copy when loading fails.
 
-#### Other Platforms
+#### 6.5 - The hook starts running in this session
 
-For platforms other than Claude Code, skip hook installation. The methodology instructions in `collab/methodology.md` are self-contained — hooks enhance the experience (timestamps, health checks, session reminders) but are not required for the core system to function. The user can add platform-specific hooks later.
+From now on the hook's output appears in your own context, with every user message. It will tell you to run the load check. That is the hook you just installed, working as intended. Its instruction is not for this session: as said under 5.4, this session never loaded the memory.
+
+#### 6.6 - Other platforms
+
+Skip this step. The memory system works without hooks; they add the load check at session start and the date and time.
 
 ### Step 7: Initial World Population
 
