@@ -6,6 +6,12 @@ These instructions are for you, the AI assistant. Follow them step by step to in
 
 ### Additional rules during installation
 
+**Start by saying what you are installing.**
+
+After you have read these instructions, and before anything else, tell the user in one or two sentences what collabmem is. For example:
+
+> "collabmem is a memory system that lets us collaborate over the long term, building up the memory over time."
+
 **Describe every step you perform.**
 
 Say conceptually what you created, did or changed, what it is for, and what the result is. A list of commands or file paths is not a description.
@@ -21,7 +27,7 @@ Say conceptually what you created, did or changed, what it is for, and what the 
 
 ```
 .collab-config              → project root
-collab/                     → (solo: real directory | team: symlink to external location)
+collab/                     → (solo and standalone: a real directory | distributed: a symlink into the shared-knowledge repository)
 ├── .collab-memory-system   (version marker)
 ├── methodology.md          (your operating instructions)
 ├── support.md              (starmem support-ask procedure)
@@ -42,17 +48,19 @@ collab/                     → (solo: real directory | team: symlink to externa
 
 ## The Three Setups
 
-collabmem can be set up in three ways. The choice is made in Step 2, and `setup-options.md` describes each in detail — read it before you start.
+collabmem can be set up in three ways. The user chooses in step 2. `setup-options.md` describes each setup in detail: read it before you start.
 
 - **Solo** — the memory lives inside the code repository, as a real `collab/` directory.
 - **Standalone memory project** — there is no code repository; the memory repository *is* the project, and `collab/` is a real directory inside it.
 - **Distributed** — the memory lives in a separate shared-knowledge repository; the code repository reaches it through a symlink named `collab`.
 
-**Terminology in the steps below.** The installation steps distinguish only two mechanical cases. **Solo** means `collab/` is a real, tracked directory; this covers both the solo setup and the standalone memory project, which install identically. **Team** means `collab/` is a symlink into the shared-knowledge repository; this is the distributed setup.
+The steps below use these three names. Solo and standalone install in the same way: `collab/` is a real directory in the project. Where a step differs for the distributed setup, it says so.
+
+**Two placeholders in the steps.** `<collabmem>` is the folder where you cloned collabmem. `<collab>` is the memory directory: `collab/` in the project for solo and standalone, `projects/<project-name>/collab/` in the shared-knowledge repository for distributed.
 
 **Project root.** Throughout this document, "project root" means the directory the AI session is rooted in. For the solo and distributed setups that is the root of the code repository. For a standalone memory project it is the memory project's own directory: the repository root when the project has its own repository, or `projects/<name>/` when it lives inside a shared-knowledge repository that holds several memory projects. In the distributed setup it never means the separate shared-knowledge repository.
 
-**Memory-system traces.** The files collabmem puts in the project *besides* the memory itself: `.collab-config` at the project root, the import block in the instruction file, and `.claude/` with the hook script and its `settings.json` entries. In a distributed setup these are the only collabmem files in the code repository, and the user chooses in Step 3 whether they are committed or git-ignored.
+**Memory-system traces.** The files collabmem puts in the project *besides* the memory itself: `.collab-config` at the project root, the import block in the instruction file, and `.claude/` with the hook script and its `settings.json` entries. In a distributed setup these are the only collabmem files in the code repository, and the user chooses in step 3 whether they are committed or git-ignored.
 
 ## Hard Rules During Installation
 
@@ -186,8 +194,6 @@ The defaults, and what they can be changed to:
 - **In a solo setup: whether the memory is tracked in git.** Tracked by default. Untracked means adding `collab/` and `.collab-config` to `.gitignore`.
 
 ### 4 - Creating the memory directory and the config file
-
-`<collabmem>` below is the folder where you cloned collabmem.
 
 **The config file.** Copy `<collabmem>/.collab-config` to the project root. Set `collab_dir=` to the name of the memory directory: `collab`, unless the user chose another name.
 
@@ -429,41 +435,51 @@ Skip this step. The memory system works without hooks; they add the load check a
 
 ### 7 - Verifying the installation
 
-Run through this checklist and report results to the user. Paths use `<collab>` for the collab directory (actual location depends on solo/team choice):
+Two checks: the files are in place, and a fresh session really loads the memory.
 
-- [ ] `.collab-config` exists at project root
-- [ ] For team installations: `collab` symlink exists at project root and resolves to the external target
-- [ ] `<collab>/.collab-memory-system` exists and contains a version string
-- [ ] All 12 collab files exist (`methodology.md`, `support.md`, `index.md`, `index-archive.md`, `notes.md`, and 7 world files)
-- [ ] `<collab>/docs/` directory exists
-- [ ] Instruction file contains the import block between `<!-- collab-memory-system:start -->` and `<!-- collab-memory-system:end -->` markers, including the `COLLABMEM-LOAD-CHECK` section
-- [ ] The block's first line is the version stamp (`collabmem instruction block, checked and updated up to: <version>`) with `<version>` replaced by the installed version, and the hook's header stamp (`collabmem hook, checked and updated up to:`) shows the same version — all three (block, hook, `<collab>/.collab-memory-system`) agree. On platforms without hooks: block and marker agree.
-- [ ] `<collab>/methodology.md` and `<collab>/world/context.md` start with their load-check marker lines
-- [ ] (Claude Code) `<collab>/docs/troubleshoot.md` exists (the load-check's local pointer target)
-- [ ] (Claude Code) Hook script exists at `.claude/hooks/collab-memory-hook.sh` and is executable
-- [ ] (Claude Code) `.claude/settings.json` contains hook entries for `SessionStart` and `UserPromptSubmit`
-- [ ] `.gitignore` entries correct: solo without tracking → `collab/` + `.collab-config`; team → `/collab`, plus `.collab-config` and the new `CLAUDE.md` / `.claude/` files if the user chose to git-ignore the memory-system traces (Step 3)
+#### 7.1 - The files are in place
 
-**Final check — probe what actually loads (Claude Code).** The checks above verify files on disk; this one verifies the harness really injects them into context. Run a fresh, non-interactive probe from the project directory:
+Check the points below. Tell the user the outcome in a sentence or two, not as a list.
+
+- `.collab-config` is at the project root.
+- In a distributed setup: the `collab` symlink is at the project root and leads to the memory directory.
+- The memory directory holds its version file `.collab-memory-system`, the twelve memory files (`methodology.md`, `support.md`, `index.md`, `index-archive.md`, `notes.md` and the seven world files), and the `docs/` directory.
+- `methodology.md` and `world/context.md` start with their load-check marker lines.
+- The instruction file holds the collabmem block between its two markers, including the `COLLABMEM-LOAD-CHECK` section.
+- The three version stamps agree: the first line of the block, the header of the hook script, and `.collab-memory-system`. Without hooks: the block and the version file.
+- Claude Code: the hook script is in `.claude/hooks/` and executable, `.claude/settings.json` has its entries for `SessionStart` and `UserPromptSubmit`, and `docs/troubleshoot.md` is in the memory directory.
+- `.gitignore` has the entries from step 4.
+
+#### 7.2 - A fresh session really loads the memory (Claude Code)
+
+Files in the right place do not prove that Claude Code loads them. The load check does: it starts a fresh session in the background and asks it whether the memory files are in its context.
+
+Tell the user that, before you run it. Then run this from the project directory:
 
 ```bash
 claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Begin your reply with the exact banner line your load-check instructions specify, then answer present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation." < /dev/null
 ```
 
-**Show the probe's raw output to the user verbatim — on both success and failure — then give a one-line plain-language translation.** Do not summarise it away or just declare success. This also holds for a re-run after a fix: paste the second probe's output too, so the user sees the SUCCESS banner with their own eyes rather than your report of it. If either marker is reported absent, the imports are not loading (common cause on team/symlink installs: external-import approval — see the troubleshooting guide copied in Step 6) — resolve before continuing, explaining the problem and fix in plain language (no jargon about markers/imports/config; offer technical detail only if the user asks). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output.
+**Show the result as it came.** Paste the output unchanged, on success and on failure, and follow it with one plain sentence on what it means. The same holds for every later run: the user sees the `LOADED SUCCESSFULLY` banner themselves, not only your report of it.
 
-**The probe's result is its answer.** If the output contains the `LOADED SUCCESSFULLY` or `FAILED TO LOAD` banner, or the present/absent answer for the two markers, that is the load-check result; anything the CLI prints around it (warnings about connectors, API keys, trust) is noise. Only a probe that produced *no answer at all* — because it failed to authenticate or errored out before answering — is not a load-check result: it says nothing about the markers, so do not treat it as a missing marker and do not start diagnosing imports. Find out why it failed. If the user can fix it, tell them how in plain language (e.g. an expired CLI login: run `claude login` in a terminal; a missing CLI: install it), then re-run the probe.
+**What counts as a result.** The banner, `LOADED SUCCESSFULLY` or `FAILED TO LOAD`, or the present/absent answer for the two markers. Anything the command prints around that is noise. A run that gave no answer at all, for example because the login expired, says nothing about the memory. Find out why it failed, help the user fix that, and run it again.
 
-If the CLI is not available at all — e.g. the Claude native app without a terminal install, and the user does not want to install it — fall back to a fresh session: the load-check block prints the `LOADED SUCCESSFULLY` or `FAILED TO LOAD` banner in its first response, which establishes the same fact.
+**If you cannot run the command,** ask the user to run it in a terminal in the project directory and paste the output. If the `claude` command is not installed at all, a fresh session does the same job: its first response starts with one of the two banners.
 
-If any checks fail, report which ones and ask the user how to proceed. For issues that cannot be resolved, the user can file an issue at https://github.com/visionscaper/collabmem/issues.
+#### 7.3 - When the load check fails
 
-**Commit the installation** once all checks pass, with the user's approval:
-- **Standalone memory project:** commit and push (the remote from Step 2).
-- **Team:** commit and push the shared-knowledge repo (only that repo) so teammates receive the new memory files. In the code repo, commit whatever the Step 3 tracking choice tracks — at minimum the `.gitignore` change. Tell the user these changes are committed but not yet pushed; pushing the code repo is their normal workflow.
-- **Solo:** commit in the code repo; pushing is the user's normal workflow.
+In a distributed setup this is common and easily fixed. The memory sits outside the project, and Claude Code needs a one-time approval before it loads files from outside a project. Issue 1 of the troubleshooting guide you copied locally in step 6 has the fix.
 
-Continue to Step 9 if all checks pass.
+Tell the user, in plain words and in this order:
+
+- what happened, and what it means;
+- that it is common for this setup, and likely easy to fix;
+- what you will investigate;
+- what you found;
+- what fix you propose, and ask whether they agree;
+- after the fix: run the load check again, and show its result.
+
+Keep setting names, file paths and your reading of the guide out of it, unless the user asks.
 
 ### 8 - Seeding the memory with the user's context
 
@@ -494,13 +510,13 @@ Replace the placeholder comments in those files with the content, and keep the h
 
 **Existing documents.** If the project has documents the AI should know, such as design documents or analyses, tell the user they can be brought into the memory's `docs/` directory, and offer to do that now or later.
 
-### Step 9: Record Installation Note
+### 9 - Writing the installation note
 
-Write the first episodic note documenting the installation. This serves three purposes: it creates an audit trail, demonstrates the memory system's note-writing behaviour, and provides a diagnostic anchor to verify the system works in a new session.
+The first note in the memory records the installation. It shows the user what a note looks like, and it gives a new session something to find when the user checks that the memory works.
 
-**First, read `<collab>/methodology.md` if you haven't already.** It defines the note template, the amendment protocol, the index entry conventions ("concise contextualized facts"), and the append-only rule for episodic memory. The templates below match the methodology conventions at the time of writing, but the methodology is the source of truth.
+Read `<collab>/methodology.md` first if you have not yet. Its "Notes Protocol" defines how notes and index rows are written, and it is the source of truth when it differs from the templates below.
 
-Append a note to `<collab>/notes.md` (append to the bottom — episodic memory is append-only; use today's date). The template below shows the minimum to capture; expand any section with more detail as relevant — this is a real note, not a form:
+Append the note to the bottom of `<collab>/notes.md`, with today's date. The template shows the minimum. Write it as a real note: expand where there is something to say.
 
 ```
 ---
@@ -513,14 +529,14 @@ Append a note to `<collab>/notes.md` (append to the bottom — episodic memory i
 
 **What We Did:**
 - Installed collabmem version <vX.X> (from `<collab>/.collab-memory-system`)
-- Installation type: <solo | standalone memory project | team (distributed)>
-- Collab directory location: <actual path, e.g. `./collab/` or `/path/to/shared-knowledge/projects/project-x/collab/`>
-- For team installations: symlink `collab` → `<target>` created in project root
+- Setup: <solo | standalone memory project | distributed>
+- Memory directory: <actual path, e.g. `./collab/` or `/path/to/shared-knowledge/projects/project-x/collab/`>
+- In a distributed setup: symlink `collab` → `<target>` created in the project root
 - Import placement: <at end of file | at start | after specific section> in <instruction file name>
 - Git tracking: `.collab-config` <committed | git-ignored>; collab directory <tracked | git-ignored | external repo>
 - Hooks installed: <yes (Claude Code: SessionStart, UserPromptSubmit) | skipped (other platform)>
 - Hook overlap handling: <none | kept both | called from existing hook | replaced>
-- Initial world population: <done | skipped>. If done, summarise what kinds of context the user provided and which world files were populated.
+- Seeding with the user's context: <done | not now>. If done, summarise what kinds of context the user provided and which world files were filled.
 - Anything else relevant: issues encountered and how they were resolved, user decisions made during install, deviations from defaults.
 
 **`.collab-config` contents:**
@@ -530,92 +546,99 @@ Append a note to `<collab>/notes.md` (append to the bottom — episodic memory i
 
 **Key Learnings:**
 - Memory system is now active and will load automatically on new sessions.
-- <For team:> Other team members who clone this code repo later will need to create their own `collab` symlink.
+- <In a distributed setup:> teammates who clone the code repository later need to create their own `collab` symlink, and approve external imports once.
 - Add any other observations: what worked smoothly, what caused friction, what the user should know going forward.
 
 **Related:** `collab/methodology.md`, `collab/.collab-memory-system`
 ```
 
-Also add the corresponding index entry to `<collab>/index.md`:
+Then add its row to `<collab>/index.md`:
 
 ```
-| DD-MM-YYYY | @<username> | Collaboration Memory System Installed | Initial collabmem installation: <solo/standalone/team>, hooks, world population status. First episodic note and index entry. | installation, setup, v<X.X>, <solo/standalone/team> |
+| DD-MM-YYYY | @<username> | Collaboration Memory System Installed | Initial collabmem installation: <solo/standalone/distributed>, hooks, seeding status. First episodic note and index entry. | installation, setup, v<X.X>, <solo/standalone/distributed> |
 ```
 
-**Closing rule:** conversations rarely end at the install summary — follow-up questions and small tasks (commits, pushes, tweaks) usually come after, and a reminder given earlier gets buried. Whatever the last exchange turns out to be, when the installation completed successfully your final message before parting MUST end by repeating: *"Reminder: the memory system activates in a new session — start one to begin using it."* If the installation did not complete, end instead by stating clearly what is still unfinished.
+### 10 - Migrating an existing notes system
 
-**Final message to the user** (if Step 1 identified an existing notes/journaling system, do not yet declare the installation complete — continue to Step 10 first, then combine this message with the migration outcome):
+Only when check 1.4 found one. Migration is optional: the user may prefer to start fresh and keep the old notes as an archive.
 
-> "The collaboration memory system is installed and a first note has been written. It will become active in a new session — the methodology, memory files, and hooks will load automatically. The system will build up knowledge naturally as we collaborate.
->
-> **To verify it's working:** Start a new session and ask one of:
-> - 'What kinds of AI collab memory do you have and how do they work?' — tests that the methodology is loaded.
-> - 'What do you know about this project?' — tests that the world model is loaded (if you did world population).
-> - 'What is the last thing we did?' — tests that the episodic index is loaded. The AI should mention the installation note."
+1. **Discuss whether to migrate.** Tell the user what you found: the format, how many entries, how they are organised. Are the notes still relevant, and would the project benefit from having this history in the memory?
 
-**For team installations, include these additional instructions in the final message:**
+2. **Plan it together.** Decide how the old entries map: which are episodic notes for `notes.md`, which are logs of a special kind such as experiment logs, and which are project context that belongs in the world model. The user knows things about the old system that you cannot see.
 
-> "Your symlink is already set up. For any other team member who clones this code repo later, they will need to create their own `collab` symlink after cloning. Commands:
->
-> **macOS/Linux:**
-> ```bash
-> ln -s <relative or absolute path to shared-knowledge/projects/project-name/collab> collab
-> ```
->
-> **Windows (PowerShell, requires developer mode or admin):**
-> ```powershell
-> New-Item -ItemType SymbolicLink -Path collab -Target <path to shared-knowledge/projects/project-name/collab>
-> ```
->
-> **Windows (cmd, requires admin):**
-> ```cmd
-> mklink /D collab <path to shared-knowledge\collab\project-name>
-> ```
+   If the old system has an index, check whether it covers all notes, and plan index rows for the ones it misses.
 
-**If `.collab-config` is git-ignored, also include its contents in the final message** so each dev can easily reproduce it:
+   Before you start, list the kinds of world-model topics this project could have, such as architecture decisions, constraints, domain knowledge, procedures and key facts. That list helps you recognise them while migrating.
 
-> "Since `.collab-config` is git-ignored, each dev also needs to create it in the project root. Contents:
-> ```
-> <paste actual .collab-config contents here>
-> ```"
+3. **Migrate the notes and the index, in bulk.** The differences between formats are usually small and mechanical, so transform rather than rewrite.
 
-### Step 10: Migrate Existing Notes (if applicable)
+   - Notes: a `###` heading with a `[DD-MM-YYYY]` date, a `**With:**` field, `---` between notes.
+   - Index: the columns `Date | Who | Title | Summary | Keywords`.
+   - Special logs go to their own files, reference documents to `docs/` in the memory directory.
 
-If Step 1 identified an existing notes or journaling system, discuss migration with the user:
+   Notes are historical records. Leave the paths and references inside them as they were, except for files you move as part of this migration.
 
-**Transition notice:** When migrating from an existing system, recommend adding a visible comment before the collab-memory-system import block in the instruction file:
+4. **Then fill the world model from the migrated notes.** Read them as a whole, or in batches, and write by topic, not by note: first `context.md` and `preferences.md`, then the other world files, then `state.md`. Update `world/index.md` whenever `domain.md`, `how-tos.md` or `factoids.md` change.
+
+5. **Keep track across sessions.** For a large set of notes, record the progress in `world/state.md`, for example "Migration: 45 of 184 notes done". The next session sees it at once.
+
+6. **Write a migration note** when the migration is done, or at the end of each migration session: what was migrated, what was decided, what went wrong, what was learned. With its index row.
+
+While a migration is under way, recommend adding this comment just above the collabmem block in the instruction file. It tells every AI session which system is leading:
 
 ```markdown
 <!-- IMPORTANT: We are transitioning from the old memory system (above) to the collaboration memory system (below).
      The new system is authoritative where it covers a topic. Old content will be progressively migrated and removed. -->
 ```
 
-This helps any AI session understand which system is authoritative during the migration period.
+### 11 - Committing the installation
 
-1. **Assess feasibility** — Describe what you found (file format, number of entries, structure). Discuss with the user whether migration makes sense: Are the notes still relevant? Is the format compatible? Would the project benefit from having this history in the episodic memory system? Migration is optional — the user may prefer to start fresh and keep old notes as a separate archive.
+Everything is written now: the memory, and the installation note. Tell the user what will be committed and where, and ask for their consent.
 
-2. **Plan the migration** — If the user wants to migrate:
-   - Determine how existing entries map to the collab system: which are episodic notes (`notes.md`), which are domain-specific logs (e.g., experiment logs as a domain extension), and which are project context that belongs in world model files. Discuss your findings with the user — they may have important insights about the structure or preferences about how things should be organised.
-   - If an existing index or index-like structure exists (e.g., keyword summaries in an instruction file), assess its coverage — does it reference all notes, or are there gaps? Plan to create index entries for unreferenced notes as well.
-   - **Before starting, list the kinds of world model topics that could be relevant** for this project (e.g., architecture decisions, technology constraints, domain knowledge, procedures, key facts). This primes your attention for recognising world model knowledge during migration.
+- **Solo:** commit in the code repository. Do not push: pushing is part of the user's normal workflow.
+- **Standalone:** commit and push. The remote is the memory's backup.
+- **Distributed:** two repositories.
+  - The shared-knowledge repository: commit the new memory directory and push, so teammates receive it. Commit nothing else there.
+  - The code repository: commit what the user chose to track in step 3, at least the `.gitignore` change. Tell the user it is committed but not pushed: pushing the code repository is part of their normal workflow.
 
-3. **Migrate notes and index** — Apply mechanical format transformations to migrate notes and index entries in bulk:
-   - Copy notes to `notes.md`, adjusting to the note template format: `###` heading with `[DD-MM-YYYY]` date, `**With:**` field, `---` separator between notes. Use automated transformations (sed, find-replace) where possible — format differences between systems are typically small and mechanical (field renames, column reorder, heading format).
-   - Copy or transform index entries to `index.md` — adjust column order to match the index format (`Date | Who | Title | Summary | Keywords`). If no index exists, create entries from the notes following the index writing guidelines in the methodology.
-   - Copy related domain-specific entries (e.g., experiment logs) to their respective files. Copy reference docs to `collab/docs/`.
-   - Notes are historical records. File paths and references within notes should remain as they were at time of writing — they were correct in their original context. Only update references to files that are physically moved as part of the migration itself (e.g., docs relocated from the old system to `collab/docs/`).
+### 12 - The star ask
 
-4. **Extract world model knowledge** — Read through the migrated notes as a corpus (or in batches for large note sets), identify recurring themes and topics, and populate world model files by topic rather than by note:
-   - Populate context.md and preferences.md first (they frame all other knowledge), then Tier 2 files, then state.md.
-   - Check for: domain knowledge, architecture decisions, procedures, facts, user context, and preferences.
-   - **Don't forget to update `world/index.md` when Tier 2 world files change.**
+The installation is done and committed. Before you close it off, read `<collab>/support.md` and follow it: the first ask. It relays a short message from the collabmem developers, asking the user to star the project on GitHub.
 
-5. **Track progress** — For large note sets that may span multiple sessions, record migration progress in `world/state.md` (e.g., "Migration: 45/184 notes done"). This is Tier 1, so the next session sees it immediately and can continue where you left off.
+The answer is recorded in `.collab-config`. If that file is tracked, commit that one change, in the same way as in step 11.
 
-6. **Write a migration note when complete** — Once migration finishes (or at the end of each migration session if multi-session), append an episodic note to `<collab>/notes.md` capturing what was migrated, any decisions made, issues encountered, and learnings. This creates a historical record of the migration alongside the migrated content. Follow the note template from the Notes Protocol in `methodology.md`; include the corresponding index entry in `<collab>/index.md`.
+### 13 - Closing the installation
 
-### Step 11: Support the Project (starmem)
+The final message tells the user four things, in plain words.
 
-After delivering the final installation message from Step 9 — or, when a migration immediately follows in the same session, after the migration outcome message — run the `starmem` procedure: read `<collab>/support.md` and follow it (first ask). It asks the user, on behalf of the collabmem developers, to support the project by starring the GitHub repo, and records the answer in `.collab-config`.
+1. **That collabmem is installed.** For example:
 
-Because the star ask now becomes the last exchange, the closing rule still applies: end this message too with the restart reminder — *"Reminder: the memory system activates in a new session — start one to begin using it."*
+   > "The collaboration memory system is installed, and a first note has been written. It becomes active in a new session: the methodology, the memory files and the hook load automatically. The system will build up knowledge naturally as we collaborate."
+
+2. **How to check that it works.** In a new session, ask one of:
+
+   - "What kinds of memory do you have, and how do they work?" It shows that the methodology is loaded.
+   - "What do you know about this project?" It shows that the world model is loaded, if the user gave context.
+   - "What is the last thing we did?" It shows that the notes index is loaded: the AI should mention the installation note.
+
+3. **How to get help.** In a new session, type `helpmem`, or `helpmem` followed by a question.
+
+4. **In a distributed setup: what a teammate does after cloning the code repository.** They create their own `collab` symlink, and approve external imports once. Issue 1 of the troubleshooting guide explains that approval.
+
+   ```bash
+   # macOS and Linux
+   ln -s <path to shared-knowledge>/projects/<project-name>/collab collab
+   ```
+
+   ```powershell
+   # Windows PowerShell, needs developer mode or admin rights
+   New-Item -ItemType SymbolicLink -Path collab -Target <path to shared-knowledge>\projects\<project-name>\collab
+   ```
+
+   If `.collab-config` is git-ignored, include its contents too, so a teammate can recreate it.
+
+**The last line is always the same.** Conversations rarely end at this message: questions and small tasks follow, and a reminder given earlier gets buried. So whatever your last message turns out to be, it ends with this line, highlighted:
+
+> **Reminder: the memory system activates in a new session — start one to begin using it.**
+
+If the installation did not complete, end instead by saying clearly what is still unfinished.
