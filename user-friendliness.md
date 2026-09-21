@@ -65,7 +65,9 @@ Do not overuse it. When much is highlighted, nothing stands out.
 
 A choice comes with four things: what it is about, the options and what each means, when to choose which, and the default with its reason.
 
-Ask one question at a time. Offer to answer questions before the user decides.
+Ask one question at a time.
+
+With every choice you put to the user, offer to answer questions before they decide.
 
 **7. Ask before you act.**
 

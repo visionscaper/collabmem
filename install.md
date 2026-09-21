@@ -71,7 +71,9 @@ Do not overuse it. When much is highlighted, nothing stands out.
 
 A choice comes with four things: what it is about, the options and what each means, when to choose which, and the default with its reason.
 
-Ask one question at a time. Offer to answer questions before the user decides.
+Ask one question at a time.
+
+With every choice you put to the user, offer to answer questions before they decide.
 
 **7. Ask before you act.**
 
@@ -218,7 +220,7 @@ Tell the user what you found in each of the four checks, and what it means for t
 
 ### 2 - Choosing the setup that fits the user
 
-Ask the user which of the three setups fits, with this text:
+Ask the user which of the three setups fits, with this text, and offer to answer questions before they choose:
 
 > "How will this memory be used? Three options:
 >
@@ -268,11 +270,13 @@ Then ask whether those files should be committed to the code repository, or git-
 
 Files that exist already and are tracked, such as an existing `CLAUDE.md`, stay tracked: only new files can be git-ignored. Say so when it applies.
 
+Ask this on its own, and wait for the answer before you go on.
+
 **Then, in every setup: describe, name the defaults, and ask.**
 
 Tell the user what you are about to install and where: the memory directory, the collabmem block in the instruction file, and the hooks. In a distributed setup also the symlink, and what goes into `.gitignore`.
 
-Name every default, and say that each can be changed. Without that the user cannot decide whether they want anything different. Then ask whether to proceed.
+Name every default, and say that each can be changed. Without that the user cannot decide whether they want anything different. Then ask whether to proceed, and offer to answer questions first.
 
 The defaults, and what they can be changed to:
 
@@ -551,7 +555,7 @@ Tell the user that, before you run it. Then run this from the project directory:
 claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Begin your reply with the exact banner line your load-check instructions specify, then answer present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation." < /dev/null
 ```
 
-**Show the result as it came.** This holds for every later run too: the user sees the `LOADED SUCCESSFULLY` banner themselves, not only your report of it.
+**Show the result as it came.** Paste the output unchanged, on success and on failure, and follow it with one plain sentence on what it means. The same holds for every later run: the user sees the `LOADED SUCCESSFULLY` banner themselves, not only your report of it.
 
 **What counts as a result.** The banner, `LOADED SUCCESSFULLY` or `FAILED TO LOAD`, or the present/absent answer for the two markers. Anything the command prints around that is noise. A run that gave no answer at all, for example because the login expired, says nothing about the memory. Find out why it failed, help the user fix that, and run it again.
 
@@ -578,15 +582,13 @@ Keep setting names, file paths and your reading of the guide out of it, unless t
 
 The memory starts empty. Ask the user for some high-level context, and strongly recommend giving it. Say why: it frames everything the AI does from now on, and high-level context rarely comes up by itself later in the work.
 
-Ask this:
+Some example questions, for the user to answer in a few sentences:
 
-> "To give the memory a good start, could you tell me in a few sentences:
->
-> - what this project is about, and what your role in it is?
-> - what you are currently working on?
-> - how you like to collaborate: communication style, level of detail?
->
-> Anything else you want me to know is welcome too."
+- what the project is about, and what their role in it is;
+- what they are currently working on;
+- how they like to collaborate: communication style, level of detail.
+
+Say that anything else they want the AI to know is welcome too.
 
 For a standalone memory project there is no code to start from. Ask about the person and the purpose instead: who they are and what they do, what they want to use this memory for, and the project, study or business it is about.
 
@@ -611,7 +613,7 @@ Read `<collab>/methodology.md` first if you have not yet. Its "Notes Protocol" d
 
 Append the note to the bottom of `<collab>/notes.md`, with today's date. The template shows the minimum. Write it as a real note: expand where there is something to say.
 
-```
+````
 ---
 
 ### [DD-MM-YYYY] Collaboration Memory System Installed
@@ -643,7 +645,7 @@ Append the note to the bottom of `<collab>/notes.md`, with today's date. The tem
 - Add any other observations: what worked smoothly, what caused friction, what the user should know going forward.
 
 **Related:** `collab/methodology.md`, `collab/.collab-memory-system`
-```
+````
 
 Then add its row to `<collab>/index.md`:
 
