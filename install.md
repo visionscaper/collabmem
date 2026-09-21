@@ -85,6 +85,8 @@ The user may read only your last message. So it says what you did in this turn, 
 
 **9. Show results as they came, then translate.**
 
+The user usually does not see the output of the commands you run: the agent client hides it or folds it away. So a result reaches them only when you paste it.
+
 Paste important output unchanged. Follow it with one plain sentence on what it means, and what needs to be done if anything.
 
 **10. Reassure where it is true.**
@@ -567,7 +569,7 @@ In a distributed setup this is common and easily fixed. The memory sits outside 
 
 In a solo or standalone setup a failure is rarer, and usually the issue is an import path that does not lead to the memory. Start from "Start here" in the same guide and follow the symptom.
 
-First paste the load-check output for the user, unchanged. Then tell them, in plain words and in this order:
+First paste the load-check output for the user, unchanged: the user has likely not seen it. Then tell them, in plain words and in this order:
 
 - what happened, and what it means;
 - that it is common for this setup, and likely easy to fix;
