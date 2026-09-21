@@ -145,7 +145,7 @@ The steps below use these three names. Solo and standalone install in the same w
 
 **Project root.** Throughout this document, "project root" means the directory the AI session is rooted in. For the solo and distributed setups that is the root of the code repository. For a standalone memory project it is the memory project's own directory: the repository root when the project has its own repository, or `projects/<name>/` when it lives inside a shared-knowledge repository that holds several memory projects. In the distributed setup it never means the separate shared-knowledge repository.
 
-**Memory-system traces.** The files collabmem puts in the project *besides* the memory itself: `.collab-config` at the project root, the import block in the instruction file, and `.claude/` with the hook script and its `settings.json` entries. In a distributed setup these are the only collabmem files in the code repository, and the user chooses in step 3 whether they are committed or git-ignored.
+**Memory-system traces.** The files collabmem puts in the project *besides* the memory itself: `.collab-config` at the project root, the collabmem block in the instruction file, and `.claude/` with the hook script and its `settings.json` entries. In a distributed setup these are the only collabmem files in the code repository, and the user chooses in step 3 whether they are committed or git-ignored.
 
 ## Hard Rules During Installation
 
@@ -218,7 +218,7 @@ Tell the user what you found in each of the four checks, and what it means for t
 
 ### 2 - Choosing the setup that fits the user
 
-collabmem can be set up in three ways. Ask the user which one fits, with this text:
+Ask the user which of the three setups fits, with this text:
 
 > "How will this memory be used? Three options:
 >
@@ -232,7 +232,7 @@ Then continue with the part below that matches the user's choice.
 
 A git repository with a private remote is required. The remote is the memory's backup, and it makes sharing the memory later a matter of cloning.
 
-If the folder is not part of a repository already, run `git init` and offer to create a private remote, before you create any files.
+If the folder is not a git repository yet, run `git init`. If it has no remote yet, offer to create a private one. Both before you create any files.
 
 **Solo**
 
@@ -259,7 +259,9 @@ Before you create or change anything, the user must know what will be installed,
 
 **First, in a distributed setup: one choice that is always the user's.**
 
-Ask whether the memory-system traces should be committed to the code repository, or git-ignored. Only the user knows whether the code repository is public, and what the team prefers.
+Say first, in plain words, which files this is about: the small config file, the collabmem block in the instruction file, and the hook. Not the memory itself, which lives in the other repository.
+
+Then ask whether those files should be committed to the code repository, or git-ignored. Only the user knows whether the code repository is public, and what the team prefers.
 
 - **Committed** is the default for a private repository the whole team works on. A teammate who clones the code repository gets a working install after two steps on their own machine: creating the symlink, and approving external imports once. Nothing in these files is machine-specific.
 - **Git-ignored** fits a public repository, or a team that prefers to keep collabmem out of the code repository. Each developer then keeps their own copies.
@@ -447,7 +449,7 @@ this to the user, starting your message with this exact line:
 
 ### 6 - Installing the session hook (Claude Code)
 
-The hook is a small script that Claude Code runs at the start of every session and with every user message. At the start of a session it tells the AI to check that the memory loaded. With every message it gives the AI the date and time. Use those words, or similar, when you tell the user about it.
+The hook is a small script that Claude Code runs at the start of every session and with every user message. At the start of a session it tells the AI to check that the memory loaded. It does the same when a long conversation has been shortened into a summary, and then also tells the AI not to carry on from that summary alone. With every message it gives the AI the date and time. Use those words, or similar, when you tell the user about it.
 
 #### 6.1 - The hook script
 
@@ -455,7 +457,9 @@ Copy `<collabmem>/clients/claude-code/hooks/collab-memory-hook.sh` to `.claude/h
 
 #### 6.2 - Telling Claude Code to run it
 
-The entries below go into `.claude/settings.json`. If the file exists already, add them to its `hooks` object.
+The entries below go into `.claude/settings.json`. If there is no such file yet, create it with the block as shown.
+
+If the file exists already, it keeps every hook it has and gains ours. Add our entries to the arrays for `SessionStart` and `UserPromptSubmit`, next to what is already there.
 
 ```json
 {
@@ -512,7 +516,9 @@ The load check points to this copy when loading fails.
 
 #### 6.5 - The hook starts running in this session
 
-From now on the hook's output appears in your own context, with every user message. It will tell you to run the load check. That is the hook you just installed, working as intended. Its instruction is not for this session: as said under 5.4, this session never loaded the memory.
+From now on the hook's output appears in your own context. With every user message it gives you the date and time. When this session resumes it prints a short reminder about the memory. In a session that starts fresh, or after a compaction, it also prints its load-check instruction.
+
+There is no need to mention to the user that the hook is active now. If you do, one plain sentence is enough.
 
 #### 6.6 - Other platforms
 
@@ -545,7 +551,7 @@ Tell the user that, before you run it. Then run this from the project directory:
 claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Begin your reply with the exact banner line your load-check instructions specify, then answer present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation." < /dev/null
 ```
 
-**Show the result as it came.** Paste the output unchanged, on success and on failure, and follow it with one plain sentence on what it means. The same holds for every later run: the user sees the `LOADED SUCCESSFULLY` banner themselves, not only your report of it.
+**Show the result as it came.** This holds for every later run too: the user sees the `LOADED SUCCESSFULLY` banner themselves, not only your report of it.
 
 **What counts as a result.** The banner, `LOADED SUCCESSFULLY` or `FAILED TO LOAD`, or the present/absent answer for the two markers. Anything the command prints around that is noise. A run that gave no answer at all, for example because the login expired, says nothing about the memory. Find out why it failed, help the user fix that, and run it again.
 
@@ -554,6 +560,8 @@ claude -p "Do NOT use any tools. From your system context ONLY: state whether a 
 #### 7.3 - When the load check fails
 
 In a distributed setup this is common and easily fixed. The memory sits outside the project, and Claude Code needs a one-time approval before it loads files from outside a project. Issue 1 of the troubleshooting guide you copied locally in step 6 has the fix.
+
+In a solo or standalone setup a failure is rarer, and usually the issue is an import path that does not lead to the memory. Start from "Start here" in the same guide and follow the symptom.
 
 Tell the user, in plain words and in this order:
 
@@ -593,7 +601,7 @@ If the user does not want to do this now, accept that. But do not present skippi
 
 Replace the placeholder comments in those files with the content, and keep the headings. Then show the user what you wrote, so they can correct it.
 
-**Existing documents.** If the project has documents the AI should know, such as design documents or analyses, tell the user they can be brought into the memory's `docs/` directory, and offer to do that now or later.
+**Existing documents.** If the project has documents the AI should know, such as design documents or analyses, tell the user they can be brought into the memory's `docs/` directory, and offer to do that now or later. If documents are moved now, add world-model index entries for them, so later sessions can find them.
 
 ### 9 - Writing the installation note
 
