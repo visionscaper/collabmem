@@ -229,7 +229,7 @@ Use a relative path when the shared-knowledge repository sits next to the code r
 - Distributed: always add `/collab`. The symlink is never committed: committed symlinks do not survive on Windows, and every developer creates their own. If the user chose to git-ignore the memory-system traces, also add `.collab-config`, and whichever of `CLAUDE.md` and `.claude/` are new.
 - Solo, when the user chose not to track the memory: add `collab/` and `.collab-config`.
 
-**Tell the user what now exists.** In a few sentences, not as a file listing. The memory directory and where it is. That it holds two kinds of memory: notes on what happened and why, and a world model, the current understanding of the project and the user. And the config file. In a distributed setup also the symlink.
+**Tell the user what now exists.** In a few sentences, not as a file listing. The memory directory and where it is. That it holds two kinds of memory: notes on what happened and why, and a world model, the current understanding of the project and the user. And the config file. In a distributed setup also the symlink. Do not repeat an explanation you already gave in step 3.
 
 ### 5 - Adding the collabmem block to the instruction file
 
@@ -480,7 +480,7 @@ In a distributed setup this is common and easily fixed. The memory sits outside 
 
 In a solo or standalone setup a failure is rarer, and usually the issue is an import path that does not lead to the memory. Start from "Start here" in the same guide and follow the symptom.
 
-Tell the user, in plain words and in this order:
+First paste the load-check output for the user, unchanged. Then tell them, in plain words and in this order:
 
 - what happened, and what it means;
 - that it is common for this setup, and likely easy to fix;
@@ -611,9 +611,9 @@ Everything is written now: the memory, and the installation note. Tell the user 
 
 ### 12 - The star ask
 
-The installation is done and committed. Before you close it off, read `<collab>/support.md` and follow it: the first ask. It relays a short message from the collabmem developers, asking the user to star the project on GitHub.
+The installation is done and committed. Before you close it off, follow the procedure below: the first ask. The answer is recorded in `.collab-config`; if that file is tracked, commit that one change, in the same way as in step 11.
 
-The answer is recorded in `.collab-config`. If that file is tracked, commit that one change, in the same way as in step 11.
+{{support}}
 
 ### 13 - Closing the installation
 

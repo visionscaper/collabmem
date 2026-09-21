@@ -45,9 +45,20 @@ TARGETS = {
 # root. A later version may first look for a client-specific file.
 FIELDS = {
     "user_friendliness": "user-friendliness.md",
+    "support": "collab/support.md",
+}
+
+# Field name → number of levels to lower its headings by, so an inlined file
+# fits under the heading it is placed in. Fields not listed keep their levels.
+HEADING_SHIFT = {
+    "support": 1,
 }
 
 FIELD_PATTERN = re.compile(r"\{\{\s*(?P<name>\w+)\s*\}\}")
+
+HEADING_PATTERN = re.compile(r"^(?P<hashes>#{1,6}) ")
+
+FENCE_PATTERN = re.compile(r"^(```|~~~)")
 
 GENERATED_NOTICE = (
     "<!-- GENERATED from {template} by tools/build_instructions.py. "
@@ -83,7 +94,40 @@ def resolve_field(name: str) -> str:
     if name not in FIELDS:
         raise ValueError(f"Unknown field '{{{{{name}}}}}'; known: {sorted(FIELDS)}")
 
-    return (REPO_ROOT / FIELDS[name]).read_text().strip()
+    content = (REPO_ROOT / FIELDS[name]).read_text().strip()
+
+    return shift_headings(content, HEADING_SHIFT.get(name, 0))
+
+
+def shift_headings(text: str, levels: int) -> str:
+    """
+    Lowers every Markdown heading in a text by a number of levels. Lines
+    inside fenced code blocks are left alone.
+
+    :param text: The text to shift.
+    :param levels: Number of levels to lower by; 0 returns the text unchanged.
+
+    :return: The text with its headings lowered.
+
+    :raises ValueError: When a heading would go below level 6.
+    """
+    if levels == 0:
+        return text
+
+    lines = []
+    in_fence = False
+    for line in text.split("\n"):
+        if FENCE_PATTERN.match(line):
+            in_fence = not in_fence
+        match = None if in_fence else HEADING_PATTERN.match(line)
+        if match:
+            depth = len(match.group("hashes")) + levels
+            if depth > 6:
+                raise ValueError(f"Heading below level 6 after shift: {line!r}")
+            line = "#" * depth + line[len(match.group("hashes")):]
+        lines.append(line)
+
+    return "\n".join(lines)
 
 
 def render(template_text: str, template: str) -> str:
