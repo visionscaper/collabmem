@@ -46,12 +46,14 @@ TARGETS = {
 FIELDS = {
     "user_friendliness": "user-friendliness.md",
     "support": "collab/support.md",
+    "install_signal": "install-signal.md",
 }
 
 # Field name → number of levels to lower its headings by, so an inlined file
 # fits under the heading it is placed in. Fields not listed keep their levels.
 HEADING_SHIFT = {
     "support": 1,
+    "install_signal": 1,
 }
 
 FIELD_PATTERN = re.compile(r"\{\{\s*(?P<name>\w+)\s*\}\}")

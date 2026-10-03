@@ -103,6 +103,29 @@ Recommend the user re-run this probe after any CLI upgrade, config-directory cha
 
 Inform the user that the upgrade is complete and summarise what changed. The upgrade takes effect in the next session (Tier 1 imports load once at session start) — suggest a restart.
 
-### Step 6: Support the Project (starmem)
+### Step 6: Questions from the collabmem developers
 
-If `.collab-config` contains no `project_starred` property, run the `starmem` procedure after the upgrade-complete message: read `<collab_dir>/support.md` (in the user's installation, or from this repository if the installed version predates it) and follow it (first ask). It asks the user, on behalf of the collabmem developers, to support the project by starring the GitHub repo, and records the answer in `.collab-config`. If the property is already present, skip this step — the user has been asked before.
+After the upgrade-complete message, the collabmem developers may have up to two questions for the user: whether they want to star the project, and whether you may send an upgrade signal. Which ones are asked depends on what `.collab-config` records.
+
+**This step belongs to the upgrade of the shared part.** Skip it when you only caught up the per-clone part of a clone.
+
+**The star ask.** It is asked when `.collab-config` has no `project_starred` property. When the property is there, the user has been asked before: do not ask.
+
+**The upgrade signal.** It depends on the `install_signal` property in `.collab-config`:
+
+- No such property: ask with the full message.
+- `install_signal=sent` or `install_signal=failed`: ask with the short ask.
+- `install_signal=declined`: do not ask.
+
+**How to go through them.**
+
+1. If the upgrade signal is to be asked, first collect its values. Do this before you say anything. Read `install-signal.md` in this repository and follow "The values of the signal", "Collecting the values" and "The install ID". The `signal_kind` is `upgrade`. If no install ID can be made, the upgrade signal is skipped.
+
+2. Count the questions that are left. With none, this step is done. Otherwise say how many are coming, for example: "Before we wrap up: two quick questions from the collabmem developers." With one question, say "one quick question".
+
+3. Ask one question at a time. Ask the first, wait for the answer, and do everything that answer asks for, including recording it. Only then ask the second.
+
+   - The star ask: read `<collab_dir>/support.md` in the user's installation and follow it, the first ask.
+   - The upgrade signal: follow `install-signal.md` from "How to ask", or from "The short ask, for a later upgrade".
+
+4. Both procedures record their answer in `.collab-config`. When that file is tracked in git, commit it once, after the last question.

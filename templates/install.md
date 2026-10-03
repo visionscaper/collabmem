@@ -609,11 +609,32 @@ Everything is written now: the memory, and the installation note. Tell the user 
   - The shared-knowledge repository: commit the new memory directory and push, so teammates receive it. Commit nothing else there.
   - The code repository: commit what the user chose to track in step 3, at least the `.gitignore` change. Tell the user it is committed but not pushed: pushing the code repository is part of their normal workflow.
 
-### 12 - The star ask
+### 12 - Two quick questions from the collabmem developers
 
-The installation is done and committed. Before you close it off, follow the procedure below: the first ask. The answer is recorded in `.collab-config`; if that file is tracked, commit that one change, in the same way as in step 11.
+The installation is done and committed. Before you close it off, the collabmem developers have two questions for the user: whether they want to star the project, and whether you may send an install signal.
+
+**First collect the values of the install signal.** Do this before you say anything: follow "The values of the signal", "Collecting the values" and "The install ID" below. The `signal_kind` is `team_member` in a distributed setup, and `install` in a solo or a standalone setup. If no install ID can be made, the install signal is skipped and one question is left.
+
+**Then say how many questions are coming.** For example:
+
+> "Before we wrap up: two quick questions from the collabmem developers."
+
+With one question left, say "one quick question".
+
+**Ask one question at a time.** Ask the first, wait for the answer, and do everything that answer asks for, including recording it. Only then ask the second.
+
+1. The star ask: follow "starmem — Supporting the Project" below, the first ask.
+2. The install signal: follow "The install signal" below, from "How to ask".
+
+When both questions are answered, go on with "Committing the answers" at the end of this step.
 
 {{support}}
+
+{{install_signal}}
+
+#### Committing the answers
+
+Both procedures record their answer in `.collab-config`. When both questions are answered, and that file is tracked in git, commit it once, in the same way as in step 11. Tell the user in one line that the answers are saved.
 
 ### 13 - Closing the installation
 
