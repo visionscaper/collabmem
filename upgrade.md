@@ -122,10 +122,10 @@ After the upgrade-complete message, the collabmem developers may have up to two 
 - No value: ask, with the first ask.
 - Any value: do not ask. The user has been asked before.
 
-**The upgrade signal.** It depends on the `install-signal` and `install-signal-version` values:
+**The upgrade signal.** It depends on the `signal` and `signal-version` values:
 
-- `install-signal-version` is the version just installed: do not ask. This person has been asked for this version already.
-- No `install-signal` value: ask with the full message.
+- `signal-version` is the version just installed: do not ask. This person has been asked for this version already.
+- No `signal` value: ask with the full message.
 - `sent` or `failed`: ask with the short ask.
 - `declined`: do not ask.
 

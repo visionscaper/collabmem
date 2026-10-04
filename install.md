@@ -930,20 +930,20 @@ Do not ask whether the user clicked it.
 
 The answer belongs to the person, not to the project. So it is not kept in the project or in the memory, but in the user's personal collabmem file, `~/.config/collabmem/personal.ini`. That file has one section per project, named by the path of the project root. Two values in the section of this project record the answer:
 
-- `install-signal`: what happened.
+- `signal`: what happened.
 
   - The signal arrived → `sent`
   - The user said yes, and the signal did not arrive → `failed`
   - The user said no → `declined`
 
-- `install-signal-version`: the `collabmem_version` the user was asked for. It tells a later upgrade, and the session hook, that this person has been asked for this version already.
+- `signal-version`: the `collabmem_version` the user was asked for, at an install or at an upgrade. It tells a later upgrade, and the session hook, that this person has been asked for this version already.
 
 Write both with these commands, run in the project root. Put the values in place of `<answer>` and `<collabmem_version>`.
 
 ```bash
 mkdir -p ~/.config/collabmem
-git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).install-signal" <answer>
-git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).install-signal-version" <collabmem_version>
+git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).signal" <answer>
+git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).signal-version" <collabmem_version>
 ```
 
 None of the three answers leads to a second attempt.
@@ -953,8 +953,8 @@ If the file cannot be written, for example because the session may not write out
 To read what is recorded, run these in the project root. Each prints nothing when there is no value yet.
 
 ```bash
-git config --file ~/.config/collabmem/personal.ini --get "project.$(pwd -P).install-signal"
-git config --file ~/.config/collabmem/personal.ini --get "project.$(pwd -P).install-signal-version"
+git config --file ~/.config/collabmem/personal.ini --get "project.$(pwd -P).signal"
+git config --file ~/.config/collabmem/personal.ini --get "project.$(pwd -P).signal-version"
 ```
 
 ##### When the user asks for more
