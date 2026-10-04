@@ -64,6 +64,8 @@ Apply all changes in a single pass:
    - **Set the block's version stamp:** the first line inside the start marker, `collabmem instruction block, checked and updated up to: vX.Y.Z`, to the version being installed. If the block has no such line (installs older than v1.8.6), add it. If lines that are not part of the template sit at the top of the block (e.g. a comment left by an earlier install), put the stamp above them, directly under the start marker, and keep those lines. Do this on every upgrade, also when the block content did not change: the stamp means "checked and updated up to this version." The hook's stamp needs no edit — it is in the hook header and comes with the `cp`.
    - **System support files that are copies** (e.g. `<collab>/docs/troubleshoot.md` on Claude Code): copy/replace them; do NOT add a `world/index.md` entry for them (they are system files, not world knowledge — the index-every-doc rule does not apply).
 2. Add any new configuration settings to `.collab-config`.
+   - **The star answer of an install from before v1.8.7.** Such an install kept it as a line `project_starred=<value>` in `.collab-config`. The answer is personal and now lives in the user's personal file. If the line is there: write its value to the personal file, as "Recording the answer" in the new `support.md` describes, and then remove the line from `.collab-config`.
+   - **The install ID.** If `<collab_dir>/.install-id` does not exist, make it now: follow "The install ID" in `install-signal.md` in the collabmem repository you cloned for this upgrade. It is committed with the other files in item 5.
 3. If memory data migrations are needed, apply them with the user's approval. Narrate each change to the user's memory files — what is being modified, why, and what the result looks like. If a migration is ambiguous or could lose information, ask the user how to proceed rather than guessing.
 4. Update `<collab_dir>/.collab-memory-system` (the `collab_dir` from `.collab-config`) to the latest version.
 5. **For team/shared-knowledge installs, commit and push the shared-knowledge repo** after the shared-dir files are updated (only that repo), so teammates pick up the new memory-side files. **For a standalone memory project, commit and push the files this upgrade changed** — shared part and per-clone part (instruction file, hook) live in the same repository there. In a repository that holds several memory projects, scope the commit to this project's directory; never sweep in unrelated working-tree changes. **For solo installs**, commit the upgraded files in the code repo; pushing goes with the user's normal code workflow. **For distributed installs whose instruction file is committed** in the code repo, tell the user the upgraded block is an uncommitted change in their code repo — committing it is theirs to do with their code.
@@ -105,27 +107,34 @@ Inform the user that the upgrade is complete and summarise what changed. The upg
 
 ### Step 6: Questions from the collabmem developers
 
-After the upgrade-complete message, the collabmem developers may have up to two questions for the user: whether they want to star the project, and whether you may send an upgrade signal. Which ones are asked depends on what `.collab-config` records.
+After the upgrade-complete message, the collabmem developers may have up to two questions for the user: whether they want to star the project, and whether you may send an upgrade signal.
 
-**This step belongs to the upgrade of the shared part.** Skip it when you only caught up the per-clone part of a clone.
+**This step belongs to a full upgrade.** Skip it when someone else had already upgraded the shared part, and you only brought this clone's hook and instruction block up to date: the per-clone catch-up of Step 1.
 
-**The star ask.** It is asked when `.collab-config` has no `project_starred` property. When the property is there, the user has been asked before: do not ask.
+**The answers are personal.** They are kept in the user's personal file, `~/.config/collabmem/personal.ini`, in the section of this project. Which questions are asked depends on what that file records for the person in front of you. The two procedures say how to read it: "Where the answer is kept" in `<collab_dir>/support.md`, and "Recording the answer" in `install-signal.md` in the collabmem repository you cloned for this upgrade.
 
-**The upgrade signal.** It depends on the `install_signal` property in `.collab-config`:
+**The star ask.** It depends on the `project-starred` value:
 
-- No such property: ask with the full message.
-- `install_signal=sent` or `install_signal=failed`: ask with the short ask.
-- `install_signal=declined`: do not ask.
+- No value: ask, with the first ask.
+- Any value: do not ask. The user has been asked before.
+
+**The upgrade signal.** It depends on the `install-signal` value:
+
+- No value: ask with the full message.
+- `sent` or `failed`: ask with the short ask.
+- `declined`: do not ask.
+
+The upgrade signal is also skipped when there is no `<collab_dir>/.install-id`: Step 4 could not make one.
 
 **How to go through them.**
 
-1. If the upgrade signal is to be asked, first collect its values. Do this before you say anything. Read `install-signal.md` in this repository and follow "The values of the signal", "Collecting the values" and "The install ID". The `signal_kind` is `upgrade`. If no install ID can be made, the upgrade signal is skipped.
+1. If the upgrade signal is to be asked, first collect its values. Do this before you say anything: follow "The values of the signal" and "Collecting the values" in `install-signal.md`. The `signal_kind` is `upgrade`.
 
 2. Count the questions that are left. With none, this step is done. Otherwise say how many are coming, for example: "Before we wrap up: two quick questions from the collabmem developers." With one question, say "one quick question".
 
 3. Ask one question at a time. Ask the first, wait for the answer, and do everything that answer asks for, including recording it. Only then ask the second.
 
-   - The star ask: read `<collab_dir>/support.md` in the user's installation and follow it, the first ask.
+   - The star ask: follow `<collab_dir>/support.md`, the first ask.
    - The upgrade signal: follow `install-signal.md` from "How to ask", or from "The short ask, for a later upgrade".
 
-4. Both procedures record their answer in `.collab-config`. When that file is tracked in git, commit it once, after the last question.
+Both answers go to the personal file, outside the project, so there is nothing to commit in this step.

@@ -53,13 +53,15 @@ Collect the values before you ask, because the user sees them in the question.
 - `collabmem_version`: digits and dots, with at most one lower-case letter at the end. For example `1.8.7` or `1.8.5a`.
 - `client`: lower-case letters, digits and dashes only, at most 32 characters.
 - `client_version` and `os_version`: they start with a digit. After that only letters, digits, dots, dashes, underscores and plus signs, at most 32 characters. A version in another form becomes `unknown`.
-- `install_id`: exactly as the tool made it, or as it stands in `.collab-config`.
+- `install_id`: exactly as the tool made it, or as it stands in `<collab>/.install-id`.
 
 #### The install ID
 
-If `.collab-config` has an `install_id` property, use its value.
+The install ID is kept in the memory directory, in the file `<collab>/.install-id`: one line, the ID. The memory directory is shared by exactly the people who work with this install, so they all send the same install ID.
 
-Otherwise make a new random UUID with a tool that is already on the machine. For example:
+If that file exists, use the ID in it.
+
+Otherwise make a new random UUID with a tool that is already on the machine, and write it to `<collab>/.install-id` right away, whatever the user will answer. For example:
 
 - `uuidgen` on macOS and most Linux systems.
 - `cat /proc/sys/kernel/random/uuid` on Linux.
@@ -68,6 +70,8 @@ Otherwise make a new random UUID with a tool that is already on the machine. For
 The install ID is derived from nothing: not from a name, a path or the machine.
 
 **If you cannot make an install ID**, skip the install signal completely. Do not ask the question and record nothing.
+
+A new `.install-id` file is part of the memory. Commit it with the memory, in the way the procedure that sent you here describes.
 
 #### How to ask
 
@@ -89,7 +93,7 @@ Then give the user two plain options to answer with: yes, or no thanks. Wait for
 
 #### The short ask, for a later upgrade
 
-Use the short ask only at an upgrade, and only when `.collab-config` has `install_signal=sent` or `install_signal=failed`: someone agreed to the signal before. It leaves out the reasons, and keeps the list of values.
+Use the short ask only at an upgrade, and only when the user's recorded answer for this project is `sent` or `failed`: they agreed to the signal before. "Recording the answer" below says where that answer is kept. It leaves out the reasons, and keeps the list of values.
 
 Ask in your own words whether you may send the upgrade signal to the collabmem developers. Show the same list of values as in the message above, and offer to repeat what the signal is about. For example:
 
@@ -138,17 +142,27 @@ Do not ask whether the user clicked it.
 
 #### Recording the answer
 
-Append or update two properties in `.collab-config`.
+The answer belongs to the person, not to the project. So it is not kept in the project or in the memory, but in the user's personal collabmem file, `~/.config/collabmem/personal.ini`. That file has one section per project, named by the path of the project root. The answer is the value `install-signal` in the section of this project.
 
-`install_id=<install_id>`, if it was not set yet. Record it whatever the answer was: in a distributed setup, every member's signal must carry the same install ID, also when the first one who installed said no.
+Write it with this command, run in the project root. Put the value in place of `<answer>`.
 
-`install_signal`, which records what happened:
+```bash
+mkdir -p ~/.config/collabmem && git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).install-signal" <answer>
+```
 
-- The signal arrived → `install_signal=sent`
-- The user said yes, and the signal did not arrive → `install_signal=failed`
-- The user said no → `install_signal=declined`
+- The signal arrived → `sent`
+- The user said yes, and the signal did not arrive → `failed`
+- The user said no → `declined`
 
 None of these leads to a second attempt.
+
+If the file cannot be written, for example because the session may not write outside the project, tell the user in one line that the answer could not be saved, and go on.
+
+To read the recorded answer, run this in the project root. It prints nothing when there is no answer yet.
+
+```bash
+git config --file ~/.config/collabmem/personal.ini --get "project.$(pwd -P).install-signal"
+```
 
 #### When the user asks for more
 

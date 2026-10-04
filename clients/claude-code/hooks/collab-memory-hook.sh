@@ -118,6 +118,37 @@ print_memory_triggers() {
     echo "When searching for information, check your context window for World Model Index or Episodic Memory Index entries before searching files."
 }
 
+# --- Star follow-up ---
+# The answer to the star ask is personal, so it is kept in the user's
+# personal collabmem file and not in the project. That file is not loaded
+# into the session, so the hook reports when the follow-up ask is due: the
+# user said "maybe later", and the memory has at least 5 entries by now.
+# See support.md for the procedure. Prints nothing in every other case.
+print_star_follow_up() {
+    local personal_file="$HOME/.config/collabmem/personal.ini"
+    [ -f "$personal_file" ] || return 0
+    command -v git >/dev/null 2>&1 || return 0
+
+    # The same path the starmem procedure uses when it writes the answer.
+    local project_root
+    project_root=$(pwd -P)
+
+    local answer
+    answer=$(git config --file "$personal_file" \
+        --get "project.$project_root.project-starred" 2>/dev/null || true)
+    [ "$answer" = "maybe-later" ] || return 0
+
+    # An index entry is a table row that starts with a date.
+    local entries
+    entries=$(grep -c '^| [0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9] ' \
+        "$COLLAB_DIR/index.md" 2>/dev/null || true)
+    [ "${entries:-0}" -ge 5 ] || return 0
+
+    echo ""
+    echo "Star follow-up pending: the user answered \"maybe later\" to the star ask, and the memory has $entries entries now."
+    echo "After the next memory update in this session, run the follow-up ask of the starmem procedure (Post-update Verification, item 5)."
+}
+
 # --- SessionStart ---
 if [ "$HOOK_EVENT" = "SessionStart" ]; then
     SOURCE=$(json_field source)
@@ -136,6 +167,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "2. Scan recent index.md entries for context"
             echo "3. If unclear, search notes.md for recent notes"
             print_memory_triggers
+            print_star_follow_up
             ;;
 
         "compact")
@@ -151,6 +183,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "1. Search notes.md for the most recent session summary note"
             echo "2. Verify with the user what was being worked on before continuing"
             print_memory_triggers
+            print_star_follow_up
             ;;
 
         "resume")
@@ -159,6 +192,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo ""
             echo "Context should be intact. If uncertain about details, verify from notes and world model files."
             print_memory_triggers
+            print_star_follow_up
             ;;
     esac
 

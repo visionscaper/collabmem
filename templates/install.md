@@ -29,6 +29,7 @@ Say conceptually what you created, did or changed, what it is for, and what the 
 .collab-config              → project root
 collab/                     → (solo and standalone: a real directory | distributed: a symlink into the shared-knowledge repository)
 ├── .collab-memory-system   (version marker)
+├── .install-id             (random install ID, made in step 12)
 ├── methodology.md          (your operating instructions)
 ├── support.md              (starmem support-ask procedure)
 ├── index.md                (episodic memory index — Tier 1)
@@ -626,15 +627,19 @@ With one question left, say "one quick question".
 1. The star ask: follow "starmem — Supporting the Project" below, the first ask.
 2. The install signal: follow "The install signal" below, from "How to ask".
 
-When both questions are answered, go on with "Committing the answers" at the end of this step.
+When both questions are answered, go on with "Committing the install ID" at the end of this step.
 
 {{support}}
 
 {{install_signal}}
 
-#### Committing the answers
+#### Committing the install ID
 
-Both procedures record their answer in `.collab-config`. When both questions are answered, and that file is tracked in git, commit it once, in the same way as in step 11. Tell the user in one line that the answers are saved.
+The two answers are personal. They are saved in the user's personal file, outside the project, so there is nothing to commit for them.
+
+The install ID is different: the file `<collab>/.install-id` is part of the memory. When you made it in this step, commit it where the memory is committed, in the same way as in step 11. In a distributed setup that is the shared-knowledge repository, and you push it, so every team member sends the same install ID.
+
+Tell the user in one line that this is done.
 
 ### 13 - Closing the installation
 
