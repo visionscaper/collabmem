@@ -66,9 +66,9 @@ Apply all changes in a single pass:
 2. Add any new configuration settings to `.collab-config`.
    - **The star answer of an install from before v1.8.7.** Such an install kept it as a line `project_starred=<value>` in `.collab-config`. The answer is personal and now lives in the user's personal file. If the line is there:
 
-     - **Solo and standalone:** one person works with this install, so the answer is theirs. Write its value to the personal file, as "Recording the answer" in the new `support.md` describes.
-     - **Distributed:** the line does not say which team member gave the answer. Ask the user, in plain words. For example: "This project has a recorded answer to the question whether to star collabmem: `<value>`. Was that your answer?" Write the value to the personal file only when the user says yes. Otherwise write nothing: Step 6 then asks them the star question.
-     - In both cases, remove the line from `.collab-config` afterwards.
+     - **The user has an answer in the personal file already:** do nothing. "Where the answer is kept" in the new `support.md` says how to read it.
+     - **`.collab-config` is git-ignored** (`git check-ignore -q .collab-config` succeeds): the file is this user's own copy, so the answer is theirs. Write its value to the personal file, as "Recording the answer" in the new `support.md` describes, and remove the line from `.collab-config`.
+     - **`.collab-config` is not git-ignored:** the file may be shared, and the line does not say who gave the answer. Ask the user, in plain words. For example: "This project has a recorded answer to the question whether to star collabmem: `<value>`. Was that your answer?" On a yes, write the value to the personal file. On a no, write nothing: Step 6 then asks them the star question. Leave the line in `.collab-config`, so the person who gave the answer can still claim it at their own upgrade.
    - **The install ID.** If `<collab_dir>/.install-id` does not exist, make it now: follow "The install ID" in `install-signal.md` in the collabmem repository you cloned for this upgrade. It is committed with the other files in item 5.
 3. If memory data migrations are needed, apply them with the user's approval. Narrate each change to the user's memory files — what is being modified, why, and what the result looks like. If a migration is ambiguous or could lose information, ask the user how to proceed rather than guessing.
 4. Update `<collab_dir>/.collab-memory-system` (the `collab_dir` from `.collab-config`) to the latest version.
