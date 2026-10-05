@@ -113,6 +113,8 @@ Inform the user that the upgrade is complete and summarise what changed. The upg
 
 After the upgrade-complete message, the collabmem developers may have up to two questions for the user: whether they want to star the project, and whether you may send an upgrade signal.
 
+**When the upgrade had problems, do Step 7 first.** Then come back here for the upgrade signal only. Do not ask the star question in that case, and record nothing for it: it is not the moment to ask for a star, and with no answer recorded the user can be asked later.
+
 **This step is for everyone who goes through this document:** the person who runs the full upgrade, and also a team member who only did the per-clone catch-up of Step 1, after someone else had upgraded the shared part. Each of them is asked for themselves.
 
 **The answers are personal.** They are kept in the user's personal file, `~/.config/collabmem/personal.ini`, in the section of this project. Which questions are asked depends on what that file records for the person in front of you. The two procedures say how to read it: "Where the answer is kept" in `<collab_dir>/support.md`, and "Recording the answer" in `install-signal.md` in the collabmem repository you cloned for this upgrade.
@@ -146,6 +148,6 @@ Both answers go to the personal file, outside the project, so there is nothing t
 
 ### Step 7: Feedback When the Upgrade Had Problems
 
-Skip this step when the upgrade went smoothly.
+Skip this step when the upgrade went smoothly. When it did not, this step comes before Step 6.
 
 Offer feedback to the collabmem developers when a step failed and needed a workaround, when the upgrade could not be completed, or when these instructions were wrong or unclear for this install. Read `<collab_dir>/feedback.md` in the user's installation and follow it. This holds for a per-clone catch-up too.

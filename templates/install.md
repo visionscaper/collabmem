@@ -82,7 +82,7 @@ First describe what you will install and what each part is for. Then ask for the
 
 **4. Suggest feedback to the developers when a problem cannot be solved without changing collabmem itself.**
 
-That is the case when the methodology, the templates, the hooks or these instructions would have to change. Do not change them yourself. Offer the user to send feedback about it: step 13.1 describes how.
+That is the case when the methodology, the templates, the hooks or these instructions would have to change. Do not change them yourself. Offer the user to send feedback about it: step 12 describes how.
 
 ## Prerequisites
 
@@ -630,9 +630,17 @@ With one question left, say "one quick question".
 
 When both questions are answered, go on with "Committing the install ID" at the end of this step.
 
+**When the installation had problems, this step is different.** That is the case when a step failed and needed a workaround, when the installation could not be completed, or when collabmem could not be fitted into what the user already has.
+
+1. First offer feedback to the collabmem developers: follow "feedbackmem — Feedback to the collabmem Developers" below.
+2. Do not ask the star question now, and record nothing for it. It is not the moment to ask for a star, and with no answer recorded the user can be asked later.
+3. Then ask the install signal, as the one quick question that is left.
+
 {{support}}
 
 {{install_signal}}
+
+{{feedback}}
 
 #### Committing the install ID
 
@@ -643,16 +651,6 @@ The install ID is different: the file `<collab>/.install-id` is part of the memo
 Tell the user in one line that this is done.
 
 ### 13 - Closing the installation
-
-#### 13.1 - When the installation had problems: offering feedback
-
-Skip this part when the installation went smoothly.
-
-Offer feedback to the collabmem developers when a step failed and needed a workaround, when the installation could not be completed, or when collabmem could not be fitted into what the user already has. Follow the procedure below. A copy of it is installed as `<collab>/feedback.md`, for later use.
-
-{{feedback}}
-
-#### 13.2 - The final message
 
 The final message tells the user four things, in plain words.
 

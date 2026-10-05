@@ -171,7 +171,7 @@ First describe what you will install and what each part is for. Then ask for the
 
 **4. Suggest feedback to the developers when a problem cannot be solved without changing collabmem itself.**
 
-That is the case when the methodology, the templates, the hooks or these instructions would have to change. Do not change them yourself. Offer the user to send feedback about it: step 13.1 describes how.
+That is the case when the methodology, the templates, the hooks or these instructions would have to change. Do not change them yourself. Offer the user to send feedback about it: step 12 describes how.
 
 ## Prerequisites
 
@@ -719,6 +719,12 @@ With one question left, say "one quick question".
 
 When both questions are answered, go on with "Committing the install ID" at the end of this step.
 
+**When the installation had problems, this step is different.** That is the case when a step failed and needed a workaround, when the installation could not be completed, or when collabmem could not be fitted into what the user already has.
+
+1. First offer feedback to the collabmem developers: follow "feedbackmem — Feedback to the collabmem Developers" below.
+2. Do not ask the star question now, and record nothing for it. It is not the moment to ask for a star, and with no answer recorded the user can be asked later.
+3. Then ask the install signal, as the one quick question that is left.
+
 #### starmem — Supporting the Project
 
 This is the `starmem` procedure: asking the user to star the collabmem GitHub repo. Also when the user types `starmem` themselves, run this procedure.
@@ -973,29 +979,13 @@ You can tell the user the following, in your own words.
 - There is no account and no cookie, and nothing is sent later without a new question.
 - Saying no changes nothing about how collabmem works.
 
-#### Committing the install ID
-
-The two answers are personal. They are saved in the user's personal file, outside the project, so there is nothing to commit for them.
-
-The install ID is different: the file `<collab>/.install-id` is part of the memory. When you made it in this step, commit it where the memory is committed, in the same way as in step 11. In a distributed setup that is the shared-knowledge repository, and you push it, so every team member sends the same install ID.
-
-Tell the user in one line that this is done.
-
-### 13 - Closing the installation
-
-#### 13.1 - When the installation had problems: offering feedback
-
-Skip this part when the installation went smoothly.
-
-Offer feedback to the collabmem developers when a step failed and needed a workaround, when the installation could not be completed, or when collabmem could not be fitted into what the user already has. Follow the procedure below. A copy of it is installed as `<collab>/feedback.md`, for later use.
-
-##### feedbackmem — Feedback to the collabmem Developers
+#### feedbackmem — Feedback to the collabmem Developers
 
 This is the `feedbackmem` procedure: helping the user send short, private feedback about collabmem to its developers, by mail. Also when the user types `feedbackmem` themselves, run this procedure.
 
 The developers cannot foresee and test every situation collabmem is used in. Feedback from real use is how they learn what does not work. You draft the mail, the user reads and approves it, and the user sends it.
 
-###### When to suggest it
+##### When to suggest it
 
 Suggest feedback when one of these happened:
 
@@ -1016,7 +1006,7 @@ Keep it from becoming a nuisance:
 
 When the user types `feedbackmem`, none of these limits apply: go straight to "Drafting the mail".
 
-###### How to suggest it
+##### How to suggest it
 
 Say in one or two sentences what happened, and offer to write short feedback about it to the collabmem developers. Then tell the user these three things, in plain words:
 
@@ -1032,7 +1022,7 @@ Give two plain options to answer with: yes, or not now.
 mkdir -p ~/.config/collabmem && git config --file ~/.config/collabmem/personal.ini collabmem.feedback-suggestions off
 ```
 
-###### Drafting the mail
+##### Drafting the mail
 
 **What stays out.** No proprietary details of the user's work: no file names, code, project names, data or business matters. No personal details. Describe the work in general terms, such as "writing code" or "discussing options". If a detail of that kind is needed to understand the issue, ask the user explicitly whether it may go in, and add it only after a yes.
 
@@ -1082,7 +1072,7 @@ Where the values come from:
 - Use `unknown` for a detail you cannot read. Do not guess, and do not ask the user for it.
 - Never put the install ID in the mail.
 
-###### Showing the draft and asking
+##### Showing the draft and asking
 
 Show the user the subject and the whole text, exactly as they will be sent. Then ask two things in the same message:
 
@@ -1091,7 +1081,7 @@ Show the user the subject and the whole text, exactly as they will be sent. Then
 
 Change the draft until the user approves it. Nothing leaves the machine before that.
 
-###### Getting the mail to the user
+##### Getting the mail to the user
 
 **A mail program on this computer.** Open the mail as a draft with a `mailto:` link. Tell the user first that a draft will open in their mail program, and that they press send themselves.
 
@@ -1127,11 +1117,19 @@ A mail program may add the user's own signature under the text, with their name 
 
 In both cases, end by thanking the user in one line. Do not ask afterwards whether they sent it.
 
-###### The public route
+##### The public route
 
 A user who prefers to report in public can file an issue at https://github.com/visionscaper/collabmem/issues. Offer to help draft it. The same rule holds there: no proprietary details and no personal details.
 
-#### 13.2 - The final message
+#### Committing the install ID
+
+The two answers are personal. They are saved in the user's personal file, outside the project, so there is nothing to commit for them.
+
+The install ID is different: the file `<collab>/.install-id` is part of the memory. When you made it in this step, commit it where the memory is committed, in the same way as in step 11. In a distributed setup that is the shared-knowledge repository, and you push it, so every team member sends the same install ID.
+
+Tell the user in one line that this is done.
+
+### 13 - Closing the installation
 
 The final message tells the user four things, in plain words.
 

@@ -55,7 +55,7 @@ FIELDS = {
 HEADING_SHIFT = {
     "support": 1,
     "install_signal": 1,
-    "feedback": 2,
+    "feedback": 1,
 }
 
 FIELD_PATTERN = re.compile(r"\{\{\s*(?P<name>\w+)\s*\}\}")
