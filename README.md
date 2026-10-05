@@ -87,6 +87,7 @@ collab/
 ├── .collab-memory-system       ← version marker
 ├── methodology.md              ← AI operating instructions
 ├── support.md                  ← starmem support-ask procedure
+├── feedback.md                 ← feedbackmem procedure: feedback to the developers
 ├── index.md                    ← episodic memory index (Tier 1 — always in context)
 ├── notes.md                    ← episodic memory (Tier 2 — searched on demand)
 ├── index-archive.md            ← archived index entries (Tier 2)
@@ -140,6 +141,7 @@ The system provides six sentinel tokens — include them in your message to trig
 - **`maintainmem`** — Evaluate whether memory maintenance is needed — consolidating old index entries into the world model, or compacting world files that have grown too large.
 - **`upgrademem`** — Upgrade the memory system to the latest version.
 - **`starmem`** — Support the project: the AI asks, once, whether you'd like to star the GitHub repo, and helps you do it.
+- **`feedbackmem`** — Tell the developers about a problem, an annoyance or a suggestion: the AI drafts a short mail without details of your work, you read it, and you send it.
 - **`helpmem`** — Get help about the memory system. Use it alone for a short overview, or embedded in a question (e.g. "what does maintainmem do? helpmem").
 
 **Example usage:**

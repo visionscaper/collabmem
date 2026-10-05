@@ -47,6 +47,7 @@ FIELDS = {
     "user_friendliness": "user-friendliness.md",
     "support": "collab/support.md",
     "install_signal": "install-signal.md",
+    "feedback": "collab/feedback.md",
 }
 
 # Field name → number of levels to lower its headings by, so an inlined file
@@ -54,6 +55,7 @@ FIELDS = {
 HEADING_SHIFT = {
     "support": 1,
     "install_signal": 1,
+    "feedback": 2,
 }
 
 FIELD_PATTERN = re.compile(r"\{\{\s*(?P<name>\w+)\s*\}\}")

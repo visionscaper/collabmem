@@ -6,7 +6,7 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 
 ## Principles
 
-1. **NEVER modify the user's episodic memory or world model content.** Notes (`notes.md`), indexes (`index.md`), the user's own documents in `docs/`, and world model files contain the user's accumulated knowledge. Only update system files: `methodology.md`, `support.md`, hooks, `.collab-config` settings, `.collab-memory-system`, the system's own copied guide `docs/troubleshoot.md` (Claude Code), and the collab-memory-system import block in the instruction file. One exception to "never modify user files": when a release adds a marker/anchor line to a user-owned file (e.g. the load-check marker atop `world/context.md`), prepend exactly that line, leaving all existing content untouched (see Step 4).
+1. **NEVER modify the user's episodic memory or world model content.** Notes (`notes.md`), indexes (`index.md`), the user's own documents in `docs/`, and world model files contain the user's accumulated knowledge. Only update system files: `methodology.md`, `support.md`, `feedback.md`, hooks, `.collab-config` settings, `.collab-memory-system`, the system's own copied guide `docs/troubleshoot.md` (Claude Code), and the collab-memory-system import block in the instruction file. One exception to "never modify user files": when a release adds a marker/anchor line to a user-owned file (e.g. the load-check marker atop `world/context.md`), prepend exactly that line, leaving all existing content untouched (see Step 4).
 2. **If a release note mentions a structural change that could affect existing content**, flag it for the user rather than applying it automatically.
 3. **Narrate every change.** Tell the user what you are updating and why.
 4. **Confirm before applying.** Summarise the planned changes and ask for confirmation before modifying any files.
@@ -15,7 +15,7 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 
 Read `setup-options.md` first. It describes the three setups and the two parts every install is made of. The short version:
 
-- **Shared part** — the collab directory: `methodology.md`, `support.md`, `docs/troubleshoot.md`, the memory, and the version marker `.collab-memory-system`. In the distributed setup it lives in the shared-knowledge repo, so there is one copy for everyone: upgrade it once, and every clone gets it on the next pull.
+- **Shared part** — the collab directory: `methodology.md`, `support.md`, `feedback.md`, `docs/troubleshoot.md`, the memory, and the version marker `.collab-memory-system`. In the distributed setup it lives in the shared-knowledge repo, so there is one copy for everyone: upgrade it once, and every clone gets it on the next pull.
 - **Per-clone part** — the import block in the instruction file and the hook script. In the distributed setup there is one copy per clone, and upgrading one does nothing for the others. Each copy carries a version stamp: the first line inside the import block, and a header line in the hook, both reading `checked and updated up to: vX.Y.Z`.
 - **Consequence** — the shared marker alone cannot tell whether the copy you are in is current. In the solo and standalone setups both parts sit in one repository and the distinction never shows; in the distributed setup Step 1 must check both.
 
@@ -143,3 +143,9 @@ The upgrade signal is also skipped when there is no `<collab_dir>/.install-id`: 
    - The upgrade signal: follow `install-signal.md` from "How to ask", or from "The short ask, for a later upgrade".
 
 Both answers go to the personal file, outside the project, so there is nothing to commit in this step.
+
+### Step 7: Feedback When the Upgrade Had Problems
+
+Skip this step when the upgrade went smoothly.
+
+Offer feedback to the collabmem developers when a step failed and needed a workaround, when the upgrade could not be completed, or when these instructions were wrong or unclear for this install. Read `<collab_dir>/feedback.md` in the user's installation and follow it. This holds for a per-clone catch-up too.

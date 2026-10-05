@@ -32,6 +32,8 @@ The signal consists of the values below. Each has a name, and the rest of this p
 
 - `client_type`: how the user works with the client. One of `terminal`, `native`, `web`, `ide`. `native` is a desktop app.
 
+- `model`: the AI model you are. Use the identifier of the model when you know it, for example `claude-opus-5-5`; otherwise its name.
+
 - `os`: the operating system. One of `macos`, `linux`, `windows`.
 
 - `os_version`: the version of the operating system. For example `15.5`.
@@ -45,13 +47,14 @@ Collect the values before you ask, because the user sees them in the question.
 - Do not ask the user for a value.
 - Read a value only when one simple command gives it, or when you know it already. Do not search for it.
 - Install nothing to get a value.
-- Do not guess. When you cannot read `client`, `client_version`, `client_type`, `os` or `os_version`, its value is `unknown`.
+- Do not guess. When you cannot read `client`, `client_version`, `client_type`, `model`, `os` or `os_version`, its value is `unknown`.
 
 **The values allow very little freedom.** The endpoint accepts a signal only when every value has exactly the form below. It ignores any other signal, and it does not say so: neither you nor the user would notice.
 
 - `signal_kind`, `setup`, `client_type` and `os`: exactly one of the words listed above, in lower case.
 - `collabmem_version`: digits and dots, with at most one lower-case letter at the end. For example `1.8.7` or `1.8.5a`.
 - `client`: lower-case letters, digits and dashes only, at most 32 characters.
+- `model`: the identifier or the name of the model and nothing else, at most 64 characters. Only letters, digits, spaces, dots, dashes, colons and slashes.
 - `client_version` and `os_version`: they start with a digit. After that only letters, digits, dots, dashes, underscores and plus signs, at most 32 characters. A version in another form becomes `unknown`.
 - `install_id`: exactly as the tool made it, or as it stands in `<collab>/.install-id`.
 
@@ -84,6 +87,7 @@ Render the message below verbatim, as a message from the collabmem developers. F
 > - collabmem version: `<collabmem_version>`
 > - Setup: `<setup>`
 > - AI client: `<client>` `<client_version>`, used in the `<client_type>` client
+> - AI model: `<model>`
 > - Operating system: `<os>` `<os_version>`
 > - A random number, so that we count this install once: `<install_id>`
 >
@@ -102,6 +106,7 @@ Ask in your own words whether you may send the upgrade signal to the collabmem d
 > - collabmem version: `<collabmem_version>`
 > - Setup: `<setup>`
 > - AI client: `<client>` `<client_version>`, used in the `<client_type>` client
+> - AI model: `<model>`
 > - Operating system: `<os>` `<os_version>`
 > - A random number, so that we count this install once: `<install_id>`
 >
@@ -123,6 +128,7 @@ curl --silent --max-time 5 \
   --data-urlencode "client=<client>" \
   --data-urlencode "client_version=<client_version>" \
   --data-urlencode "client_type=<client_type>" \
+  --data-urlencode "model=<model>" \
   --data-urlencode "os=<os>" \
   --data-urlencode "os_version=<os_version>" \
   https://signals.lucens.ai/collabmem
@@ -136,7 +142,7 @@ Keep the names before each `=` and the `--user-agent` text as they are. In Power
 
 > "The signal could not be sent from here. Please click this link to send it manually, or copy it into the address bar of your browser:"
 >
-> `https://signals.lucens.ai/collabmem?kind=<signal_kind>&install_id=<install_id>&version=<collabmem_version>&setup=<setup>&client=<client>&client_version=<client_version>&client_type=<client_type>&os=<os>&os_version=<os_version>`
+> `https://signals.lucens.ai/collabmem?kind=<signal_kind>&install_id=<install_id>&version=<collabmem_version>&setup=<setup>&client=<client>&client_version=<client_version>&client_type=<client_type>&model=<model>&os=<os>&os_version=<os_version>`
 
 Do not ask whether the user clicked it.
 

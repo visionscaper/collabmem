@@ -32,6 +32,7 @@ collab/                     → (solo and standalone: a real directory | distrib
 ├── .install-id             (random install ID, made in step 12)
 ├── methodology.md          (your operating instructions)
 ├── support.md              (starmem support-ask procedure)
+├── feedback.md             (feedbackmem procedure: feedback to the developers)
 ├── index.md                (episodic memory index — Tier 1)
 ├── notes.md                (episodic memory — Tier 2)
 ├── index-archive.md        (archived index entries — Tier 2)
@@ -79,9 +80,9 @@ Examples of a conflict: existing instructions that contradict the methodology, d
 
 First describe what you will install and what each part is for. Then ask for the go-ahead, and wait for it.
 
-**4. Suggest filing an issue when a problem cannot be solved without changing collabmem itself.**
+**4. Suggest feedback to the developers when a problem cannot be solved without changing collabmem itself.**
 
-That is the case when the methodology, the templates, the hooks or these instructions would have to change. Point the user to https://github.com/visionscaper/collabmem/issues and offer to help draft the issue.
+That is the case when the methodology, the templates, the hooks or these instructions would have to change. Do not change them yourself. Offer the user to send feedback about it: step 13.1 describes how.
 
 ## Prerequisites
 
@@ -643,6 +644,16 @@ Tell the user in one line that this is done.
 
 ### 13 - Closing the installation
 
+#### 13.1 - When the installation had problems: offering feedback
+
+Skip this part when the installation went smoothly.
+
+Offer feedback to the collabmem developers when a step failed and needed a workaround, when the installation could not be completed, or when collabmem could not be fitted into what the user already has. Follow the procedure below. A copy of it is installed as `<collab>/feedback.md`, for later use.
+
+{{feedback}}
+
+#### 13.2 - The final message
+
 The final message tells the user four things, in plain words.
 
 1. **That collabmem is installed.** For example:
@@ -655,7 +666,7 @@ The final message tells the user four things, in plain words.
    - "What do you know about this project?" It shows that the world model is loaded, if the user gave context.
    - "What is the last thing we did?" It shows that the notes index is loaded: the AI should mention the installation note.
 
-3. **How to get help.** In a new session, type `helpmem`, or `helpmem` followed by a question.
+3. **How to get help, and how to tell the developers something.** In a new session, type `helpmem`, or `helpmem` followed by a question. Type `feedbackmem` to send the developers feedback: a problem, an annoyance or a suggestion.
 
 4. **In a distributed setup: what a teammate does after cloning the code repository.** They create their own `collab` symlink, and approve external imports once. Issue 1 of the troubleshooting guide explains that approval.
 

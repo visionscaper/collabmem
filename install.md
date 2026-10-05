@@ -121,6 +121,7 @@ collab/                     → (solo and standalone: a real directory | distrib
 ├── .install-id             (random install ID, made in step 12)
 ├── methodology.md          (your operating instructions)
 ├── support.md              (starmem support-ask procedure)
+├── feedback.md             (feedbackmem procedure: feedback to the developers)
 ├── index.md                (episodic memory index — Tier 1)
 ├── notes.md                (episodic memory — Tier 2)
 ├── index-archive.md        (archived index entries — Tier 2)
@@ -168,9 +169,9 @@ Examples of a conflict: existing instructions that contradict the methodology, d
 
 First describe what you will install and what each part is for. Then ask for the go-ahead, and wait for it.
 
-**4. Suggest filing an issue when a problem cannot be solved without changing collabmem itself.**
+**4. Suggest feedback to the developers when a problem cannot be solved without changing collabmem itself.**
 
-That is the case when the methodology, the templates, the hooks or these instructions would have to change. Point the user to https://github.com/visionscaper/collabmem/issues and offer to help draft the issue.
+That is the case when the methodology, the templates, the hooks or these instructions would have to change. Do not change them yourself. Offer the user to send feedback about it: step 13.1 describes how.
 
 ## Prerequisites
 
@@ -818,6 +819,8 @@ The signal consists of the values below. Each has a name, and the rest of this p
 
 - `client_type`: how the user works with the client. One of `terminal`, `native`, `web`, `ide`. `native` is a desktop app.
 
+- `model`: the AI model you are. Use the identifier of the model when you know it, for example `claude-opus-5-5`; otherwise its name.
+
 - `os`: the operating system. One of `macos`, `linux`, `windows`.
 
 - `os_version`: the version of the operating system. For example `15.5`.
@@ -831,13 +834,14 @@ Collect the values before you ask, because the user sees them in the question.
 - Do not ask the user for a value.
 - Read a value only when one simple command gives it, or when you know it already. Do not search for it.
 - Install nothing to get a value.
-- Do not guess. When you cannot read `client`, `client_version`, `client_type`, `os` or `os_version`, its value is `unknown`.
+- Do not guess. When you cannot read `client`, `client_version`, `client_type`, `model`, `os` or `os_version`, its value is `unknown`.
 
 **The values allow very little freedom.** The endpoint accepts a signal only when every value has exactly the form below. It ignores any other signal, and it does not say so: neither you nor the user would notice.
 
 - `signal_kind`, `setup`, `client_type` and `os`: exactly one of the words listed above, in lower case.
 - `collabmem_version`: digits and dots, with at most one lower-case letter at the end. For example `1.8.7` or `1.8.5a`.
 - `client`: lower-case letters, digits and dashes only, at most 32 characters.
+- `model`: the identifier or the name of the model and nothing else, at most 64 characters. Only letters, digits, spaces, dots, dashes, colons and slashes.
 - `client_version` and `os_version`: they start with a digit. After that only letters, digits, dots, dashes, underscores and plus signs, at most 32 characters. A version in another form becomes `unknown`.
 - `install_id`: exactly as the tool made it, or as it stands in `<collab>/.install-id`.
 
@@ -870,6 +874,7 @@ Render the message below verbatim, as a message from the collabmem developers. F
 > - collabmem version: `<collabmem_version>`
 > - Setup: `<setup>`
 > - AI client: `<client>` `<client_version>`, used in the `<client_type>` client
+> - AI model: `<model>`
 > - Operating system: `<os>` `<os_version>`
 > - A random number, so that we count this install once: `<install_id>`
 >
@@ -888,6 +893,7 @@ Ask in your own words whether you may send the upgrade signal to the collabmem d
 > - collabmem version: `<collabmem_version>`
 > - Setup: `<setup>`
 > - AI client: `<client>` `<client_version>`, used in the `<client_type>` client
+> - AI model: `<model>`
 > - Operating system: `<os>` `<os_version>`
 > - A random number, so that we count this install once: `<install_id>`
 >
@@ -909,6 +915,7 @@ curl --silent --max-time 5 \
   --data-urlencode "client=<client>" \
   --data-urlencode "client_version=<client_version>" \
   --data-urlencode "client_type=<client_type>" \
+  --data-urlencode "model=<model>" \
   --data-urlencode "os=<os>" \
   --data-urlencode "os_version=<os_version>" \
   https://signals.lucens.ai/collabmem
@@ -922,7 +929,7 @@ Keep the names before each `=` and the `--user-agent` text as they are. In Power
 
 > "The signal could not be sent from here. Please click this link to send it manually, or copy it into the address bar of your browser:"
 >
-> `https://signals.lucens.ai/collabmem?kind=<signal_kind>&install_id=<install_id>&version=<collabmem_version>&setup=<setup>&client=<client>&client_version=<client_version>&client_type=<client_type>&os=<os>&os_version=<os_version>`
+> `https://signals.lucens.ai/collabmem?kind=<signal_kind>&install_id=<install_id>&version=<collabmem_version>&setup=<setup>&client=<client>&client_version=<client_version>&client_type=<client_type>&model=<model>&os=<os>&os_version=<os_version>`
 
 Do not ask whether the user clicked it.
 
@@ -976,6 +983,156 @@ Tell the user in one line that this is done.
 
 ### 13 - Closing the installation
 
+#### 13.1 - When the installation had problems: offering feedback
+
+Skip this part when the installation went smoothly.
+
+Offer feedback to the collabmem developers when a step failed and needed a workaround, when the installation could not be completed, or when collabmem could not be fitted into what the user already has. Follow the procedure below. A copy of it is installed as `<collab>/feedback.md`, for later use.
+
+##### feedbackmem — Feedback to the collabmem Developers
+
+This is the `feedbackmem` procedure: helping the user send short, private feedback about collabmem to its developers, by mail. Also when the user types `feedbackmem` themselves, run this procedure.
+
+The developers cannot foresee and test every situation collabmem is used in. Feedback from real use is how they learn what does not work. You draft the mail, the user reads and approves it, and the user sends it.
+
+###### When to suggest it
+
+Suggest feedback when one of these happened:
+
+- **During an install or an upgrade:** a step failed and needed a workaround; the procedure could not be completed; or collabmem could not be fitted into the user's existing workflow or memory setup.
+- **During normal use:** the user shows frustration about how collabmem behaves; the same problem with the memory system happens a second time; or an instruction of the methodology turns out to be wrong, contradictory or impossible to follow.
+- **The user has a suggestion** for collabmem.
+
+Keep it from becoming a nuisance:
+
+- Never interrupt the work for it. Suggest it when the task at hand is finished, or at a memory update.
+- Suggest it at most once per issue.
+- After a no, do not suggest it again in this session.
+- Do not suggest it at all when the user has switched the suggestions off. This command prints `off` in that case, and nothing otherwise:
+
+  ```bash
+  git config --file ~/.config/collabmem/personal.ini --get collabmem.feedback-suggestions
+  ```
+
+When the user types `feedbackmem`, none of these limits apply: go straight to "Drafting the mail".
+
+###### How to suggest it
+
+Say in one or two sentences what happened, and offer to write short feedback about it to the collabmem developers. Then tell the user these three things, in plain words:
+
+- The feedback is about collabmem only. It contains no details of what they were working on.
+- It goes by mail, from their own mail address. So the developers see that address and can reply.
+- You prepare the mail as a draft. They read it, and they are the one who sends it.
+
+Give two plain options to answer with: yes, or not now.
+
+**After a "not now":** leave it. You may add, once, that you can stop suggesting this altogether if they prefer. If they say so, record it:
+
+```bash
+mkdir -p ~/.config/collabmem && git config --file ~/.config/collabmem/personal.ini collabmem.feedback-suggestions off
+```
+
+###### Drafting the mail
+
+**What stays out.** No proprietary details of the user's work: no file names, code, project names, data or business matters. No personal details. Describe the work in general terms, such as "writing code" or "discussing options". If a detail of that kind is needed to understand the issue, ask the user explicitly whether it may go in, and add it only after a yes.
+
+**Keep it short:** at most about 180 words, which is about 1200 characters. A longer mail may not open as a draft.
+
+**The subject:**
+
+```
+collabmem: <kind>: <short title>
+```
+
+The `<kind>` is `blocking issue`, `non-blocking issue` or `suggestion`. An issue is blocking when the user could not go on with collabmem because of it.
+
+**The text.** Leave out a part that has nothing in it.
+
+```
+Hello,
+
+<Summary: one or two lines that say what this is about.>
+
+Context
+- Experience with collabmem: <first-time user | has used it for a while | very experienced user>. Installed since <month and year>, about <number> notes.
+- What we were doing: <in general terms>
+- Step: <for an install or an upgrade: the document and the step in which it happened>
+
+<"The issue" or "The suggestion">
+<For an issue: what was expected, what happened, and what was tried and whether it helped.>
+<For a suggestion: the idea, and what it would improve.>
+
+Details
+- collabmem version: <version>
+- Setup: <solo | standalone | distributed>
+- AI client: <name> <version>, used in the <terminal | native | web | ide> client
+- AI model: <the identifier or the name of the model>
+- Operating system: <macos | linux | windows> <version>
+
+Questions to the developers
+<Questions the user or you have for them.>
+
+This mail was drafted by my AI assistant and approved by me.
+```
+
+Where the values come from:
+
+- The collabmem version is in `<collab>/.collab-memory-system`.
+- "Installed since" is the date of the oldest entry in the Episodic Memory Index, including `index-archive.md`. The number of notes is the number of entries, rounded.
+- Use `unknown` for a detail you cannot read. Do not guess, and do not ask the user for it.
+- Never put the install ID in the mail.
+
+###### Showing the draft and asking
+
+Show the user the subject and the whole text, exactly as they will be sent. Then ask two things in the same message:
+
+1. Whether the draft is right, or what they want changed.
+2. Where they read their mail: in a mail program on this computer, or in the browser.
+
+Change the draft until the user approves it. Nothing leaves the machine before that.
+
+###### Getting the mail to the user
+
+**A mail program on this computer.** Open the mail as a draft with a `mailto:` link. Tell the user first that a draft will open in their mail program, and that they press send themselves.
+
+Build the link like this, with the subject and the text percent-encoded: a space becomes `%20`, a line break becomes `%0A`, and every other character that is not a letter or a digit is encoded as well.
+
+```
+mailto:feedback@lucens.ai?subject=<encoded subject>&body=<encoded text>
+```
+
+Open it with the command of the operating system:
+
+```bash
+open "<link>"              # macOS
+xdg-open "<link>"          # Linux
+start "" "<link>"          # Windows, in cmd; in PowerShell: Start-Process "<link>"
+```
+
+Then ask whether the draft opened. If it did not, go on with the next case.
+
+A mail program may add the user's own signature under the text, with their name or phone number. Mention that they can remove it before sending if they prefer.
+
+**Mail in the browser, or the draft did not open.** The user pastes the mail themselves.
+
+- Put the text on the clipboard, with a tool that is already on the machine: `pbcopy` on macOS, `Set-Clipboard` in PowerShell on Windows, `wl-copy` or `xclip` on Linux. Install nothing for this. Without such a tool, show the text again for copying.
+- Show the address and the subject as two short lines:
+
+  ```
+  To: feedback@lucens.ai
+  Subject: <subject>
+  ```
+
+- Tell the user: start a new mail, fill in these two lines, and paste the text.
+
+In both cases, end by thanking the user in one line. Do not ask afterwards whether they sent it.
+
+###### The public route
+
+A user who prefers to report in public can file an issue at https://github.com/visionscaper/collabmem/issues. Offer to help draft it. The same rule holds there: no proprietary details and no personal details.
+
+#### 13.2 - The final message
+
 The final message tells the user four things, in plain words.
 
 1. **That collabmem is installed.** For example:
@@ -988,7 +1145,7 @@ The final message tells the user four things, in plain words.
    - "What do you know about this project?" It shows that the world model is loaded, if the user gave context.
    - "What is the last thing we did?" It shows that the notes index is loaded: the AI should mention the installation note.
 
-3. **How to get help.** In a new session, type `helpmem`, or `helpmem` followed by a question.
+3. **How to get help, and how to tell the developers something.** In a new session, type `helpmem`, or `helpmem` followed by a question. Type `feedbackmem` to send the developers feedback: a problem, an annoyance or a suggestion.
 
 4. **In a distributed setup: what a teammate does after cloning the code repository.** They create their own `collab` symlink, and approve external imports once. Issue 1 of the troubleshooting guide explains that approval.
 

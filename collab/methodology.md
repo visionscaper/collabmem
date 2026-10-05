@@ -31,7 +31,7 @@ A **standalone memory project** — a repository that *is* the memory, with no c
 
 **Memory ownership:** The episodic and world model files are *your* memory — treat them as such regardless of which AI session originally wrote them. Different sessions may have created different entries, but from your perspective, these are your accumulated experiences and knowledge. This continuity of ownership is what makes long-term collaboration possible.
 
-**Reflection sentinel tokens:** The user can include `readmem`, `updatemem`, `maintainmem`, `upgrademem`, `helpmem`, or `starmem` in their message to explicitly trigger memory operations, an upgrade, help, or the support ask. These are the primary mechanism for memory interaction — when present, you MUST perform the corresponding operation. Memory operations are also triggered by word cues and conceptual patterns described in the relevant sections (SHOULD-level), but these are less reliable because AI attention can drift from memory instructions during generation — proactive sentinel use by the user is the most dependable trigger.
+**Reflection sentinel tokens:** The user can include `readmem`, `updatemem`, `maintainmem`, `upgrademem`, `helpmem`, `starmem`, or `feedbackmem` in their message to explicitly trigger memory operations, an upgrade, help, the support ask, or feedback to the developers. These are the primary mechanism for memory interaction — when present, you MUST perform the corresponding operation. Memory operations are also triggered by word cues and conceptual patterns described in the relevant sections (SHOULD-level), but these are less reliable because AI attention can drift from memory instructions during generation — proactive sentinel use by the user is the most dependable trigger.
 
 **Load-check:** Tier 1 files reach your context through imports in the project instruction file, and imports can fail silently — leaving you without memory while nothing looks wrong. The COLLABMEM-LOAD-CHECK section in the project instruction file describes how to verify loading, using two marker lines: one at the top of this file (`COLLABMEM-MARKER-` joined with `METHODOLOGY`), one at the top of `world/context.md` (`COLLABMEM-MARKER-` joined with `CONTEXT`). The check lives in the instruction file, not here, because when loading fails this methodology is exactly what's missing. Do not remove or alter the marker lines. If a load-check ever fails: warn the user first, and never silently read the memory files as a substitute.
 
@@ -516,7 +516,7 @@ For user-triggered help with the memory system, see `helpmem` (Section 14); this
 If the user has questions about the memory system, doesn't understand how something works, or encounters an issue:
 
 1. **Try to explain or resolve it.** Use your understanding of the methodology to answer questions or fix problems within the normal operating procedures.
-2. **If you can't resolve it without changes to the system itself** (the methodology, templates, hooks, or installation procedure), don't improvise changes to system files. Instead, suggest filing an issue and help the user draft it if they want.
+2. **If you can't resolve it without changes to the system itself** (the methodology, templates, hooks, or installation procedure), don't improvise changes to system files. Instead, suggest private feedback to the developers (see Section 17 — feedbackmem) or filing an issue, and help the user draft it if they want.
 
 **Issue filing:** https://github.com/visionscaper/collabmem/issues
 
@@ -525,3 +525,11 @@ When helping draft an issue, include: what the user was trying to do, what happe
 ### 16. starmem — Supporting the Project
 
 `starmem` is the procedure for asking the user to support the project by starring the collabmem GitHub repo — also run it when the user types `starmem`. Please read and follow the instructions at `<collab_dir>/support.md` (see `collab_dir` in `.collab-config`).
+
+### 17. feedbackmem — Feedback to the Developers
+
+`feedbackmem` is the procedure for helping the user send short, private feedback about collabmem to its developers, by mail — also run it when the user types `feedbackmem`.
+
+Suggest it yourself when something about collabmem went wrong or annoyed: an install or upgrade step failed or could not be completed, the user shows frustration about how collabmem behaves, the same problem with the memory system happens a second time, or an instruction of this methodology turns out wrong or impossible to follow. Do not interrupt the work for it: suggest it when the task at hand is finished, or at a memory update, and at most once per issue.
+
+Before you suggest or draft anything, read and follow the instructions at `<collab_dir>/feedback.md` (see `collab_dir` in `.collab-config`).

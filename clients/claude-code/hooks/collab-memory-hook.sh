@@ -113,7 +113,7 @@ print_load_check() {
 # Sentinel token names create attention matches to methodology headings.
 print_memory_triggers() {
     echo ""
-    echo "IMPORTANT: The user may include readmem, updatemem, maintainmem, upgrademem, helpmem, or starmem in their messages — when present, you MUST perform the corresponding operation."
+    echo "IMPORTANT: The user may include readmem, updatemem, maintainmem, upgrademem, helpmem, starmem, or feedbackmem in their messages — when present, you MUST perform the corresponding operation."
     echo "The methodology also defines word cues and conceptual triggers for automatic memory operations."
     echo "When searching for information, check your context window for World Model Index or Episodic Memory Index entries before searching files."
 }

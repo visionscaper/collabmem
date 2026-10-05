@@ -120,6 +120,7 @@ The three setups differ in where files live, but every install is made of the sa
 
 - `methodology.md` — the AI's operating instructions
 - `support.md` — the starmem support-ask procedure
+- `feedback.md` — the feedbackmem procedure: feedback to the developers
 - `docs/troubleshoot.md` — the troubleshooting guide, copied at install
 - the memory itself: notes, indexes, the `world/` files, and the `docs/` reference documents
 - `.collab-memory-system` — the version marker
