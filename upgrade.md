@@ -150,4 +150,13 @@ Both answers go to the personal file, outside the project, so there is nothing t
 
 Skip this step when the upgrade went smoothly. When it did not, this step comes before Step 6.
 
-Offer feedback to the collabmem developers when a step failed and needed a workaround, when the upgrade could not be completed, or when these instructions were wrong or unclear for this install. Read `<collab_dir>/feedback.md` in the user's installation and follow it. This holds for a per-clone catch-up too.
+Offer the user to send feedback to the collabmem developers when:
+
+- A step failed, or needed a workaround.
+- The upgrade could not be completed.
+- These instructions were wrong or unclear for this install.
+- Something in the upgrade procedure annoyed the user.
+
+When you are in doubt whether the upgrade went smoothly for the user, ask them whether there is anything they would like to pass on to the developers.
+
+Read `<collab_dir>/feedback.md` in the user's installation and follow it. This holds for a per-clone catch-up too.

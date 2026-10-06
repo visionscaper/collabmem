@@ -54,7 +54,7 @@ Collect the values before you ask, because the user sees them in the question.
 - `signal_kind`, `setup`, `client_type` and `os`: exactly one of the words listed above, in lower case.
 - `collabmem_version`: digits and dots, with at most one lower-case letter at the end. For example `1.8.7` or `1.8.5a`.
 - `client`: lower-case letters, digits and dashes only, at most 32 characters.
-- `model`: the identifier or the name of the model and nothing else, at most 64 characters. Only letters, digits, spaces, dots, dashes, colons and slashes.
+- `model`: the identifier or the name of the model and nothing else, at most 64 characters. Only letters, digits, spaces, dots, dashes and colons. A slash is not accepted: write it as two dashes, so `anthropic/claude-opus-5-5` becomes `anthropic--claude-opus-5-5`.
 - `client_version` and `os_version`: they start with a digit. After that only letters, digits, dots, dashes, underscores and plus signs, at most 32 characters. A version in another form becomes `unknown`.
 - `install_id`: exactly as the tool made it, or as it stands in `<collab>/.install-id`.
 

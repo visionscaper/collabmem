@@ -8,9 +8,22 @@ The developers cannot foresee and test every situation collabmem is used in. Fee
 
 Suggest feedback when one of these happened:
 
-- **During an install or an upgrade:** a step failed and needed a workaround; the procedure could not be completed; or collabmem could not be fitted into the user's existing workflow or memory setup.
-- **During normal use:** the user shows frustration about how collabmem behaves; the same problem with the memory system happens a second time; or an instruction of the methodology turns out to be wrong, contradictory or impossible to follow.
+- **During an install or an upgrade:**
+
+  - A step failed, or needed a workaround.
+  - The procedure could not be completed.
+  - collabmem could not be fitted into the user's existing workflow or memory setup.
+  - Something in the procedure annoyed the user.
+
+- **During normal use:**
+
+  - The user shows frustration about how collabmem works, or about how you work with it.
+  - The same problem with the memory system happens a second time.
+  - An instruction of the methodology turns out to be wrong, contradictory or impossible to follow.
+
 - **The user has a suggestion** for collabmem.
+
+**When you are in doubt at the end of an install or an upgrade** whether it went smoothly for the user, ask them. For example: "Was there anything in this that bothered you, or that could be better? I can pass it on to the collabmem developers." A no ends it.
 
 Keep it from becoming a nuisance:
 
@@ -53,7 +66,7 @@ mkdir -p ~/.config/collabmem && git config --file ~/.config/collabmem/personal.i
 collabmem: <kind>: <short title>
 ```
 
-The `<kind>` is `blocking issue`, `non-blocking issue` or `suggestion`. An issue is blocking when the user could not go on with collabmem because of it.
+The `<kind>` is `blocking issue`, `non-blocking issue` or `suggestion`. An issue is blocking when the user could not go on with collabmem because of it, or did not want to.
 
 **The text.** Leave out a part that has nothing in it.
 
@@ -96,7 +109,7 @@ Where the values come from:
 Show the user the subject and the whole text, exactly as they will be sent. Then ask two things in the same message:
 
 1. Whether the draft is right, or what they want changed.
-2. Where they read their mail: in a mail program on this computer, or in the browser.
+2. Where they read their mail: in a mail program on this computer, in Gmail in the browser, in Outlook in the browser, or somewhere else.
 
 Change the draft until the user approves it. Nothing leaves the machine before that.
 
@@ -122,7 +135,16 @@ Then ask whether the draft opened. If it did not, go on with the next case.
 
 A mail program may add the user's own signature under the text, with their name or phone number. Mention that they can remove it before sending if they prefer.
 
-**Mail in the browser, or the draft did not open.** The user pastes the mail themselves.
+**Gmail or Outlook in the browser.** These can open a new mail with the fields filled in. Tell the user first that a new mail will open in their browser, and that they press send themselves. Build the link with the same percent-encoding as above, and open it with the same command.
+
+```
+Gmail:    https://mail.google.com/mail/?view=cm&fs=1&to=feedback%40lucens.ai&su=<encoded subject>&body=<encoded text>
+Outlook:  https://outlook.office.com/mail/deeplink/compose?to=feedback%40lucens.ai&subject=<encoded subject>&body=<encoded text>
+```
+
+For a personal Outlook account the address starts with `https://outlook.live.com/mail/0/deeplink/compose` instead. Then ask whether the new mail opened. If it did not, go on with the next case.
+
+**Mail somewhere else, or nothing opened.** The user pastes the mail themselves.
 
 - Put the text on the clipboard, with a tool that is already on the machine: `pbcopy` on macOS, `Set-Clipboard` in PowerShell on Windows, `wl-copy` or `xclip` on Linux. Install nothing for this. Without such a tool, show the text again for copying.
 - Show the address and the subject as two short lines:
@@ -138,4 +160,6 @@ In both cases, end by thanking the user in one line. Do not ask afterwards wheth
 
 #### The public route
 
-A user who prefers to report in public can file an issue at https://github.com/visionscaper/collabmem/issues. Offer to help draft it. The same rule holds there: no proprietary details and no personal details.
+A user who prefers to report in public can file an issue at https://github.com/visionscaper/collabmem/issues. Offer to help draft it.
+
+An issue says what the user was trying to do, what happened, what was expected, and the context: the same details as in the mail above, and any error message. The same rule holds there: no proprietary details and no personal details.

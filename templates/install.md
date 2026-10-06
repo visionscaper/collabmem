@@ -630,7 +630,16 @@ With one question left, say "one quick question".
 
 When both questions are answered, go on with "Committing the install ID" at the end of this step.
 
-**When the installation had problems, this step is different.** That is the case when a step failed and needed a workaround, when the installation could not be completed, or when collabmem could not be fitted into what the user already has.
+**When the installation had problems, this step is different.** That is the case when:
+
+- A step failed, or needed a workaround.
+- The installation could not be completed.
+- collabmem could not be fitted into what the user already has.
+- Something in the installation annoyed the user.
+
+When you are in doubt whether the installation went smoothly for the user, ask them whether there is anything they would like to pass on to the developers.
+
+In that case:
 
 1. First offer feedback to the collabmem developers: follow "feedbackmem — Feedback to the collabmem Developers" below.
 2. Do not ask the star question now, and record nothing for it. It is not the moment to ask for a star, and with no answer recorded the user can be asked later.

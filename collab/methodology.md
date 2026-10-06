@@ -145,7 +145,7 @@ After completing any memory update, verify:
 2. If any Tier 2 world file was updated (`world/domain.md`, `world/how-tos.md`, `world/factoids.md`): `world/index.md` was updated to reflect the change (see Writing World Model Index Entries in the World Model Protocol)
 3. If a note or world model update relates to a document in `docs/`: the document is referenced from the note or relevant world model entry
 4. Every episodic note has a corresponding row in the Episodic Memory Index (`index.md`)
-5. If the session-start hook reported a pending star follow-up, and you have not asked yet in this session: run the follow-up ask of the `starmem` procedure (see Section 16 — starmem)
+5. If the session-start hook reported a pending star follow-up, and you have not asked yet in this session: run the follow-up ask of the `starmem` procedure (see Section 15 — starmem)
 
 ### 4. maintainmem — Maintaining and Consolidating Memory
 
@@ -479,7 +479,16 @@ When the user includes `upgrademem` in their message, first confirm that they wa
 
 If the user confirms, upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location (a full clone, not a shallow `--depth 1` one — the upgrade compares against older commits) and following the instructions in `upgrade.md` from the clone.
 
-### 14. helpmem — Help with the Memory System
+### 14. Help, Troubleshooting and Feedback
+
+This section is about what to do when the user has a question about the memory system, does not understand how something works, or runs into a problem with it.
+
+1. **Try to explain or resolve it.** Use your understanding of the methodology to answer the question, or to fix the problem within the normal operating procedures. The user can also ask for help explicitly, with `helpmem`.
+2. **If it cannot be resolved without changing the system itself**, do not improvise changes to system files. The system itself is the methodology, the templates, the hooks and the installation procedure. Suggest feedback to the developers instead, with `feedbackmem`.
+
+The two procedures follow below. Supporting the project with a star is a separate matter: see `starmem` (Section 15).
+
+#### helpmem — Help with the Memory System
 
 When the user includes `helpmem` in their message, you MUST provide help about the memory system. How depends on whether the sentinel stands alone or is part of a question.
 
@@ -507,29 +516,28 @@ When the user includes `helpmem` in their message, you MUST provide help about t
 
 **Download fallback.** If the web fetch fails, try cloning. If both fail (network, platform, git availability), ask the user to check the GitHub repo directly at `https://github.com/visionscaper/collabmem`.
 
-**If no satisfactory answer can be given,** suggest filing an issue (see Section 15 — Troubleshooting and Feedback) and offer to help draft it.
+**If no satisfactory answer can be given,** suggest feedback to the developers, with `feedbackmem` below, and offer to help draft it.
 
-### 15. Troubleshooting and Feedback
+#### feedbackmem — Feedback to the Developers
 
-For user-triggered help with the memory system, see `helpmem` (Section 14); this section is the escalation target when the system itself needs change.
+`feedbackmem` is the procedure for helping the user send short, private feedback about collabmem to its developers, by mail. Also run it when the user types `feedbackmem`.
 
-If the user has questions about the memory system, doesn't understand how something works, or encounters an issue:
+**Suggest it yourself** when something about collabmem went wrong or annoyed the user:
 
-1. **Try to explain or resolve it.** Use your understanding of the methodology to answer questions or fix problems within the normal operating procedures.
-2. **If you can't resolve it without changes to the system itself** (the methodology, templates, hooks, or installation procedure), don't improvise changes to system files. Instead, suggest private feedback to the developers (see Section 17 — feedbackmem) or filing an issue, and help the user draft it if they want.
+- A step of an install or an upgrade failed, needed a workaround, or could not be completed.
+- The user shows frustration about how collabmem works, or about how you work with it.
+- The same problem with the memory system happens a second time.
+- An instruction of this methodology turns out to be wrong, or impossible to follow.
 
-**Issue filing:** https://github.com/visionscaper/collabmem/issues
+**Do not let it become a nuisance:**
 
-When helping draft an issue, include: what the user was trying to do, what happened, what was expected, and the relevant context (platform, methodology version from `.collab-memory-system`, any error messages or unexpected behavior).
+- Do not interrupt the work for it. Suggest it when the task at hand is finished, or at a memory update.
+- Suggest it at most once per issue.
 
-### 16. starmem — Supporting the Project
+**Before you suggest or draft anything,** read and follow the instructions at `<collab_dir>/feedback.md` (see `collab_dir` in `.collab-config`).
+
+**The public route.** A user who prefers to report in public can file an issue at https://github.com/visionscaper/collabmem/issues. `feedback.md` describes that route too.
+
+### 15. starmem — Supporting the Project
 
 `starmem` is the procedure for asking the user to support the project by starring the collabmem GitHub repo — also run it when the user types `starmem`. Please read and follow the instructions at `<collab_dir>/support.md` (see `collab_dir` in `.collab-config`).
-
-### 17. feedbackmem — Feedback to the Developers
-
-`feedbackmem` is the procedure for helping the user send short, private feedback about collabmem to its developers, by mail — also run it when the user types `feedbackmem`.
-
-Suggest it yourself when something about collabmem went wrong or annoyed: an install or upgrade step failed or could not be completed, the user shows frustration about how collabmem behaves, the same problem with the memory system happens a second time, or an instruction of this methodology turns out wrong or impossible to follow. Do not interrupt the work for it: suggest it when the task at hand is finished, or at a memory update, and at most once per issue.
-
-Before you suggest or draft anything, read and follow the instructions at `<collab_dir>/feedback.md` (see `collab_dir` in `.collab-config`).
