@@ -4,6 +4,8 @@ This is the `feedbackmem` procedure: helping the user send short, private feedba
 
 The developers cannot foresee and test every situation collabmem is used in. Feedback from real use is how they learn what does not work. You draft the mail, the user reads and approves it, and the user sends it.
 
+This procedure is written in a general way. It is used during an installation, during an upgrade, and in normal work with collabmem.
+
 #### When to suggest it
 
 Suggest feedback when one of these happened:
@@ -23,7 +25,7 @@ Suggest feedback when one of these happened:
 
 - **The user has a suggestion** for collabmem.
 
-**When you are in doubt at the end of an install or an upgrade** whether it went smoothly for the user, ask them. For example: "Was there anything in this that bothered you, or that could be better? I can pass it on to the collabmem developers." A no ends it.
+**When you are in doubt at the end of an install or an upgrade** whether it went smoothly for the user, ask them. Make clear that it costs them little: you write the mail. For example: "Was there anything in this that bothered you, or that could be better? I can write it up as a short mail to the collabmem developers. You only read it and press send." A no ends it.
 
 Keep it from becoming a nuisance:
 
@@ -44,7 +46,7 @@ Say in one or two sentences what happened, and offer to write short feedback abo
 
 - The feedback is about collabmem only. It contains no details of what they were working on.
 - It goes by mail, from their own mail address. So the developers see that address and can reply.
-- You prepare the mail as a draft. They read it, and they are the one who sends it.
+- It is little work for them: you write the mail. They only read it, and they are the one who sends it.
 
 Give two plain options to answer with: yes, or not now.
 
@@ -109,13 +111,16 @@ Where the values come from:
 Show the user the subject and the whole text, exactly as they will be sent. Then ask two things in the same message:
 
 1. Whether the draft is right, or what they want changed.
-2. Where they read their mail: in a mail program on this computer, in Gmail in the browser, in Outlook in the browser, or somewhere else.
+2. How they want the mail. Give these two options:
+
+   - **You open it as a draft for them.** That works for a mail program on this computer, for Gmail in the browser, and for Outlook in the browser. Ask which of the three it is.
+   - **You put the text on their clipboard,** and they paste it into a new mail themselves. This is the better choice for someone who uses several mail accounts or several browsers: a draft opens in whatever account happens to be the default, which may be the wrong one.
 
 Change the draft until the user approves it. Nothing leaves the machine before that.
 
 #### Getting the mail to the user
 
-**A mail program on this computer.** Open the mail as a draft with a `mailto:` link. Tell the user first that a draft will open in their mail program, and that they press send themselves.
+**A draft in a mail program on this computer.** Open the mail as a draft with a `mailto:` link. Tell the user first that a draft will open in their mail program, and that they press send themselves.
 
 Build the link like this, with the subject and the text percent-encoded: a space becomes `%20`, a line break becomes `%0A`, and every other character that is not a letter or a digit is encoded as well.
 
@@ -135,7 +140,7 @@ Then ask whether the draft opened. If it did not, go on with the next case.
 
 A mail program may add the user's own signature under the text, with their name or phone number. Mention that they can remove it before sending if they prefer.
 
-**Gmail or Outlook in the browser.** These can open a new mail with the fields filled in. Tell the user first that a new mail will open in their browser, and that they press send themselves. Build the link with the same percent-encoding as above, and open it with the same command.
+**A draft in Gmail or Outlook in the browser.** These can open a new mail with the fields filled in. Tell the user first that a new mail will open in their browser, and that they press send themselves. Build the link with the same percent-encoding as above, and open it with the same command.
 
 ```
 Gmail:    https://mail.google.com/mail/?view=cm&fs=1&to=feedback%40lucens.ai&su=<encoded subject>&body=<encoded text>
@@ -144,7 +149,7 @@ Outlook:  https://outlook.office.com/mail/deeplink/compose?to=feedback%40lucens.
 
 For a personal Outlook account the address starts with `https://outlook.live.com/mail/0/deeplink/compose` instead. Then ask whether the new mail opened. If it did not, go on with the next case.
 
-**Mail somewhere else, or nothing opened.** The user pastes the mail themselves.
+**The clipboard.** Use it when the user chose it, and when a draft did not open. The user pastes the mail themselves.
 
 - Put the text on the clipboard, with a tool that is already on the machine: `pbcopy` on macOS, `Set-Clipboard` in PowerShell on Windows, `wl-copy` or `xclip` on Linux. Install nothing for this. Without such a tool, show the text again for copying.
 - Show the address and the subject as two short lines:
@@ -156,7 +161,7 @@ For a personal Outlook account the address starts with `https://outlook.live.com
 
 - Tell the user: start a new mail, fill in these two lines, and paste the text.
 
-In both cases, end by thanking the user in one line. Do not ask afterwards whether they sent it.
+In every case, end by thanking the user in one line. Do not ask afterwards whether they sent it.
 
 #### The public route
 

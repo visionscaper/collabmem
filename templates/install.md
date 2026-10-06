@@ -637,7 +637,7 @@ When both questions are answered, go on with "Committing the install ID" at the 
 - collabmem could not be fitted into what the user already has.
 - Something in the installation annoyed the user.
 
-When you are in doubt whether the installation went smoothly for the user, ask them whether there is anything they would like to pass on to the developers.
+When you are in doubt whether the installation went smoothly for the user, ask them whether there is anything they would like the developers to know. Say that you write the mail for them, and that they only read it and press send.
 
 In that case:
 

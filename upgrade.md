@@ -157,6 +157,6 @@ Offer the user to send feedback to the collabmem developers when:
 - These instructions were wrong or unclear for this install.
 - Something in the upgrade procedure annoyed the user.
 
-When you are in doubt whether the upgrade went smoothly for the user, ask them whether there is anything they would like to pass on to the developers.
+When you are in doubt whether the upgrade went smoothly for the user, ask them whether there is anything they would like the developers to know. Say that you write the mail for them, and that they only read it and press send.
 
 Read `<collab_dir>/feedback.md` in the user's installation and follow it. This holds for a per-clone catch-up too.
