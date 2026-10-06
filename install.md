@@ -815,9 +815,9 @@ Every person who uses collabmem is asked for themselves, once per collabmem vers
 
 The hook reports it for a person who was not asked by an installation or an upgrade. For example a team member who received collabmem, or a new version of it, through a plain `git pull`.
 
-Ask after the next memory update, not in the middle of the work. Say first that a quick question from the collabmem developers is coming. Then go through this procedure from "The values of the signal". The hook's message says which form applies:
+Ask after the next memory update, not in the middle of the work. Open warmly: thank the user for using collabmem, and say that the developers have a quick question. For example: "Thanks for using collabmem! Its developers have one quick question for you." Then go through this procedure from "The values of the signal". The hook's message says which form applies:
 
-- **This person's first signal for this project.** The `signal_kind` is `team_member` in a distributed setup, and `install` in a solo or a standalone setup. Use the full message of "How to ask".
+- **This person's first signal for this project.** The `signal_kind` is `team_member`, in every setup: the install existed before this person was asked, so they joined it. Use the full message of "How to ask".
 - **`signal_kind` upgrade.** The person agreed to a signal before, and a new version has arrived. Use "The short ask, for a later upgrade".
 
 ##### The values of the signal
@@ -827,7 +827,10 @@ The signal consists of the values below. Each has a name, and the rest of this p
 - `signal_kind`: what happened. One of:
 
   - `install`: a new install in a solo or a standalone setup.
-  - `team_member`: a new install in a distributed setup. In a distributed setup a team shares the memory, and everyone who installs is a member of that team, also the first one. So such a project sends only `team_member` signals.
+  - `team_member`: a person who works with an install that is shared.
+
+    - In a distributed setup a team shares the memory, and everyone who installs is a member of that team, also the first one. So such a project sends only `team_member` signals at an install.
+    - In a solo or a standalone setup the project can be shared too. A person who joins an install that someone else made sends `team_member`.
   - `upgrade`: an upgrade of an existing install.
 
 - `signal_kind_word`: the word for `signal_kind` in the message to the user. It is `upgrade` when `signal_kind` is `upgrade`, and `install` otherwise. It is not sent.
