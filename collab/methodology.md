@@ -145,7 +145,7 @@ After completing any memory update, verify:
 2. If any Tier 2 world file was updated (`world/domain.md`, `world/how-tos.md`, `world/factoids.md`): `world/index.md` was updated to reflect the change (see Writing World Model Index Entries in the World Model Protocol)
 3. If a note or world model update relates to a document in `docs/`: the document is referenced from the note or relevant world model entry
 4. Every episodic note has a corresponding row in the Episodic Memory Index (`index.md`)
-5. If the session-start hook reported a pending star follow-up, and you have not asked yet in this session: run the follow-up ask of the `starmem` procedure (see Section 15 — starmem)
+5. If the session-start hook reported pending questions from the collabmem developers, and you have not asked them yet in this session: ask them now, one at a time, in the form the hook's message names. The star ask is the `starmem` procedure (see Section 15 — starmem). The install signal is described in `<collab_dir>/install-signal.md`; start at "When the session hook reports the signal as pending"
 
 ### 4. maintainmem — Maintaining and Consolidating Memory
 

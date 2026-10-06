@@ -118,35 +118,73 @@ print_memory_triggers() {
     echo "When searching for information, check your context window for World Model Index or Episodic Memory Index entries before searching files."
 }
 
-# --- Star follow-up ---
-# The answer to the star ask is personal, so it is kept in the user's
-# personal collabmem file and not in the project. That file is not loaded
-# into the session, so the hook reports when the follow-up ask is due: the
-# user said "maybe later", and the memory has at least 5 entries by now.
-# See support.md for the procedure. Prints nothing in every other case.
-print_star_follow_up() {
+# --- Pending questions from the collabmem developers ---
+# The developers have two questions for every person who uses collabmem: the
+# star ask and the install signal (see support.md and install-signal.md in
+# the collab directory). The answers are personal, so they are kept in the
+# user's personal collabmem file and not in the project. That file is not
+# loaded into the session, so the hook reports which questions are still due
+# for this person. It covers everyone who was not asked by an install or an
+# upgrade procedure: for example a team member who received collabmem, or a
+# new version of it, through a plain "git pull".
+# Prints nothing when no question is due.
+
+# Reads one value of this project from the personal file; empty when absent.
+read_personal_value() {
     local personal_file="$HOME/.config/collabmem/personal.ini"
     [ -f "$personal_file" ] || return 0
+
+    # The same path the procedures use when they write a value.
+    git config --file "$personal_file" \
+        --get "project.$(pwd -P).$1" 2>/dev/null || true
+}
+
+print_pending_questions() {
     command -v git >/dev/null 2>&1 || return 0
 
-    # The same path the starmem procedure uses when it writes the answer.
-    local project_root
-    project_root=$(pwd -P)
-
-    local answer
-    answer=$(git config --file "$personal_file" \
-        --get "project.$project_root.project-starred" 2>/dev/null || true)
-    [ "$answer" = "maybe-later" ] || return 0
+    local pending=()
 
     # An index entry is a table row that starts with a date.
     local entries
     entries=$(grep -c '^| [0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9] ' \
         "$COLLAB_DIR/index.md" 2>/dev/null || true)
-    [ "${entries:-0}" -ge 5 ] || return 0
+    entries="${entries:-0}"
+
+    # The star ask. It waits until the memory has at least 5 entries: the
+    # user has seen the system work by then.
+    local starred
+    starred=$(read_personal_value project-starred)
+    if [ "$entries" -ge 5 ]; then
+        if [ -z "$starred" ]; then
+            pending+=("the star ask (the first ask)")
+        elif [ "$starred" = "maybe-later" ]; then
+            pending+=("the star ask (the follow-up ask)")
+        fi
+    fi
+
+    # The install signal. It needs the install ID of the project; without
+    # one there is nothing to send. A person is asked once per version.
+    local version signal signal_version
+    version=$(sed 's/^v//' "$COLLAB_DIR/.collab-memory-system" 2>/dev/null \
+        | tr -d '[:space:]' || true)
+    if [ -f "$COLLAB_DIR/.install-id" ] && [ -n "$version" ]; then
+        signal=$(read_personal_value signal)
+        signal_version=$(read_personal_value signal-version)
+        if [ -z "$signal" ]; then
+            pending+=("the install signal (this person's first signal for this project; the full message)")
+        elif [ "$signal" != "declined" ] && [ "$signal_version" != "$version" ]; then
+            pending+=("the install signal (signal_kind upgrade; the short ask)")
+        fi
+    fi
+
+    [ "${#pending[@]}" -gt 0 ] || return 0
+
+    local list="${pending[0]}"
+    [ "${#pending[@]}" -gt 1 ] && list="$list, and ${pending[1]}"
 
     echo ""
-    echo "Star follow-up pending: the user answered \"maybe later\" to the star ask, and the memory has $entries entries now."
-    echo "After the next memory update in this session, run the follow-up ask of the starmem procedure (Post-update Verification, item 5)."
+    echo "Questions from the collabmem developers are pending for this user: $list."
+    echo "After the next memory update in this session, ask them, one at a time (Post-update Verification, item 5)."
 }
 
 # --- SessionStart ---
@@ -167,7 +205,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "2. Scan recent index.md entries for context"
             echo "3. If unclear, search notes.md for recent notes"
             print_memory_triggers
-            print_star_follow_up
+            print_pending_questions
             ;;
 
         "compact")
@@ -183,7 +221,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "1. Search notes.md for the most recent session summary note"
             echo "2. Verify with the user what was being worked on before continuing"
             print_memory_triggers
-            print_star_follow_up
+            print_pending_questions
             ;;
 
         "resume")
@@ -192,7 +230,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo ""
             echo "Context should be intact. If uncertain about details, verify from notes and world model files."
             print_memory_triggers
-            print_star_follow_up
+            print_pending_questions
             ;;
     esac
 

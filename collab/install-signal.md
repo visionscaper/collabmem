@@ -6,6 +6,17 @@ The signal tells the developers which collabmem setups, AI clients and operating
 
 The signal must only be sent after the user has said yes. The user sees every value before it is sent.
 
+Every person who uses collabmem is asked for themselves, once per collabmem version. This procedure is used in three situations: at the end of an installation, at the end of an upgrade, and in a normal session when the session-start hook reports the signal as pending.
+
+#### When the session hook reports the signal as pending
+
+The hook reports it for a person who was not asked by an installation or an upgrade. For example a team member who received collabmem, or a new version of it, through a plain `git pull`.
+
+Ask after the next memory update, not in the middle of the work. Say first that a quick question from the collabmem developers is coming. Then go through this procedure from "The values of the signal". The hook's message says which form applies:
+
+- **This person's first signal for this project.** The `signal_kind` is `team_member` in a distributed setup, and `install` in a solo or a standalone setup. Use the full message of "How to ask".
+- **`signal_kind` upgrade.** The person agreed to a signal before, and a new version has arrived. Use "The short ask, for a later upgrade".
+
 #### The values of the signal
 
 The signal consists of the values below. Each has a name, and the rest of this procedure uses these names.
@@ -97,7 +108,7 @@ Then give the user two plain options to answer with: yes, or no thanks. Wait for
 
 #### The short ask, for a later upgrade
 
-Use the short ask only at an upgrade, and only when the user's recorded answer for this project is `sent` or `failed`: they agreed to the signal before. "Recording the answer" below says where that answer is kept. It leaves out the reasons, and keeps the list of values.
+Use the short ask only for an upgrade signal, and only when the user's recorded answer for this project is `sent` or `failed`: they agreed to the signal before. "Recording the answer" below says where that answer is kept. It leaves out the reasons, and keeps the list of values.
 
 Ask in your own words whether you may send the upgrade signal to the collabmem developers. Show the same list of values as in the message above, and offer to repeat what the signal is about. For example:
 

@@ -121,6 +121,7 @@ collab/                     → (solo and standalone: a real directory | distrib
 ├── .install-id             (random install ID, made in step 12)
 ├── methodology.md          (your operating instructions)
 ├── support.md              (starmem support-ask procedure)
+├── install-signal.md       (install signal procedure)
 ├── feedback.md             (feedbackmem procedure: feedback to the developers)
 ├── index.md                (episodic memory index — Tier 1)
 ├── notes.md                (episodic memory — Tier 2)
@@ -754,8 +755,8 @@ git config --file ~/.config/collabmem/personal.ini --get "project.$(pwd -P).proj
 
 The ask must stay respectful and bounded, so it is governed by strict ask discipline:
 
-- **Ask only once at installation or upgrade**, when the personal file has no `project-starred` value for this project. The value becomes `done`, `maybe-later` or `declined`.
-- **Ask once more only when** the value is `maybe-later` and the Episodic Memory Index (`index.md`) has at least 5 entries. The session-start hook reports when that is the case, and the Post-update Verification checklist of the methodology then sends you here. The value becomes `done` or `declined`.
+- **The first ask: only once, and only when the personal file has no `project-starred` value for this project.** It happens at an installation or an upgrade. A person who was not asked there is asked later: when the memory has at least 5 entries, the session-start hook reports the star ask as pending, and the Post-update Verification checklist of the methodology sends you here. The value becomes `done`, `maybe-later` or `declined`.
+- **The follow-up ask: once more, only when** the value is `maybe-later` and the Episodic Memory Index (`index.md`) has at least 5 entries. The session-start hook reports this too. The value becomes `done` or `declined`.
 - **Never ask again after a decline**, and never after the follow-up ask, whatever its outcome. A second "maybe later" at the follow-up ask is therefore recorded as `declined` — the value gates asking, it doesn't judge the user's interest; the user can always star later themselves or type `starmem`.
 
 ##### How to ask
@@ -768,7 +769,7 @@ Render the message below verbatim, as a message from the collabmem developers. T
 
 Then give the user three plain options to answer with: star it, maybe later, or no thanks.
 
-**The first ask.** It is used at installation, and at the upgrade of an existing installation. Render:
+**The first ask.** It is used at installation, at the upgrade of an existing installation, and when the session-start hook reports the first ask as pending. Render:
 
 > "collabmem is a small open-source project. GitHub stars are the main way new people discover it — each one helps the project reach others with the same problem. If you like the idea behind collabmem, would you consider starring the repo? And thanks for trying it either way!
 >
@@ -807,6 +808,17 @@ This is the procedure for the install signal: asking the user whether you may se
 The signal tells the developers which collabmem setups, AI clients and operating systems are in use, so they know what to support. It also lets them show that collabmem is really used.
 
 The signal must only be sent after the user has said yes. The user sees every value before it is sent.
+
+Every person who uses collabmem is asked for themselves, once per collabmem version. This procedure is used in three situations: at the end of an installation, at the end of an upgrade, and in a normal session when the session-start hook reports the signal as pending.
+
+##### When the session hook reports the signal as pending
+
+The hook reports it for a person who was not asked by an installation or an upgrade. For example a team member who received collabmem, or a new version of it, through a plain `git pull`.
+
+Ask after the next memory update, not in the middle of the work. Say first that a quick question from the collabmem developers is coming. Then go through this procedure from "The values of the signal". The hook's message says which form applies:
+
+- **This person's first signal for this project.** The `signal_kind` is `team_member` in a distributed setup, and `install` in a solo or a standalone setup. Use the full message of "How to ask".
+- **`signal_kind` upgrade.** The person agreed to a signal before, and a new version has arrived. Use "The short ask, for a later upgrade".
 
 ##### The values of the signal
 
@@ -899,7 +911,7 @@ Then give the user two plain options to answer with: yes, or no thanks. Wait for
 
 ##### The short ask, for a later upgrade
 
-Use the short ask only at an upgrade, and only when the user's recorded answer for this project is `sent` or `failed`: they agreed to the signal before. "Recording the answer" below says where that answer is kept. It leaves out the reasons, and keeps the list of values.
+Use the short ask only for an upgrade signal, and only when the user's recorded answer for this project is `sent` or `failed`: they agreed to the signal before. "Recording the answer" below says where that answer is kept. It leaves out the reasons, and keeps the list of values.
 
 Ask in your own words whether you may send the upgrade signal to the collabmem developers. Show the same list of values as in the message above, and offer to repeat what the signal is about. For example:
 

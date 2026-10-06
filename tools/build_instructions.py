@@ -46,7 +46,7 @@ TARGETS = {
 FIELDS = {
     "user_friendliness": "user-friendliness.md",
     "support": "collab/support.md",
-    "install_signal": "install-signal.md",
+    "install_signal": "collab/install-signal.md",
     "feedback": "collab/feedback.md",
 }
 

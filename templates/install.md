@@ -32,6 +32,7 @@ collab/                     → (solo and standalone: a real directory | distrib
 ├── .install-id             (random install ID, made in step 12)
 ├── methodology.md          (your operating instructions)
 ├── support.md              (starmem support-ask procedure)
+├── install-signal.md       (install signal procedure)
 ├── feedback.md             (feedbackmem procedure: feedback to the developers)
 ├── index.md                (episodic memory index — Tier 1)
 ├── notes.md                (episodic memory — Tier 2)

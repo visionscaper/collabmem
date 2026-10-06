@@ -6,7 +6,7 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 
 ## Principles
 
-1. **NEVER modify the user's episodic memory or world model content.** Notes (`notes.md`), indexes (`index.md`), the user's own documents in `docs/`, and world model files contain the user's accumulated knowledge. Only update system files: `methodology.md`, `support.md`, `feedback.md`, hooks, `.collab-config` settings, `.collab-memory-system`, the system's own copied guide `docs/troubleshoot.md` (Claude Code), and the collab-memory-system import block in the instruction file. One exception to "never modify user files": when a release adds a marker/anchor line to a user-owned file (e.g. the load-check marker atop `world/context.md`), prepend exactly that line, leaving all existing content untouched (see Step 4).
+1. **NEVER modify the user's episodic memory or world model content.** Notes (`notes.md`), indexes (`index.md`), the user's own documents in `docs/`, and world model files contain the user's accumulated knowledge. Only update system files: `methodology.md`, `support.md`, `install-signal.md`, `feedback.md`, hooks, `.collab-config` settings, `.collab-memory-system`, the system's own copied guide `docs/troubleshoot.md` (Claude Code), and the collab-memory-system import block in the instruction file. One exception to "never modify user files": when a release adds a marker/anchor line to a user-owned file (e.g. the load-check marker atop `world/context.md`), prepend exactly that line, leaving all existing content untouched (see Step 4).
 2. **If a release note mentions a structural change that could affect existing content**, flag it for the user rather than applying it automatically.
 3. **Narrate every change.** Tell the user what you are updating and why.
 4. **Confirm before applying.** Summarise the planned changes and ask for confirmation before modifying any files.
@@ -15,7 +15,7 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 
 Read `setup-options.md` first. It describes the three setups and the two parts every install is made of. The short version:
 
-- **Shared part** — the collab directory: `methodology.md`, `support.md`, `feedback.md`, `docs/troubleshoot.md`, the memory, and the version marker `.collab-memory-system`. In the distributed setup it lives in the shared-knowledge repo, so there is one copy for everyone: upgrade it once, and every clone gets it on the next pull.
+- **Shared part** — the collab directory: `methodology.md`, `support.md`, `install-signal.md`, `feedback.md`, `docs/troubleshoot.md`, the memory, and the version marker `.collab-memory-system`. In the distributed setup it lives in the shared-knowledge repo, so there is one copy for everyone: upgrade it once, and every clone gets it on the next pull.
 - **Per-clone part** — the import block in the instruction file and the hook script. In the distributed setup there is one copy per clone, and upgrading one does nothing for the others. Each copy carries a version stamp: the first line inside the import block, and a header line in the hook, both reading `checked and updated up to: vX.Y.Z`.
 - **Consequence** — the shared marker alone cannot tell whether the copy you are in is current. In the solo and standalone setups both parts sit in one repository and the distinction never shows; in the distributed setup Step 1 must check both.
 
@@ -58,7 +58,7 @@ Summarise the planned changes for the user and ask for confirmation before proce
 
 Apply all changes in a single pass:
 
-1. Copy updated system files from this repository to the user's installation (e.g., `collab/methodology.md`, and the hook — note its source path may have moved between versions, see the release notes) using the `cp` command — this is more stable than copying over changes. **Always re-copy the hook**, on every upgrade: its header stamp changes with every release even when its body does not, so the installed copy always differs from the template. After copying the hook, make it executable (`chmod +x`).
+1. Copy updated system files from this repository to the user's installation (e.g., `collab/methodology.md`, `collab/support.md`, `collab/install-signal.md`, `collab/feedback.md`, and the hook — note its source path may have moved between versions, see the release notes) using the `cp` command — this is more stable than copying over changes. **Always re-copy the hook**, on every upgrade: its header stamp changes with every release even when its body does not, so the installed copy always differs from the template. After copying the hook, make it executable (`chmod +x`).
    - **Marker/anchor lines in user-owned memory files** (e.g. the load-check marker at the top of `world/context.md`): never replace the file — insert exactly the line specified in the release notes with an **edit tool** (not shell/`cp`, so the change is a reviewable diff), leaving the user's content untouched. **Idempotent:** if that line is already present (e.g. a re-run), skip it — do not add it twice.
    - **When refreshing the import block in the instruction file:** the template is the fenced ```` ```markdown ```` block in install.md Step 5 — not the first place install.md's prose mentions the `collab-memory-system` markers. Preserve the existing install's path adjustments (e.g. `@../collab/...` for an instruction file in `.claude/`, or absolute paths for a collab directory outside the repo without a symlink) — apply the new block *content* with the old block's *paths*, following the path rules in install.md Step 5. Copying template paths verbatim silently breaks loading on adjusted installs. **Also preserve any user additions inside the markers** — e.g. `## Methodology Domain Extensions` imports (methodology §12); refresh the block by adding/updating the system sections, not by wholesale replacement.
    - **Set the block's version stamp:** the first line inside the start marker, `collabmem instruction block, checked and updated up to: vX.Y.Z`, to the version being installed. If the block has no such line (installs older than v1.8.6), add it. If lines that are not part of the template sit at the top of the block (e.g. a comment left by an earlier install), put the stamp above them, directly under the start marker, and keep those lines. Do this on every upgrade, also when the block content did not change: the stamp means "checked and updated up to this version." The hook's stamp needs no edit — it is in the hook header and comes with the `cp`.
@@ -69,7 +69,7 @@ Apply all changes in a single pass:
      - **The user has an answer in the personal file already:** do nothing. "Where the answer is kept" in the new `support.md` says how to read it.
      - **`.collab-config` is git-ignored** (`git check-ignore -q .collab-config` succeeds): the file is this user's own copy, so the answer is theirs. Write its value to the personal file, as "Recording the answer" in the new `support.md` describes, and remove the line from `.collab-config`.
      - **`.collab-config` is not git-ignored:** the file may be shared, and the line does not say who gave the answer. Ask the user, in plain words. For example: "This project has a recorded answer to the question whether to star collabmem: `<value>`. Was that your answer?" On a yes, write the value to the personal file. On a no, write nothing: Step 6 then asks them the star question. Leave the line in `.collab-config`, so the person who gave the answer can still claim it at their own upgrade.
-   - **The install ID.** If `<collab_dir>/.install-id` does not exist, make it now: follow "The install ID" in `install-signal.md` in the collabmem repository you cloned for this upgrade. It is committed with the other files in item 5.
+   - **The install ID.** If `<collab_dir>/.install-id` does not exist, make it now: follow "The install ID" in `<collab_dir>/install-signal.md`, which item 1 has just copied into the installation. It is committed with the other files in item 5.
 3. If memory data migrations are needed, apply them with the user's approval. Narrate each change to the user's memory files — what is being modified, why, and what the result looks like. If a migration is ambiguous or could lose information, ask the user how to proceed rather than guessing.
 4. Update `<collab_dir>/.collab-memory-system` (the `collab_dir` from `.collab-config`) to the latest version.
 5. **For team/shared-knowledge installs, commit and push the shared-knowledge repo** after the shared-dir files are updated (only that repo), so teammates pick up the new memory-side files. **For a standalone memory project, commit and push the files this upgrade changed** — shared part and per-clone part (instruction file, hook) live in the same repository there. In a repository that holds several memory projects, scope the commit to this project's directory; never sweep in unrelated working-tree changes. **For solo installs**, commit the upgraded files in the code repo; pushing goes with the user's normal code workflow. **For distributed installs whose instruction file is committed** in the code repo, tell the user the upgraded block is an uncommitted change in their code repo — committing it is theirs to do with their code.
@@ -117,7 +117,7 @@ After the upgrade-complete message, the collabmem developers may have up to two 
 
 **This step is for everyone who goes through this document:** the person who runs the full upgrade, and also a team member who only did the per-clone catch-up of Step 1, after someone else had upgraded the shared part. Each of them is asked for themselves.
 
-**The answers are personal.** They are kept in the user's personal file, `~/.config/collabmem/personal.ini`, in the section of this project. Which questions are asked depends on what that file records for the person in front of you. The two procedures say how to read it: "Where the answer is kept" in `<collab_dir>/support.md`, and "Recording the answer" in `install-signal.md` in the collabmem repository you cloned for this upgrade.
+**The answers are personal.** They are kept in the user's personal file, `~/.config/collabmem/personal.ini`, in the section of this project. Which questions are asked depends on what that file records for the person in front of you. The two procedures say how to read it: "Where the answer is kept" in `<collab_dir>/support.md`, and "Recording the answer" in `<collab_dir>/install-signal.md`.
 
 **The star ask.** It depends on the `project-starred` value:
 
@@ -135,14 +135,14 @@ The upgrade signal is also skipped when there is no `<collab_dir>/.install-id`: 
 
 **How to go through them.**
 
-1. If the upgrade signal is to be asked, first collect its values. Do this before you say anything: follow "The values of the signal" and "Collecting the values" in `install-signal.md`. The `signal_kind` is `upgrade`.
+1. If the upgrade signal is to be asked, first collect its values. Do this before you say anything: follow "The values of the signal" and "Collecting the values" in `<collab_dir>/install-signal.md`. The `signal_kind` is `upgrade`.
 
 2. Count the questions that are left. With none, this step is done. Otherwise say how many are coming, for example: "Before we wrap up: two quick questions from the collabmem developers." With one question, say "one quick question".
 
 3. Ask one question at a time. Ask the first, wait for the answer, and do everything that answer asks for, including recording it. Only then ask the second.
 
    - The star ask: follow `<collab_dir>/support.md`, the first ask.
-   - The upgrade signal: follow `install-signal.md` from "How to ask", or from "The short ask, for a later upgrade".
+   - The upgrade signal: follow `<collab_dir>/install-signal.md` from "How to ask", or from "The short ask, for a later upgrade".
 
 Both answers go to the personal file, outside the project, so there is nothing to commit in this step.
 

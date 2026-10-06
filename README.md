@@ -87,6 +87,7 @@ collab/
 ├── .collab-memory-system       ← version marker
 ├── methodology.md              ← AI operating instructions
 ├── support.md                  ← starmem support-ask procedure
+├── install-signal.md           ← install signal procedure
 ├── feedback.md                 ← feedbackmem procedure: feedback to the developers
 ├── index.md                    ← episodic memory index (Tier 1 — always in context)
 ├── notes.md                    ← episodic memory (Tier 2 — searched on demand)
