@@ -62,4 +62,4 @@ mkdir -p ~/.config/collabmem && git config --file ~/.config/collabmem/personal.i
 - "No" → `declined`
 - After the follow-up ask, set `done` or `declined` — never `maybe-later` again.
 
-If the file cannot be written, for example because the session may not write outside the project, tell the user in one line that the answer could not be saved, and go on.
+If the file cannot be written, for example because the session may not write outside the project, tell the user that the answer could not be saved, and what that means: collabmem cannot remember it, so they may be asked again. Offer to help find out why. If it cannot be fixed, suggest feedback to the developers, with `feedbackmem`. Then go on.

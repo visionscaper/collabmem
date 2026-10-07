@@ -129,14 +129,73 @@ print_memory_triggers() {
 # new version of it, through a plain "git pull".
 # Prints nothing when no question is due.
 
+PERSONAL_FILE="$HOME/.config/collabmem/personal.ini"
+
+# Says whether the personal file can be used: "ok", "unreadable" (it exists
+# but cannot be read, or its content is damaged) or "unwritable" (it, or its
+# folder, cannot be written). A file that does not exist yet is fine: it is
+# made when the first value is written.
+#
+# This is not the same as a value that is missing. A missing value means
+# "not asked yet". A file that cannot be used means we do not know, and then
+# nothing may be asked.
+personal_file_state() {
+    if [ -e "$PERSONAL_FILE" ]; then
+        git config --file "$PERSONAL_FILE" --list >/dev/null 2>&1 \
+            || { echo "unreadable"; return 0; }
+        [ -w "$PERSONAL_FILE" ] || { echo "unwritable"; return 0; }
+    else
+        mkdir -p "$(dirname "$PERSONAL_FILE")" 2>/dev/null \
+            || { echo "unwritable"; return 0; }
+        [ -w "$(dirname "$PERSONAL_FILE")" ] || { echo "unwritable"; return 0; }
+    fi
+
+    echo "ok"
+}
+
 # Reads one value of this project from the personal file; empty when absent.
 read_personal_value() {
-    local personal_file="$HOME/.config/collabmem/personal.ini"
-    [ -f "$personal_file" ] || return 0
+    [ -f "$PERSONAL_FILE" ] || return 0
 
     # The same path the procedures use when they write a value.
-    git config --file "$personal_file" \
+    git config --file "$PERSONAL_FILE" \
         --get "project.$(pwd -P).$1" 2>/dev/null || true
+}
+
+# The collabmem version that is installed in this project, without the "v".
+installed_version() {
+    sed 's/^v//' "$COLLAB_DIR/.collab-memory-system" 2>/dev/null \
+        | tr -d '[:space:]' || true
+}
+
+# Says which install signal is due for this person: "first" (they have no
+# signal answer yet), "upgrade" (they agreed before, and another version is
+# installed now) or nothing. The signal needs the install ID of the project;
+# without one there is nothing to send. A "declined" is never raised again.
+due_signal() {
+    local version signal
+    version=$(installed_version)
+    [ -f "$COLLAB_DIR/.install-id" ] && [ -n "$version" ] || return 0
+
+    signal=$(read_personal_value signal)
+    if [ -z "$signal" ]; then
+        echo "first"
+    elif [ "$signal" != "declined" ] \
+        && [ "$(read_personal_value signal-version)" != "$version" ]; then
+        echo "upgrade"
+    fi
+}
+
+# Tells the AI that the personal file cannot be used, what that means, and
+# what to offer the user. Printed in every new session until it is fixed.
+print_personal_file_problem() {
+    echo ""
+    echo "PROBLEM WITH THE PERSONAL COLLABMEM FILE: $PERSONAL_FILE is $1."
+    echo "In your first response of this session, tell the user, in plain words:"
+    echo "- collabmem keeps a person's own settings for collabmem in that file, and the file cannot be read or written right now."
+    echo "- This does not affect the functioning of the memory itself. It keeps collabmem from recording personal settings: for example the answers to the questions from its developers. So those questions are not asked, until this is fixed."
+    echo "- Offer to help find out what is wrong and to fix it. Change nothing before the user agrees."
+    echo "If it cannot be fixed, suggest feedback to the developers: the feedbackmem procedure."
 }
 
 print_pending_questions() {
@@ -162,20 +221,15 @@ print_pending_questions() {
         fi
     fi
 
-    # The install signal. It needs the install ID of the project; without
-    # one there is nothing to send. A person is asked once per version.
-    local version signal signal_version
-    version=$(sed 's/^v//' "$COLLAB_DIR/.collab-memory-system" 2>/dev/null \
-        | tr -d '[:space:]' || true)
-    if [ -f "$COLLAB_DIR/.install-id" ] && [ -n "$version" ]; then
-        signal=$(read_personal_value signal)
-        signal_version=$(read_personal_value signal-version)
-        if [ -z "$signal" ]; then
-            pending+=("the install signal (this person's first signal for this project; the full message)")
-        elif [ "$signal" != "declined" ] && [ "$signal_version" != "$version" ]; then
-            pending+=("the install signal (signal_kind upgrade; the short ask)")
-        fi
-    fi
+    # The install signal. A person is asked once per version. It is normally
+    # asked together with the welcome; it shows up here when that did not
+    # lead to an answer.
+    case "$(due_signal)" in
+        "first")
+            pending+=("the install signal (this person's first signal for this project; the full message)") ;;
+        "upgrade")
+            pending+=("the install signal (signal_kind upgrade; the short ask)") ;;
+    esac
 
     [ "${#pending[@]}" -gt 0 ] || return 0
 
@@ -188,64 +242,106 @@ print_pending_questions() {
 }
 
 # --- Welcome ---
-# Every person gets one welcome from the collabmem developers, in their first
-# session in a project: a thank-you, how to get help, how to send feedback,
-# and where to get news. A team member who received collabmem through a plain
-# "git pull" never saw the final message of an install; this is where they
-# learn these things.
+# Every person gets a short message from the collabmem developers in their
+# first session with a version of collabmem in a project:
 #
-# The hook records the welcome itself, in the user's personal file, so the AI
-# does not have to run a command for it in the user's first session. It is
-# recorded when the hook prints it, not when the AI has said it: a welcome
-# that is missed is better than one that comes twice.
+# - The welcome, for a person who never had one in this project: a
+#   thank-you, how to get help, how to send feedback, where to get news. A
+#   team member who received collabmem through a plain "git pull" never saw
+#   the final message of an install; this is where they learn these things.
+# - The upgrade message, for a person whose last message was for an older
+#   version: that collabmem was upgraded, and where to read what is new.
 #
-# Returns 0 when the welcome was printed, 1 when it was not due.
+# The personal file records the version of the last message, as the value
+# "welcomed". The hook records it itself, so the AI does not have to run a
+# command for it in the user's first session. It is recorded when the hook
+# prints the message, not when the AI has said it: a message that is missed
+# is better than one that comes twice.
+#
+# When the install signal is due, the message announces it, and the question
+# is asked at the end of the same response, after the user's own request.
+#
+# Returns 0 when a message was printed, 1 when none was due.
 print_welcome() {
-    command -v git >/dev/null 2>&1 || return 1
-    [ -z "$(read_personal_value welcomed)" ] || return 1
+    local version welcomed
+    version=$(installed_version)
+    [ -n "$version" ] || return 1
 
-    # Record it first. When the personal file cannot be written, give no
-    # welcome at all: otherwise it would come back in every session.
-    local personal_file="$HOME/.config/collabmem/personal.ini"
-    mkdir -p "$(dirname "$personal_file")" 2>/dev/null || return 1
-    git config --file "$personal_file" \
-        "project.$(pwd -P).welcomed" yes 2>/dev/null || return 1
+    welcomed=$(read_personal_value welcomed)
+    [ "$welcomed" != "$version" ] || return 1
 
-    # Is the install signal due for this person? Same test as in
-    # print_pending_questions, for a person with no signal answer yet.
-    local version signal_due=""
-    version=$(sed 's/^v//' "$COLLAB_DIR/.collab-memory-system" 2>/dev/null \
-        | tr -d '[:space:]' || true)
-    if [ -f "$COLLAB_DIR/.install-id" ] && [ -n "$version" ] \
-        && [ -z "$(read_personal_value signal)" ]; then
-        signal_due="yes"
-    fi
+    # Record it first: when that fails, give no message at all.
+    git config --file "$PERSONAL_FILE" \
+        "project.$(pwd -P).welcomed" "$version" 2>/dev/null || return 1
+
+    local signal
+    signal=$(due_signal)
 
     echo ""
-    echo "WELCOME FROM THE COLLABMEM DEVELOPERS: this user has not had it yet in this project."
-    echo "In your FIRST response of this session, give the welcome below. It comes first in that"
+    echo "MESSAGE FROM THE COLLABMEM DEVELOPERS for this user, to give once."
+    echo "In your FIRST response of this session, give the message below. It comes first in that"
     echo "response; only the load-check banner comes before it. Render it verbatim, then a"
     echo "horizontal line (---), then answer what the user asked."
     echo ""
-    echo "    **From the collabmem developers:** thanks for using collabmem!"
-    echo ""
-    echo "    - Type \`helpmem\` when you want help with it."
-    echo "    - Type \`feedbackmem\` to tell the developers about a problem or an idea."
-    echo "    - For occasional news about collabmem: https://lucens.ai/subscribe/?source=collabmem-welcome"
-    if [ -n "$signal_due" ]; then
+    if [ -z "$welcomed" ]; then
+        echo "    **From the collabmem developers:** thanks for using collabmem!"
         echo ""
-        echo "    They also have one quick question for you. I will ask it at the end of this answer."
+        echo "    - Type \`helpmem\` when you want help with it."
+        echo "    - Type \`feedbackmem\` to tell the developers about a problem or an idea."
+        echo "    - For occasional news about collabmem: https://lucens.ai/subscribe/?source=collabmem-welcome"
+    else
+        echo "    **From the collabmem developers:** collabmem was upgraded to version $version in this project. Thanks for using it!"
         echo ""
-        echo "After your answer to the user, in the SAME response: a horizontal line (---), then the"
-        echo "install signal question. It starts with:"
-        echo ""
-        echo "    **One quick question from the collabmem developers:**"
-        echo ""
-        echo "Follow $COLLAB_DIR/install-signal.md, \"When the session hook reports the signal as pending\":"
-        echo "this person's first signal for this project, the full message. Do not wait for a memory update."
+        # The release notes have one section per version, with the heading
+        # "## v1.8.7". GitHub makes the anchor "#v187" of that: lower case,
+        # the dots dropped. The heading must stay bare for this to work.
+        echo "    - What is new: https://github.com/visionscaper/collabmem/blob/main/release-notes.md#v$(printf '%s' "$version" | tr -d '.')"
+        echo "    - Type \`helpmem\` for help, and \`feedbackmem\` to tell the developers about a problem or an idea."
+        echo "    - For occasional news about collabmem: https://lucens.ai/subscribe/?source=collabmem-upgrade"
     fi
 
+    [ -n "$signal" ] || return 0
+
+    echo ""
+    echo "    They also have one quick question for you. I will ask it at the end of this answer."
+    echo ""
+    echo "After your answer to the user, in the SAME response: a horizontal line (---), then the"
+    echo "install signal question. It starts with:"
+    echo ""
+    echo "    **One quick question from the collabmem developers:**"
+    echo ""
+    echo "Follow $COLLAB_DIR/install-signal.md, \"When the session hook reports the signal as pending\"."
+    if [ "$signal" = "first" ]; then
+        echo "It is this person's first signal for this project: the full message."
+    else
+        echo "It is an upgrade signal (signal_kind upgrade): the short ask."
+    fi
+    echo "Do not wait for a memory update."
+
     return 0
+}
+
+# --- Messages from the developers, together ---
+# At the start of a session: the welcome or the upgrade message when one is
+# due, otherwise the questions that are still pending. With "pending-only":
+# just the pending questions, for a session that continues.
+# When the personal file cannot be used, nothing is asked. At the start of a
+# session the problem is reported instead.
+print_developer_messages() {
+    command -v git >/dev/null 2>&1 || return 0
+
+    local state
+    state=$(personal_file_state)
+    if [ "$state" != "ok" ]; then
+        [ "$1" = "pending-only" ] || print_personal_file_problem "$state"
+        return 0
+    fi
+
+    if [ "$1" = "pending-only" ]; then
+        print_pending_questions
+    else
+        print_welcome || print_pending_questions
+    fi
 }
 
 # --- SessionStart ---
@@ -266,10 +362,10 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "2. Scan recent index.md entries for context"
             echo "3. If unclear, search notes.md for recent notes"
             print_memory_triggers
-            # A person's first session gets the welcome, with the install
-            # signal question when it is due. The star ask is left for a
-            # later session.
-            print_welcome || print_pending_questions
+            # The welcome or the upgrade message when one is due, with the
+            # install signal question. Otherwise the pending questions. The
+            # star ask never comes together with a welcome.
+            print_developer_messages
             ;;
 
         "compact")
@@ -285,7 +381,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "1. Search notes.md for the most recent session summary note"
             echo "2. Verify with the user what was being worked on before continuing"
             print_memory_triggers
-            print_pending_questions
+            print_developer_messages pending-only
             ;;
 
         "resume")
@@ -294,7 +390,7 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo ""
             echo "Context should be intact. If uncertain about details, verify from notes and world model files."
             print_memory_triggers
-            print_pending_questions
+            print_developer_messages pending-only
             ;;
     esac
 

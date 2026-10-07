@@ -146,6 +146,22 @@ The upgrade signal is also skipped when there is no `<collab_dir>/.install-id`: 
 
 Both answers go to the personal file, outside the project, so there is nothing to commit in this step.
 
+**Record which version this person had.** In their next session the session hook tells the user once that collabmem was upgraded, and where to read what is new. It can only do that for a person whose earlier version is recorded. If the personal file has no `welcomed` value for this project, write the version this person had before, without the leading `v`:
+
+- **At a full upgrade:** the installed version you read in Step 1, from `<collab_dir>/.collab-memory-system`, before Step 4 replaced it.
+- **At a per-clone catch-up:** that file already holds the new version, because someone else upgraded the shared part. Use the version in the stamp of this clone's instruction block, as it was before you changed it.
+- **When you cannot tell:** write `earlier`. The hook only needs a value that differs from the installed version.
+
+Run this in the project root:
+
+```bash
+mkdir -p ~/.config/collabmem
+git config --file ~/.config/collabmem/personal.ini --get "project.$(pwd -P).welcomed" \
+  || git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).welcomed" <previous version>
+```
+
+Do this also when no question was asked, and also at a per-clone catch-up.
+
 ### Step 7: Feedback When the Upgrade Had Problems
 
 Skip this step when the upgrade went smoothly. When it did not, this step comes before Step 6.

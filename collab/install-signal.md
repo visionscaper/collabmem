@@ -14,8 +14,8 @@ The hook reports it for a person who was not asked by an installation or an upgr
 
 **When to ask.** The hook's message says which of these two holds:
 
-- **In the person's first session, together with the welcome.** The welcome comes first in your first response and says that a question follows. Then you answer what the user asked. The question comes last in that same response, under a horizontal line, and starts with "**One quick question from the collabmem developers:**". The user's own request is never held up by it.
-- **In a later session: after the next memory update,** not in the middle of the work. Open warmly: thank the user for using collabmem, and say that the developers have a quick question. For example: "Thanks for using collabmem! Its developers have one quick question for you."
+- **Together with a message from the developers.** That is the welcome in a person's first session, or the message that collabmem was upgraded. The message comes first in your first response and says that a question follows. Then you answer what the user asked. The question comes last in that same response, under a horizontal line, and starts with "**One quick question from the collabmem developers:**". The user's own request is never held up by it.
+- **In another session: after the next memory update,** not in the middle of the work. This happens when the question was not answered the first time. It is the last time it is asked: say that a clear yes or no is fine either way. If the user leaves it unanswered again, record `declined`, so it does not come back. Open warmly: thank the user for using collabmem, and say that the developers have a quick question. For example: "Thanks for using collabmem! Its developers have one quick question for you."
 
 Then go through this procedure from "The values of the signal". The hook's message also says which form applies:
 
@@ -187,7 +187,7 @@ git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).signal-ver
 
 None of the three answers leads to a second attempt.
 
-If the file cannot be written, for example because the session may not write outside the project, tell the user in one line that the answer could not be saved, and go on.
+If the file cannot be written, for example because the session may not write outside the project, tell the user that the answer could not be saved, and what that means: collabmem cannot remember it, so they may be asked again. Offer to help find out why. If it cannot be fixed, suggest feedback to the developers, with `feedbackmem`. Then go on.
 
 To read what is recorded, run these in the project root. Each prints nothing when there is no value yet.
 
