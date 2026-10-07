@@ -20,6 +20,7 @@ The ask must stay respectful and bounded, so it is governed by strict ask discip
 
 - **The first ask: only once, and only when the personal file has no `project-starred` value for this project.** It happens at an installation or an upgrade. A person who was not asked there is asked later: when the memory has at least 5 entries, the session-start hook reports the star ask as pending, and the Post-update Verification checklist of the methodology sends you here. The value becomes `done`, `maybe-later` or `declined`.
 - **The follow-up ask: once more, only when** the value is `maybe-later` and the Episodic Memory Index (`index.md`) has at least 5 entries. The session-start hook reports this too. The value becomes `done` or `declined`.
+- **A question that is left unanswered counts as an answer.** When the user does not react to the first ask, record `maybe-later`: it leads to the one follow-up ask and no more. When they do not react to the follow-up ask, record `declined`.
 - **Never ask again after a decline**, and never after the follow-up ask, whatever its outcome. A second "maybe later" at the follow-up ask is therefore recorded as `declined` — the value gates asking, it doesn't judge the user's interest; the user can always star later themselves or type `starmem`.
 
 #### How to ask
