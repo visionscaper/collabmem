@@ -187,6 +187,67 @@ print_pending_questions() {
     echo "After the next memory update in this session, ask them, one at a time (Post-update Verification, item 5)."
 }
 
+# --- Welcome ---
+# Every person gets one welcome from the collabmem developers, in their first
+# session in a project: a thank-you, how to get help, how to send feedback,
+# and where to get news. A team member who received collabmem through a plain
+# "git pull" never saw the final message of an install; this is where they
+# learn these things.
+#
+# The hook records the welcome itself, in the user's personal file, so the AI
+# does not have to run a command for it in the user's first session. It is
+# recorded when the hook prints it, not when the AI has said it: a welcome
+# that is missed is better than one that comes twice.
+#
+# Returns 0 when the welcome was printed, 1 when it was not due.
+print_welcome() {
+    command -v git >/dev/null 2>&1 || return 1
+    [ -z "$(read_personal_value welcomed)" ] || return 1
+
+    # Record it first. When the personal file cannot be written, give no
+    # welcome at all: otherwise it would come back in every session.
+    local personal_file="$HOME/.config/collabmem/personal.ini"
+    mkdir -p "$(dirname "$personal_file")" 2>/dev/null || return 1
+    git config --file "$personal_file" \
+        "project.$(pwd -P).welcomed" yes 2>/dev/null || return 1
+
+    # Is the install signal due for this person? Same test as in
+    # print_pending_questions, for a person with no signal answer yet.
+    local version signal_due=""
+    version=$(sed 's/^v//' "$COLLAB_DIR/.collab-memory-system" 2>/dev/null \
+        | tr -d '[:space:]' || true)
+    if [ -f "$COLLAB_DIR/.install-id" ] && [ -n "$version" ] \
+        && [ -z "$(read_personal_value signal)" ]; then
+        signal_due="yes"
+    fi
+
+    echo ""
+    echo "WELCOME FROM THE COLLABMEM DEVELOPERS: this user has not had it yet in this project."
+    echo "In your FIRST response of this session, give the welcome below. It comes first in that"
+    echo "response; only the load-check banner comes before it. Render it verbatim, then a"
+    echo "horizontal line (---), then answer what the user asked."
+    echo ""
+    echo "    **From the collabmem developers:** thanks for using collabmem!"
+    echo ""
+    echo "    - Type \`helpmem\` when you want help with it."
+    echo "    - Type \`feedbackmem\` to tell the developers about a problem or an idea."
+    echo "    - For occasional news about collabmem: https://lucens.ai/subscribe/?source=collabmem-welcome"
+    if [ -n "$signal_due" ]; then
+        echo ""
+        echo "    They also have one quick question for you. I will ask it at the end of this answer."
+        echo ""
+        echo "After your answer to the user, in the SAME response: a horizontal line (---), then the"
+        echo "install signal question. It starts with:"
+        echo ""
+        echo "    **One quick question from the collabmem developers:**"
+        echo ""
+        echo "Follow $COLLAB_DIR/install-signal.md, \"When the session hook reports the signal as pending\":"
+        echo "this person's first signal for this project, the full message. Do not wait for a memory update."
+    fi
+
+    return 0
+}
+
 # --- SessionStart ---
 if [ "$HOOK_EVENT" = "SessionStart" ]; then
     SOURCE=$(json_field source)
@@ -205,7 +266,10 @@ if [ "$HOOK_EVENT" = "SessionStart" ]; then
             echo "2. Scan recent index.md entries for context"
             echo "3. If unclear, search notes.md for recent notes"
             print_memory_triggers
-            print_pending_questions
+            # A person's first session gets the welcome, with the install
+            # signal question when it is due. The star ask is left for a
+            # later session.
+            print_welcome || print_pending_questions
             ;;
 
         "compact")

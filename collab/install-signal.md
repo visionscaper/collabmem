@@ -12,7 +12,12 @@ Every person who uses collabmem is asked for themselves, once per collabmem vers
 
 The hook reports it for a person who was not asked by an installation or an upgrade. For example a team member who received collabmem, or a new version of it, through a plain `git pull`.
 
-Ask after the next memory update, not in the middle of the work. Open warmly: thank the user for using collabmem, and say that the developers have a quick question. For example: "Thanks for using collabmem! Its developers have one quick question for you." Then go through this procedure from "The values of the signal". The hook's message says which form applies:
+**When to ask.** The hook's message says which of these two holds:
+
+- **In the person's first session, together with the welcome.** The welcome comes first in your first response and says that a question follows. Then you answer what the user asked. The question comes last in that same response, under a horizontal line, and starts with "**One quick question from the collabmem developers:**". The user's own request is never held up by it.
+- **In a later session: after the next memory update,** not in the middle of the work. Open warmly: thank the user for using collabmem, and say that the developers have a quick question. For example: "Thanks for using collabmem! Its developers have one quick question for you."
+
+Then go through this procedure from "The values of the signal". The hook's message also says which form applies:
 
 - **This person's first signal for this project.** The `signal_kind` is `team_member`, in every setup: the install existed before this person was asked, so they joined it. Use the full message of "How to ask".
 - **`signal_kind` upgrade.** The person agreed to a signal before, and a new version has arrived. Use "The short ask, for a later upgrade".

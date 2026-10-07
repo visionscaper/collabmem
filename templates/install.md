@@ -105,9 +105,9 @@ Look for an instruction file for the AI, such as `CLAUDE.md`, and read it.
 
 If it contains the collabmem markers (`<!-- collab-memory-system:start -->`), collabmem is installed. Tell the user and stop.
 
-**One case looks the same but is unfinished: a teammate's fresh clone.** The markers are there, but there is no `collab` symlink or directory at the project root. This is a clone of a distributed install whose memory-system traces were committed. Nothing needs installing. Two steps on this machine are missing:
+**One case looks the same but is unfinished: a team member's fresh clone.** The markers are there, but there is no `collab` symlink or directory at the project root. This is a clone of a distributed install whose memory-system traces were committed. Nothing needs installing. Two steps on this machine are missing:
 
-1. Create the `collab` symlink to the project's directory in the shared-knowledge repository. Ask the user where their clone of that repository is. If they have none yet, they need its location from a teammate, and clone it next to the code repository.
+1. Create the `collab` symlink to the project's directory in the shared-knowledge repository. Ask the user where their clone of that repository is. If they have none yet, they need its location from a team member, and clone it next to the code repository.
 2. Run the load check described under "Verifying the installation". It will most likely need the approval for external imports; Issue 1 of the troubleshooting guide covers that.
 
 Then stop.
@@ -181,7 +181,7 @@ Say first, in plain words, which files this is about: the small config file, the
 
 Then ask whether those files should be committed to the code repository, or git-ignored. Only the user knows whether the code repository is public, and what the team prefers.
 
-- **Committed** is the default for a private repository the whole team works on. A teammate who clones the code repository gets a working install after two steps on their own machine: creating the symlink, and approving external imports once. Nothing in these files is machine-specific.
+- **Committed** is the default for a private repository the whole team works on. A team member who clones the code repository gets a working install after two steps on their own machine: creating the symlink, and approving external imports once. Nothing in these files is machine-specific.
 - **Git-ignored** fits a public repository, or a team that prefers to keep collabmem out of the code repository. Each developer then keeps their own copies.
 
 Files that exist already and are tracked, such as an existing `CLAUDE.md`, stay tracked: only new files can be git-ignored. Say so when it applies.
@@ -196,7 +196,7 @@ Name every default, and say that each can be changed. Without that the user cann
 
 The defaults, and what they can be changed to:
 
-- **The name of the memory directory.** `collab` by default. In a distributed setup it cannot be changed: the symlink must have the same name on every teammate's machine.
+- **The name of the memory directory.** `collab` by default. In a distributed setup it cannot be changed: the symlink must have the same name on every team member's machine.
 - **Where the collabmem block goes in the instruction file.** At the end by default, so the project's own instructions come first. It can also go at the start, or after a section the user names.
 - **In a solo setup: whether the memory is tracked in git.** Tracked by default. Untracked means adding `collab/` and `.collab-config` to `.gitignore`.
 
@@ -225,7 +225,7 @@ The defaults, and what they can be changed to:
 ln -s <shared-knowledge-repo>/projects/<project-name>/collab collab
 ```
 
-Use a relative path when the shared-knowledge repository sits next to the code repository, for example `../shared-knowledge/projects/<project-name>/collab`. The symlink then also works on a teammate's machine with the same layout. Otherwise use an absolute path.
+Use a relative path when the shared-knowledge repository sits next to the code repository, for example `../shared-knowledge/projects/<project-name>/collab`. The symlink then also works on a team member's machine with the same layout. Otherwise use an absolute path.
 
 **The `.gitignore` entries.**
 
@@ -557,7 +557,7 @@ Append the note to the bottom of `<collab>/notes.md`, with today's date. The tem
 
 **Key Learnings:**
 - Memory system is now active and will load automatically on new sessions.
-- <In a distributed setup:> teammates who clone the code repository later need to create their own `collab` symlink, and approve external imports once.
+- <In a distributed setup:> team members who clone the code repository later need to create their own `collab` symlink, and approve external imports once.
 - Add any other observations: what worked smoothly, what caused friction, what the user should know going forward.
 
 **Related:** `collab/methodology.md`, `collab/.collab-memory-system`
@@ -609,7 +609,7 @@ Everything is written now: the memory, and the installation note. Tell the user 
 - **Solo:** commit in the code repository. Do not push: pushing is part of the user's normal workflow.
 - **Standalone:** commit and push. The remote is the memory's backup.
 - **Distributed:** two repositories.
-  - The shared-knowledge repository: commit the new memory directory and push, so teammates receive it. Commit nothing else there.
+  - The shared-knowledge repository: commit the new memory directory and push, so team members receive it. Commit nothing else there.
   - The code repository: commit what the user chose to track in step 3, at least the `.gitignore` change. Tell the user it is committed but not pushed: pushing the code repository is part of their normal workflow.
 
 ### 12 - Two quick questions from the collabmem developers
@@ -674,9 +674,15 @@ The final message tells the user four things, in plain words.
    - "What do you know about this project?" It shows that the world model is loaded, if the user gave context.
    - "What is the last thing we did?" It shows that the notes index is loaded: the AI should mention the installation note.
 
-3. **How to get help, and how to tell the developers something.** In a new session, type `helpmem`, or `helpmem` followed by a question. Type `feedbackmem` to send the developers feedback: a problem, an annoyance or a suggestion.
+3. **How to get help, how to tell the developers something, and where to get news.**
 
-4. **In a distributed setup: what a teammate does after cloning the code repository.** They create their own `collab` symlink, and approve external imports once. Issue 1 of the troubleshooting guide explains that approval.
+   - In a new session, type `helpmem`, or `helpmem` followed by a question.
+   - Type `feedbackmem` to send the developers feedback: a problem, an annoyance or a suggestion.
+   - Give the link for news about collabmem, in one line:
+
+     > "Want occasional news about collabmem? https://lucens.ai/subscribe/?source=collabmem-install"
+
+4. **In a distributed setup: what a team member does after cloning the code repository.** They create their own `collab` symlink, and approve external imports once. Issue 1 of the troubleshooting guide explains that approval.
 
    ```bash
    # macOS and Linux
@@ -688,7 +694,7 @@ The final message tells the user four things, in plain words.
    New-Item -ItemType SymbolicLink -Path collab -Target <path to shared-knowledge>\projects\<project-name>\collab
    ```
 
-   If `.collab-config` is git-ignored, include its contents too, so a teammate can recreate it.
+   If `.collab-config` is git-ignored, include its contents too, so a team member can recreate it.
 
 **The last line is always the same.** Conversations rarely end at this message: questions and small tasks follow, and a reminder given earlier gets buried. So whatever your last message turns out to be, it ends with this line, highlighted:
 

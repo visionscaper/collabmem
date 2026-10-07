@@ -75,6 +75,7 @@ A new session is an implicit `readmem` trigger.
 3. Check `world/state.md` for current work
 4. Scan recent entries in the Episodic Memory Index (`index.md`) for context on active work
 5. If prior work is unclear, search `notes.md` for recent notes
+6. If the session-start hook reported a welcome from the collabmem developers for this user: give it in your first response, placed as the hook's message says
 
 #### After Compaction
 
