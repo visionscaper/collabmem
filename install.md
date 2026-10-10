@@ -279,7 +279,13 @@ Ask this on its own, and wait for the answer before you go on.
 
 **Then, in every setup: describe, name the defaults, and ask.**
 
-Tell the user what you are about to install and where: the memory directory, the collabmem block in the instruction file, and the hooks. In a distributed setup also the symlink, and what goes into `.gitignore`.
+Tell the user what you are about to install and where:
+
+- The memory directory.
+- The collabmem block in the instruction file.
+- The hooks.
+- In a distributed setup, tell them also about the symlink, and about the entries that are added to `.gitignore`.
+- One small file outside the project, `~/.config/collabmem/personal.ini`. It holds this person's own settings for collabmem, such as their answers to two questions at the end of the install. `setup-options.md` says what is in it, for when the user asks.
 
 Name every default, and say that each can be changed. Without that the user cannot decide whether they want anything different. Then ask whether to proceed, and offer to answer questions first.
 
@@ -543,7 +549,7 @@ Check the points below. Tell the user the outcome in a sentence or two, not as a
 
 - `.collab-config` is at the project root.
 - In a distributed setup: the `collab` symlink is at the project root and leads to the memory directory.
-- The memory directory holds its version file `.collab-memory-system`, the twelve memory files (`methodology.md`, `support.md`, `index.md`, `index-archive.md`, `notes.md` and the seven world files), and the `docs/` directory.
+- The memory directory holds its version file `.collab-memory-system`, the fourteen memory files (`methodology.md`, `support.md`, `install-signal.md`, `feedback.md`, `index.md`, `index-archive.md`, `notes.md` and the seven world files), and the `docs/` directory.
 - `methodology.md` and `world/context.md` start with their load-check marker lines.
 - The instruction file holds the collabmem block between its two markers, including the `COLLABMEM-LOAD-CHECK` section.
 - The three version stamps agree: the first line of the block, the header of the hook script, and `.collab-memory-system`. Without hooks: the block and the version file.
@@ -557,8 +563,10 @@ Files in the right place do not prove that Claude Code loads them. The load chec
 Tell the user that, before you run it. Then run this from the project directory:
 
 ```bash
-claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Begin your reply with the exact banner line your load-check instructions specify, then answer present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation." < /dev/null
+COLLABMEM_PROBE=1 claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Begin your reply with the exact banner line your load-check instructions specify, then answer present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation." < /dev/null
 ```
+
+`COLLABMEM_PROBE=1` tells the session hook that this session is a check and that no person reads it. The hook then keeps its messages for the user's own first real session.
 
 **Show the result as it came.** Paste the output unchanged, on success and on failure, and follow it with one plain sentence on what it means. The same holds for every later run: the user sees the `LOADED SUCCESSFULLY` banner themselves, not only your report of it.
 
@@ -693,7 +701,11 @@ While a migration is under way, recommend adding this comment just above the col
 
 ### 11 - Committing the installation
 
-Everything is written now: the memory, and the installation note. Tell the user what will be committed and where, and ask for their consent.
+Everything is written now: the memory, and the installation note.
+
+**First make the install ID.** It is a random number that stands for this install, kept in the memory directory as `<collab>/.install-id`. Step 12 needs it, and it is committed here with the rest. Follow "The install ID" in step 12. If no install ID can be made, go on without one.
+
+Then tell the user what will be committed and where, and ask for their consent.
 
 - **Solo:** commit in the code repository. Do not push: pushing is part of the user's normal workflow.
 - **Standalone:** commit and push. The remote is the memory's backup.
@@ -705,31 +717,18 @@ Everything is written now: the memory, and the installation note. Tell the user 
 
 The installation is done and committed. Before you close it off, the collabmem developers have two questions for the user: whether they want to star the project, and whether you may send an install signal.
 
-**First collect the values of the install signal.** Do this before you say anything: follow "The values of the signal", "Collecting the values" and "The install ID" below. The `signal_kind` is `team_member` in a distributed setup, and `install` in a solo or a standalone setup. If no install ID can be made, the install signal is skipped and one question is left.
+**First collect the values of the install signal.** Do this before you say anything: follow "The values of the signal" and "Collecting the values" below. The `signal_kind` is `team_member` in a distributed setup, and `install` in a solo or a standalone setup. If step 11 could make no install ID, the install signal is skipped and one question is left.
 
-**Then say how many questions are coming.** For example:
+**Then say how many questions are coming, and ask them one at a time.** For example:
 
 > "Before we wrap up: two quick questions from the collabmem developers."
 
-With one question left, say "one quick question".
-
-**Ask one question at a time.** Ask the first, wait for the answer, and do everything that answer asks for, including recording it. Only then ask the second.
+Ask the first, wait for the answer, and do everything that answer asks for, including recording it. Only then ask the second.
 
 1. The star ask: follow "starmem — Supporting the Project" below, the first ask.
 2. The install signal: follow "The install signal" below, from "How to ask".
 
-When both questions are answered, go on with "Committing the install ID" at the end of this step.
-
-**When the installation had problems, this step is different.** That is the case when:
-
-- A step failed, or needed a workaround.
-- The installation could not be completed.
-- collabmem could not be fitted into what the user already has.
-- Something in the installation annoyed the user.
-
-When you are in doubt whether the installation went smoothly for the user, ask them whether there is anything they would like the developers to know. Say that you write the mail for them, and that they only read it and press send.
-
-In that case:
+**When the installation did not go smoothly, this step is different.** "When to suggest it" in the feedback procedure below says when that is the case.
 
 1. First offer feedback to the collabmem developers: follow "feedbackmem — Feedback to the collabmem Developers" below.
 2. Do not ask the star question now, and record nothing for it. It is not the moment to ask for a star, and with no answer recorded the user can be asked later.
@@ -753,12 +752,13 @@ git config --file ~/.config/collabmem/personal.ini --get "project.$(pwd -P).proj
 
 ##### When to ask
 
-The ask must stay respectful and bounded, so it is governed by strict ask discipline:
+**A person is asked at most twice, ever.** The ask must stay respectful and bounded.
 
-- **The first ask: only once, and only when the personal file has no `project-starred` value for this project.** It happens at an installation or an upgrade. A person who was not asked there is asked later: when the memory has at least 5 entries, the session-start hook reports the star ask as pending, and the Post-update Verification checklist of the methodology sends you here. The value becomes `done`, `maybe-later` or `declined`.
-- **The follow-up ask: once more, only when** the value is `maybe-later` and the Episodic Memory Index (`index.md`) has at least 5 entries. The session-start hook reports this too. The value becomes `done` or `declined`.
-- **A question that is left unanswered counts as an answer.** When the user does not react to the first ask, record `maybe-later`: it leads to the one follow-up ask and no more. When they do not react to the follow-up ask, record `declined`.
-- **Never ask again after a decline**, and never after the follow-up ask, whatever its outcome. A second "maybe later" at the follow-up ask is therefore recorded as `declined` — the value gates asking, it doesn't judge the user's interest; the user can always star later themselves or type `starmem`.
+- **The first ask: when the personal file has no `project-starred` value for this project.** It happens at an installation or an upgrade. A person who was not asked there is asked later: the session-start hook reports the star ask as pending when the memory has grown by 5 entries since that person's welcome, and the Post-update Verification checklist of the methodology sends you here. The value becomes `done`, `maybe-later` or `declined`.
+- **The follow-up ask: once more, when the value is `maybe-later`.** The session-start hook reports it, on the same condition. The user has seen the system work by then. The value becomes `done` or `declined`, also when the user says "maybe later" again.
+- **A question that is left unanswered counts as an answer.** When the user does not react to the first ask, record `maybe-later`. When they do not react to the follow-up ask, record `declined`.
+
+The value decides whether to ask. It does not judge the user's interest: they can always star the project themselves, or type `starmem`.
 
 ##### How to ask
 
@@ -770,15 +770,15 @@ Render the message below verbatim, as a message from the collabmem developers. T
 
 Then give the user three plain options to answer with: star it, maybe later, or no thanks.
 
-**The first ask.** It is used at installation, at the upgrade of an existing installation, and when the session-start hook reports the first ask as pending. Render:
+**The first ask.** Render:
 
 > "collabmem is a small open-source project. GitHub stars are the main way new people discover it — each one helps the project reach others with the same problem. If you like the idea behind collabmem, would you consider starring the repo? And thanks for trying it either way!
 >
 > Star collabmem manually here: https://github.com/visionscaper/collabmem"
 
-**The follow-up ask.** It is used only when the value is `maybe-later` and the Episodic Memory Index has at least 5 entries. The user has seen the system work by then, so the message speaks about its value. Render:
+**The follow-up ask.** Render:
 
-> "When collabmem was installed you said 'maybe later' about starring the repo. You've built up real memory with the system now. If collabmem has been useful, the developers would appreciate the support. You can star collabmem manually here: https://github.com/visionscaper/collabmem — and if it's not for you, no problem, it won't come up again."
+> "Earlier you were asked about starring collabmem, and it was left for later. You've worked with the system for a while now. If collabmem has been useful, the developers would appreciate the support. You can star collabmem manually here: https://github.com/visionscaper/collabmem — and if it's not for you, no problem, it won't come up again."
 
 ##### The `gh` path
 
@@ -798,9 +798,8 @@ mkdir -p ~/.config/collabmem && git config --file ~/.config/collabmem/personal.i
 - User starred the repo (via `gh` or themselves) → `done`
 - "Maybe later" → `maybe-later`
 - "No" → `declined`
-- After the follow-up ask, set `done` or `declined` — never `maybe-later` again.
 
-If the file cannot be written, for example because the session may not write outside the project, tell the user that the answer could not be saved, and what that means: collabmem cannot remember it, so they may be asked again. Offer to help find out why. If it cannot be fixed, suggest feedback to the developers, with `feedbackmem`. Then go on.
+**If the file cannot be written,** for example because the session may not write outside the project: tell the user that the answer could not be saved, and what that means. collabmem cannot remember it, so they may be asked again. Offer to help fix it; Issue 4 of the troubleshooting guide, `<collab_dir>/docs/troubleshoot.md`, has the usual causes. When the session's own settings are what blocks it, those settings have to allow this one file. As a last resort, show the command and ask the user to run it themselves.
 
 #### The install signal
 
@@ -810,76 +809,23 @@ The signal tells the developers which collabmem setups, AI clients and operating
 
 The signal must only be sent after the user has said yes. The user sees every value before it is sent.
 
-Every person who uses collabmem is asked for themselves, once per collabmem version. This procedure is used in three situations: at the end of an installation, at the end of an upgrade, and in a normal session when the session-start hook reports the signal as pending.
+Every person who uses collabmem is asked for themselves. When the answer is no, the install signal is never asked for again.
 
-##### When the session hook reports the signal as pending
+**One question, one attempt, then it is over.** That holds for the asking and for the sending.
 
-The hook reports it for a person who was not asked by an installation or an upgrade. For example a team member who received collabmem, or a new version of it, through a plain `git pull`.
+##### The procedure in short
 
-**When to ask.** The hook's message says which of these two holds:
+1. **Get the install ID.** It is a random number that stands for this install. Without one there is no signal, and nothing is asked.
+2. **Collect the values:** the collabmem version, the setup, the AI client and model, and the operating system.
+3. **Ask the user,** with a message that lists the values. A person who agreed before gets a shorter question at an upgrade.
+4. **On a yes, send the signal,** with one `curl` command. When that does not work, show the same values as a link.
+5. **Record the answer** in the user's personal file.
 
-- **Together with a message from the developers.** That is the welcome in a person's first session, or the message that collabmem was upgraded. The message comes first in your first response and says that a question follows. Then you answer what the user asked. The question comes last in that same response, under a horizontal line, and starts with "**One quick question from the collabmem developers:**". The user's own request is never held up by it.
-- **In another session: after the next memory update,** not in the middle of the work. This happens when the question was not answered the first time. It is the last time it is asked: say that a clear yes or no is fine either way. If the user leaves it unanswered again, record `declined`, so it does not come back. Open warmly: thank the user for using collabmem, and say that the developers have a quick question. For example: "Thanks for using collabmem! Its developers have one quick question for you."
+The procedure is used in three situations. Each has its own kind of signal:
 
-Then go through this procedure from "The values of the signal". The hook's message also says which form applies:
-
-- **This person's first signal for this project.** The `signal_kind` is `team_member`, in every setup: the install existed before this person was asked, so they joined it. Use the full message of "How to ask".
-- **`signal_kind` upgrade.** The person agreed to a signal before, and a new version has arrived. Use "The short ask, for a later upgrade".
-
-##### The values of the signal
-
-The signal consists of the values below. Each has a name, and the rest of this procedure uses these names.
-
-- `signal_kind`: what happened. One of:
-
-  - `install`: a new install in a solo or a standalone setup.
-  - `team_member`: a person who works with an install that is shared.
-
-    - In a distributed setup a team shares the memory, and everyone who installs is a member of that team, also the first one. So such a project sends only `team_member` signals at an install.
-    - In a solo or a standalone setup the project can be shared too. A person who joins an install that someone else made sends `team_member`.
-  - `upgrade`: an upgrade of an existing install.
-
-- `signal_kind_word`: the word for `signal_kind` in the message to the user. It is `upgrade` when `signal_kind` is `upgrade`, and `install` otherwise. It is not sent.
-
-- `collabmem_version`: the version in `<collab>/.collab-memory-system`, without the leading `v`. For example `1.8.7`.
-
-- `setup`: how collabmem is set up in this project. One of:
-
-  - `solo`: the memory lives inside the code repository.
-  - `standalone`: there is no code repository; the memory repository is the project.
-  - `distributed`: the memory lives in a separate shared-knowledge repository.
-
-- `client`: the name of the AI client you run in. For example `claude-code`.
-
-- `client_version`: the version of that client. For example `2.1.263`.
-
-- `client_type`: how the user works with the client. One of `terminal`, `native`, `web`, `ide`. `native` is a desktop app.
-
-- `model`: the AI model you are. Use the identifier of the model when you know it, for example `claude-opus-5-5`; otherwise its name.
-
-- `os`: the operating system. One of `macos`, `linux`, `windows`.
-
-- `os_version`: the version of the operating system. For example `15.5`.
-
-- `install_id`: a random number that stands for this install. See "The install ID" below.
-
-##### Collecting the values
-
-Collect the values before you ask, because the user sees them in the question.
-
-- Do not ask the user for a value.
-- Read a value only when one simple command gives it, or when you know it already. Do not search for it.
-- Install nothing to get a value.
-- Do not guess. When you cannot read `client`, `client_version`, `client_type`, `model`, `os` or `os_version`, its value is `unknown`.
-
-**The values allow very little freedom.** The endpoint accepts a signal only when every value has exactly the form below. It ignores any other signal, and it does not say so: neither you nor the user would notice.
-
-- `signal_kind`, `setup`, `client_type` and `os`: exactly one of the words listed above, in lower case.
-- `collabmem_version`: digits and dots, with at most one lower-case letter at the end. For example `1.8.7` or `1.8.5a`.
-- `client`: lower-case letters, digits and dashes only, at most 32 characters.
-- `model`: the identifier or the name of the model and nothing else, at most 64 characters. Only letters, digits, spaces, dots, dashes, colons and slashes. It starts with a letter or a digit.
-- `client_version` and `os_version`: they start with a digit. After that only letters, digits, dots, dashes, underscores and plus signs, at most 32 characters. A version in another form becomes `unknown`.
-- `install_id`: exactly as the tool made it, or as it stands in `<collab>/.install-id`.
+- **At the end of an installation.** The kind is `install`, or `team_member` in a distributed setup.
+- **At the end of an upgrade.** The kind is `upgrade`.
+- **In a normal session, when the session-start hook reports the signal as pending.** That is for a person who was not asked by an installation or an upgrade. The section "When the session hook reports the signal as pending" says which kind applies.
 
 ##### The install ID
 
@@ -893,11 +839,92 @@ Otherwise make a new random UUID with a tool that is already on the machine, and
 - `cat /proc/sys/kernel/random/uuid` on Linux.
 - `[guid]::NewGuid().ToString()` in PowerShell on Windows.
 
-The install ID is derived from nothing: not from a name, a path or the machine.
-
 **If you cannot make an install ID**, skip the install signal completely. Do not ask the question and record nothing.
 
 A new `.install-id` file is part of the memory. Commit it with the memory, in the way the procedure that sent you here describes.
+
+##### The values of the signal
+
+The signal consists of the values below. Each has a name, and the rest of this procedure uses these names.
+
+- `signal_kind`: what happened. One of:
+
+  - `install`: a new install in a solo or a standalone setup.
+  - `team_member`: a person starts to work with an install that is shared.
+
+    - In a distributed setup a team shares the memory, and everyone who installs is a member of that team, also the first one. So such a project sends only `team_member` signals at an install.
+    - In a solo or a standalone setup the project can be shared too. A person who joins an install that someone else made sends `team_member`.
+  - `upgrade`: an existing install got a new version. This holds for every person, also for a team member.
+
+- `collabmem_version`: the version in `<collab>/.collab-memory-system`, without the leading `v`. For example `1.8.7`.
+
+- `setup`: how collabmem is set up in this project. One of:
+
+  - `solo`: the memory lives inside the code repository.
+  - `standalone`: there is no code repository; the memory repository is the project.
+  - `distributed`: the memory lives in a separate shared-knowledge repository.
+
+- `client`: the name of the AI client you run in. For example `claude-code`.
+
+- `client_version`: the version of that client. For example `2.1.263`.
+
+- `client_type`: how the user works with the client. One of `terminal`, `native`, `web`, `ide`, or `unknown`. `native` is a desktop app.
+
+- `model`: the AI model you are. Use the identifier of the model when you know it, for example `claude-opus-5-5`; otherwise its name.
+
+- `os`: the operating system. One of `macos`, `linux`, `windows`, or `unknown`.
+
+- `os_version`: the version of the operating system. For example `15.5`.
+
+- `install_id`: the install ID of the section above.
+
+One more name is used in the message to the user. **It is not sent.**
+
+- `signal_event`: what the message says that happened. It depends on `signal_kind`:
+
+  - For `install`: "a collabmem install happened".
+  - For `team_member`: "a new team member started using collabmem".
+  - For `upgrade`: "a collabmem upgrade happened".
+
+##### Collecting the values
+
+Collect the values before you ask, because the user sees them in the question.
+
+**Collecting should cost the user nothing.** Use what you know already, or what one simple command prints. Otherwise the value is `unknown`.
+
+- Do not ask the user for a value.
+- Do not do exhaustive searches.
+- Install nothing to get a value.
+- Do not guess.
+
+**The values allow very little freedom.** The endpoint accepts a signal only when every value has exactly the form below. It ignores any other signal, and it does not say so: neither you nor the user would notice.
+
+- `signal_kind`, `setup`, `client_type` and `os`: exactly one of the words listed above, in lower case.
+- `collabmem_version`: digits and dots, with at most one lower-case letter at the end. For example `1.8.7` or `1.8.5a`.
+- `client`: lower-case letters, digits and dashes only, at most 32 characters, or `unknown`.
+- `model`: the identifier or the name of the model and nothing else, at most 64 characters, or `unknown`. Only letters, digits, spaces, dots, dashes, colons and slashes. It starts with a letter or a digit.
+- `client_version` and `os_version`: they start with a digit. After that only letters, digits, dots, dashes, underscores and plus signs, at most 32 characters. A version in another form becomes `unknown`.
+- `install_id`: exactly as the tool made it, or as it stands in `<collab>/.install-id`.
+
+##### When the session hook reports the signal as pending
+
+This section is only for the third situation: the session-start hook reports the signal as pending. At an installation or an upgrade you do not need it. There the installation or upgrade instructions say which kind of signal applies and when to ask.
+
+The hook reports it for a person who was not asked by an installation or an upgrade. For example a team member who received collabmem, or a new version of it, through a plain `git pull`.
+
+**Which kind to send.** The hook's message says which of the two it is.
+
+- **This person's first signal for this project:** the `signal_kind` is `team_member`, in every setup. The install existed before this person was asked, so they joined it. Use the full message of "How to ask".
+- **This person agreed to a signal before, and collabmem was upgraded to a new version since:** the `signal_kind` is `upgrade`. Use "The short ask, for a later upgrade".
+
+**When to ask.** The hook's message says this too. There are two moments.
+
+- **Together with a message from the developers.** That is the normal case. The welcome, or the message that collabmem was upgraded, comes first in your response and thanks the user. The question comes at the end of that same response. The hook's message gives the layout.
+- **After the next memory update.** This happens only when the question was asked together with a message and got no answer. It is asked this one more time, and that is the last time.
+
+  - There is no message from the developers in front of it now, so open warmly yourself. For example: "Thanks for using collabmem! Its developers have one quick question for you."
+  - Say that a clear yes or no is fine either way.
+  - If the user leaves it unanswered again, record `declined`.
 
 ##### How to ask
 
@@ -905,7 +932,7 @@ Render the message below verbatim, as a message from the collabmem developers. F
 
 > "We'd like to understand what type of collabmem setup you use, so we can keep supporting you in the best way. It also helps us show that collabmem is really used.
 >
-> May your AI send us one small signal that says a collabmem `<signal_kind_word>` happened? **It is anonymous: it says nothing about you or your project.** This is all it contains:
+> May your AI send us one small signal that says `<signal_event>`? **It is anonymous: it says nothing about you or your project.** This is all it contains:
 >
 > - collabmem version: `<collabmem_version>`
 > - Setup: `<setup>`
@@ -920,18 +947,13 @@ Then give the user two plain options to answer with: yes, or no thanks. Wait for
 
 ##### The short ask, for a later upgrade
 
-Use the short ask only for an upgrade signal, and only when the user's recorded answer for this project is `sent` or `failed`: they agreed to the signal before. "Recording the answer" below says where that answer is kept. It leaves out the reasons, and keeps the list of values.
+Use the short ask only for an upgrade signal, and only when the user's recorded answer for this project is `sent` or `failed`: they agreed to the signal before. "Recording the answer" below says where that answer is kept.
 
-Ask in your own words whether you may send the upgrade signal to the collabmem developers. Show the same list of values as in the message above, and offer to repeat what the signal is about. For example:
+Ask in your own words whether you may send the upgrade signal to the collabmem developers. Show the same list of values as in the message of "How to ask", and offer to repeat what the signal is about. For example:
 
 > "May I send the upgrade signal to the collabmem developers? This is all it contains:
 >
-> - collabmem version: `<collabmem_version>`
-> - Setup: `<setup>`
-> - AI client: `<client>` `<client_version>`, used in the `<client_type>` client
-> - AI model: `<model>`
-> - Operating system: `<os>` `<os_version>`
-> - A random number, so that we count this install once: `<install_id>`
+> `<the same list of values>`
 >
 > I can repeat what this is about, if you like."
 
@@ -939,7 +961,7 @@ When the user wants to hear what it is about, render the full message from "How 
 
 ##### When the user says yes: sending the signal
 
-Send the values once, with the `curl` command, as a `POST`. Fill in every placeholder.
+Send the values with the `curl` command, as a `POST`. Fill in every placeholder.
 
 ```bash
 curl --silent --max-time 5 \
@@ -961,13 +983,13 @@ Keep the names before each `=` and the `--user-agent` text as they are. In Power
 
 **The signal arrived when the answer is exactly `Signal received, thank you!`.** Tell the user in one line that the signal was received, and that the collabmem developers say thank you.
 
-**Any other outcome means it did not arrive.** For example: no answer, an error, a page from a proxy, or no `curl` command on the machine. Do not try again. Show the user the same values as a link, once:
+**Any other outcome means it did not arrive.** For example: no answer, an error, a page from a proxy, or no `curl` command on the machine. Show the user the same values as a link:
 
 > "The signal could not be sent from here. Please click this link to send it manually, or copy it into the address bar of your browser:"
 >
 > `https://signals.lucens.ai/collabmem?kind=<signal_kind>&install_id=<install_id>&version=<collabmem_version>&setup=<setup>&client=<client>&client_version=<client_version>&client_type=<client_type>&model=<model>&os=<os>&os_version=<os_version>`
 
-Do not ask whether the user clicked it.
+Percent-encode each value in the link: a space in a model name becomes `%20`.
 
 ##### Recording the answer
 
@@ -989,9 +1011,7 @@ git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).signal" <a
 git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).signal-version" <collabmem_version>
 ```
 
-None of the three answers leads to a second attempt.
-
-If the file cannot be written, for example because the session may not write outside the project, tell the user that the answer could not be saved, and what that means: collabmem cannot remember it, so they may be asked again. Offer to help find out why. If it cannot be fixed, suggest feedback to the developers, with `feedbackmem`. Then go on.
+**If the file cannot be written,** for example because the session may not write outside the project: tell the user that the answer could not be saved, and what that means. collabmem cannot remember it, so they may be asked again. Offer to help fix it; Issue 4 of the troubleshooting guide, `<collab>/docs/troubleshoot.md`, has the usual causes. When the session's own settings are what blocks it, those settings have to allow this one file. As a last resort, show the commands and ask the user to run them themselves.
 
 To read what is recorded, run these in the project root. Each prints nothing when there is no value yet.
 
@@ -1026,6 +1046,7 @@ Suggest feedback when one of these happened:
   - A step failed, or needed a workaround.
   - The procedure could not be completed.
   - collabmem could not be fitted into the user's existing workflow or memory setup.
+  - The instructions were wrong or unclear for this project.
   - Something in the procedure annoyed the user.
 
 - **During normal use:**
@@ -1038,7 +1059,7 @@ Suggest feedback when one of these happened:
 
 **When you are in doubt at the end of an install or an upgrade** whether it went smoothly for the user, ask them. Make clear that it costs them little: you write the mail. For example: "Was there anything in this that bothered you, or that could be better? I can write it up as a short mail to the collabmem developers. You only read it and press send." A no ends it.
 
-Keep it from becoming a nuisance:
+**Suggesting must never be a nuisance, and sending is the user's business.**
 
 - Never interrupt the work for it. Suggest it when the task at hand is finished, or at a memory update.
 - Suggest it at most once per issue.
@@ -1179,14 +1200,6 @@ In every case, end by thanking the user in one line. Do not ask afterwards wheth
 A user who prefers to report in public can file an issue at https://github.com/visionscaper/collabmem/issues. Offer to help draft it.
 
 An issue says what the user was trying to do, what happened, what was expected, and the context: the same details as in the mail above, and any error message. The same rule holds there: no proprietary details and no personal details.
-
-#### Committing the install ID
-
-The two answers are personal. They are saved in the user's personal file, outside the project, so there is nothing to commit for them.
-
-The install ID is different: the file `<collab>/.install-id` is part of the memory. When you made it in this step, commit it where the memory is committed, in the same way as in step 11. In a distributed setup that is the shared-knowledge repository, and you push it, so every team member sends the same install ID.
-
-Tell the user in one line that this is done.
 
 ### 13 - Closing the installation
 

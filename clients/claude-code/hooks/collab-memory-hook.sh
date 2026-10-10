@@ -209,11 +209,17 @@ print_pending_questions() {
         "$COLLAB_DIR/index.md" 2>/dev/null || true)
     entries="${entries:-0}"
 
-    # The star ask. It waits until the memory has at least 5 entries: the
-    # user has seen the system work by then.
-    local starred
+    # The star ask. It waits until the memory has grown by at least 5
+    # entries since this person had their welcome: they have seen the system
+    # work by then. Counting from the welcome matters for a person who joins
+    # a memory that is large already.
+    local starred entries_at_welcome
     starred=$(read_personal_value project-starred)
-    if [ "$entries" -ge 5 ]; then
+    entries_at_welcome=$(read_personal_value entries-at-welcome)
+    case "$entries_at_welcome" in
+        ''|*[!0-9]*) entries_at_welcome=0 ;;
+    esac
+    if [ "$entries" -ge $((entries_at_welcome + 5)) ]; then
         if [ -z "$starred" ]; then
             pending+=("the star ask (the first ask)")
         elif [ "$starred" = "maybe-later" ]; then
@@ -274,6 +280,16 @@ print_welcome() {
     git config --file "$PERSONAL_FILE" \
         "project.$(pwd -P).welcomed" "$version" 2>/dev/null || return 1
 
+    # At the first welcome, remember how large the memory is. The star ask
+    # counts from here.
+    if [ -z "$welcomed" ]; then
+        local entries
+        entries=$(grep -c '^| [0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9] ' \
+            "$COLLAB_DIR/index.md" 2>/dev/null || true)
+        git config --file "$PERSONAL_FILE" \
+            "project.$(pwd -P).entries-at-welcome" "${entries:-0}" 2>/dev/null || true
+    fi
+
     local signal
     signal=$(due_signal)
 
@@ -284,7 +300,7 @@ print_welcome() {
     echo "horizontal line (---), then answer what the user asked."
     echo ""
     if [ -z "$welcomed" ]; then
-        echo "    **From the collabmem developers:** thanks for using collabmem!"
+        echo "    **From the collabmem developers:** welcome to collabmem, and thanks for using it! This project uses collabmem: a way for you and your AI assistant to collaborate over the long term and build up a shared memory of the work. More about it: https://github.com/visionscaper/collabmem"
         echo ""
         echo "    - Type \`helpmem\` when you want help with it."
         echo "    - Type \`feedbackmem\` to tell the developers about a problem or an idea."
@@ -328,6 +344,12 @@ print_welcome() {
 # When the personal file cannot be used, nothing is asked. At the start of a
 # session the problem is reported instead.
 print_developer_messages() {
+    # A load-check probe is a session of its own, started by an install, an
+    # upgrade or the troubleshooting guide. No person reads it, so it gets no
+    # message: otherwise the welcome would be recorded as given, and the real
+    # user would never see it. The probe sets this variable.
+    [ -z "${COLLABMEM_PROBE:-}" ] || return 0
+
     command -v git >/dev/null 2>&1 || return 0
 
     local state

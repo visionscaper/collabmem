@@ -77,6 +77,21 @@ Ask your AI assistant:
 
 The AI will compare your installed version with the latest, read the release notes, and apply the differences. Your notes, world model, and accumulated knowledge are never modified during an upgrade — only system files (methodology, hooks, configuration) are updated. In rare cases where memory data needs to be adapted to a new version, the AI will discuss the changes with you and ask for approval before making any modifications.
 
+## Two Questions from Us
+
+At the end of an install or an upgrade, the AI asks you two quick questions on our behalf. You can say no to both, and collabmem works the same either way.
+
+**Would you star the project?** collabmem is a small open-source project, and GitHub stars are the main way new people discover it. Each one helps the project reach others with the same problem.
+
+**May the AI send one install signal?** We'd like to understand what type of collabmem setup people use, so we can keep supporting you in the best way. It also helps us show that collabmem is really used.
+
+- The signal is anonymous: it says nothing about you or your project.
+- It contains the collabmem version, the kind of setup, the AI client and model, the operating system, and a random number, so that we count an install once.
+- You see every value before it is sent, and it is sent only after you say yes.
+- To block fake signals, we keep a scrambled form of your network address for a limited time, then erase it. Apart from that, we store nothing that could identify you, and we do not track you.
+
+Each person is asked for themselves, and your answers are kept in your personal file (see "What Gets Installed"). When you say no, the question is not asked again.
+
 ## What Gets Installed
 
 The system adds a collaboration directory (default `collab/`) to the project:
@@ -108,6 +123,8 @@ Imports are added to the project's instruction file (e.g., `CLAUDE.md`, `.cursor
 
 All files are git-tracked — in the code repo for solo installations, in the memory repo itself for a standalone memory project, or in the shared-knowledge repo for distributed installations (see "Choosing a Setup" above). Nothing is hidden or opaque.
 
+One file lives outside the project: `~/.config/collabmem/personal.ini`, in your home directory. It holds your own settings for collabmem, such as your answers to the two questions described under "Two Questions from Us". It is plain text, it is never committed, and removing it is safe. `setup-options.md` lists what it holds.
+
 ## Introduction
 
 Losing context across sessions is the visible symptom — existing memory solutions tackle that. But effective long-term collaboration with AI needs something deeper: a shared conceptual understanding that grows over time. Without it, the AI can't remember what the project is actually about, what matters to you, or why you ruled out an approach last week — the kind of knowledge that takes real time to build up and that makes the AI genuinely useful as a partner.
@@ -128,14 +145,14 @@ Entries in this memory are summarized in an index which is always in the AI cont
 global **awareness** of everything that is in the memory. This allows it to cross-correlate knowledge in this memory
 and to know where to find details from memory entries.
 
-The system uses three sentinel tokens — `readmem`, `updatemem`, and `maintainmem` — as the primary way to interact with memory. Include them in your message to the AI to trigger reading from memory, updating it, or maintaining it. The AI proposes what to read or write; you approve. In this way a high-quality memory with conceptual knowledge is built up over time. And we keep the memory system simple, without needing custom agentic AI solutions or infrastructure. Three further sentinels complete the set: `upgrademem` for system upgrade, `helpmem` for help about the memory system, and `starmem` for supporting the project with a GitHub star.
+The system uses three sentinel tokens — `readmem`, `updatemem`, and `maintainmem` — as the primary way to interact with memory. Include them in your message to the AI to trigger reading from memory, updating it, or maintaining it. The AI proposes what to read or write; you approve. In this way a high-quality memory with conceptual knowledge is built up over time. And we keep the memory system simple, without needing custom agentic AI solutions or infrastructure. Four further sentinels complete the set: `upgrademem` for system upgrade, `helpmem` for help about the memory system, `starmem` for supporting the project with a GitHub star, and `feedbackmem` for telling the developers about a problem or an idea.
 
 collabmem has a methodology to ensure that episodic or world model memory is never lost. See the section
 "How It Works" for more details.
 
 ## Working with the Memory System
 
-The system provides six sentinel tokens — include them in your message to trigger the corresponding operation:
+The system provides seven sentinel tokens — include them in your message to trigger the corresponding operation:
 
 - **`readmem`** — Read relevant information from memory before handling a task. Use when you need background, history, or context from prior work.
 - **`updatemem`** — Evaluate what should be captured in memory — as a note, a world model update, or both. Use after discussions that produced decisions or learnings, after completing work, or when you've shared context that should be remembered.
@@ -161,7 +178,7 @@ You'll get the most out of the memory system by developing the habit of using th
 
 The methodology defines three levels of triggers that can activate memory operations:
 
-1. **Sentinel tokens (strongest guarantee)** — When `readmem`, `updatemem`, or `maintainmem` is present in your message, the AI MUST perform the operation. (`upgrademem` and `helpmem` are also MUST-level sentinels, but for system upgrade and help respectively — not memory operations.)
+1. **Sentinel tokens (strongest guarantee)** — When `readmem`, `updatemem`, or `maintainmem` is present in your message, the AI MUST perform the operation. (`upgrademem`, `helpmem`, `starmem` and `feedbackmem` are also MUST-level sentinels, but for upgrading, help, supporting the project and feedback — not memory operations.)
 2. **Word cues** — Words like "done", "decided", "background", "history" may prompt the AI to read from or update memory without an explicit sentinel token.
 3. **Conceptual triggers** — The AI is instructed to recognise situations where memory operations are appropriate, such as when a logical unit of work concludes.
 

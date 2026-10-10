@@ -16,12 +16,13 @@ git config --file ~/.config/collabmem/personal.ini --get "project.$(pwd -P).proj
 
 #### When to ask
 
-The ask must stay respectful and bounded, so it is governed by strict ask discipline:
+**A person is asked at most twice, ever.** The ask must stay respectful and bounded.
 
-- **The first ask: only once, and only when the personal file has no `project-starred` value for this project.** It happens at an installation or an upgrade. A person who was not asked there is asked later: when the memory has at least 5 entries, the session-start hook reports the star ask as pending, and the Post-update Verification checklist of the methodology sends you here. The value becomes `done`, `maybe-later` or `declined`.
-- **The follow-up ask: once more, only when** the value is `maybe-later` and the Episodic Memory Index (`index.md`) has at least 5 entries. The session-start hook reports this too. The value becomes `done` or `declined`.
-- **A question that is left unanswered counts as an answer.** When the user does not react to the first ask, record `maybe-later`: it leads to the one follow-up ask and no more. When they do not react to the follow-up ask, record `declined`.
-- **Never ask again after a decline**, and never after the follow-up ask, whatever its outcome. A second "maybe later" at the follow-up ask is therefore recorded as `declined` — the value gates asking, it doesn't judge the user's interest; the user can always star later themselves or type `starmem`.
+- **The first ask: when the personal file has no `project-starred` value for this project.** It happens at an installation or an upgrade. A person who was not asked there is asked later: the session-start hook reports the star ask as pending when the memory has grown by 5 entries since that person's welcome, and the Post-update Verification checklist of the methodology sends you here. The value becomes `done`, `maybe-later` or `declined`.
+- **The follow-up ask: once more, when the value is `maybe-later`.** The session-start hook reports it, on the same condition. The user has seen the system work by then. The value becomes `done` or `declined`, also when the user says "maybe later" again.
+- **A question that is left unanswered counts as an answer.** When the user does not react to the first ask, record `maybe-later`. When they do not react to the follow-up ask, record `declined`.
+
+The value decides whether to ask. It does not judge the user's interest: they can always star the project themselves, or type `starmem`.
 
 #### How to ask
 
@@ -33,15 +34,15 @@ Render the message below verbatim, as a message from the collabmem developers. T
 
 Then give the user three plain options to answer with: star it, maybe later, or no thanks.
 
-**The first ask.** It is used at installation, at the upgrade of an existing installation, and when the session-start hook reports the first ask as pending. Render:
+**The first ask.** Render:
 
 > "collabmem is a small open-source project. GitHub stars are the main way new people discover it — each one helps the project reach others with the same problem. If you like the idea behind collabmem, would you consider starring the repo? And thanks for trying it either way!
 >
 > Star collabmem manually here: https://github.com/visionscaper/collabmem"
 
-**The follow-up ask.** It is used only when the value is `maybe-later` and the Episodic Memory Index has at least 5 entries. The user has seen the system work by then, so the message speaks about its value. Render:
+**The follow-up ask.** Render:
 
-> "When collabmem was installed you said 'maybe later' about starring the repo. You've built up real memory with the system now. If collabmem has been useful, the developers would appreciate the support. You can star collabmem manually here: https://github.com/visionscaper/collabmem — and if it's not for you, no problem, it won't come up again."
+> "Earlier you were asked about starring collabmem, and it was left for later. You've worked with the system for a while now. If collabmem has been useful, the developers would appreciate the support. You can star collabmem manually here: https://github.com/visionscaper/collabmem — and if it's not for you, no problem, it won't come up again."
 
 #### The `gh` path
 
@@ -61,6 +62,5 @@ mkdir -p ~/.config/collabmem && git config --file ~/.config/collabmem/personal.i
 - User starred the repo (via `gh` or themselves) → `done`
 - "Maybe later" → `maybe-later`
 - "No" → `declined`
-- After the follow-up ask, set `done` or `declined` — never `maybe-later` again.
 
-If the file cannot be written, for example because the session may not write outside the project, tell the user that the answer could not be saved, and what that means: collabmem cannot remember it, so they may be asked again. Offer to help find out why. If it cannot be fixed, suggest feedback to the developers, with `feedbackmem`. Then go on.
+**If the file cannot be written,** for example because the session may not write outside the project: tell the user that the answer could not be saved, and what that means. collabmem cannot remember it, so they may be asked again. Offer to help fix it; Issue 4 of the troubleshooting guide, `<collab_dir>/docs/troubleshoot.md`, has the usual causes. When the session's own settings are what blocks it, those settings have to allow this one file. As a last resort, show the command and ask the user to run it themselves.

@@ -81,8 +81,11 @@ your context automatically on every session; **Tier 2** files are searched on de
 .collab-config                  ← system settings (at project root)
 collab/
 ├── .collab-memory-system       ← version marker
+├── .install-id                 ← random install ID, for the install signal
 ├── methodology.md              ← AI operating instructions
 ├── support.md                  ← starmem support-ask procedure
+├── install-signal.md           ← install signal procedure
+├── feedback.md                 ← feedbackmem procedure: feedback to the developers
 ├── index.md                    ← episodic memory index (Tier 1 — always in context)
 ├── notes.md                    ← episodic memory (Tier 2 — searched on demand)
 ├── index-archive.md            ← archived index entries (Tier 2)
@@ -97,6 +100,10 @@ collab/
     ├── domain.md               ← domain-specific knowledge (Tier 2)
     └── factoids.md             ← specific facts, numbers, references (Tier 2)
 ```
+
+One file lives outside the project: `~/.config/collabmem/personal.ini`. It holds one person's own
+settings for collabmem, with a section per project. `setup-options.md` in the collabmem repository
+has the full list of files and says what the personal file holds.
 
 `collab/` is the memory directory; its location comes from `collab_dir` in `.collab-config`. Depending on the
 setup it is a real directory in the repository, or a **symlink to a shared-knowledge repo outside the project** —
@@ -149,7 +156,7 @@ non-interactive mode and ask it what it received:
 
 ```bash
 # from the project directory; set the config-dir env var if you use a non-default one
-claude -p "Do NOT use any tools. From your system context ONLY: list the exact paths of every file whose \
+COLLABMEM_PROBE=1 claude -p "Do NOT use any tools. From your system context ONLY: list the exact paths of every file whose \
 CONTENTS were provided to you. Then state whether the text following the Tier 1 import header is actual \
 file content or a literal '@...' path line." < /dev/null
 ```
@@ -305,7 +312,7 @@ Re-run the Check 3 probe. Every Tier 1 file should now appear by path. Then conf
 there, not just the filename:
 
 ```bash
-claude -p "Do NOT use tools. From system context only, yes/no: does your context contain the string \
+COLLABMEM_PROBE=1 claude -p "Do NOT use tools. From system context only, yes/no: does your context contain the string \
 '<a distinctive string from the END of your largest Tier 1 file>'?" < /dev/null
 ```
 
@@ -487,6 +494,26 @@ session-start hook's check a): the COLLABMEM-LOAD-CHECK section is absent.
 
 ---
 
+## Issue 4 — The session-start hook reports a problem with the personal collabmem file
+
+The hook prints "PROBLEM WITH THE PERSONAL COLLABMEM FILE" when `~/.config/collabmem/personal.ini`
+cannot be read or cannot be written. The memory itself is not affected. Until it is fixed, collabmem
+gives no messages from its developers and asks none of their questions.
+
+- **"unreadable":** the file exists, but it cannot be read, or its content is damaged. Check with
+  `git config --file ~/.config/collabmem/personal.ini --list`. A file damaged by a manual edit can be
+  repaired by hand; it is a plain INI file with one section per project. Removing the file is safe:
+  the answers in it are then asked once more.
+- **"unwritable":** the file, or its folder, cannot be written. The usual cause is that it belongs to
+  another user, for example after a command that was run with `sudo`. Check with
+  `ls -ld ~/.config/collabmem ~/.config/collabmem/personal.ini`.
+
+A different case gives no such report: the hook can use the file, but the session may not write
+outside the project, so the AI cannot save an answer. The fix is to allow that one file in the
+session's settings. As a last resort the user runs the one command themselves.
+
+---
+
 ## Technique — investigating harness behaviour
 
 When a memory problem looks like harness behaviour, resist answering from recollection. In order:
@@ -530,7 +557,9 @@ advisories, which is what promoted it from guess to explanation.
 ## Escalating
 
 If the problem is in collabmem itself — methodology, templates, hooks, or installation procedure — do not
-improvise changes to system files (methodology §15). File an issue:
+improvise changes to system files (methodology, "Help, Troubleshooting and Feedback"). Offer the user to
+send feedback to the developers: the `feedbackmem` procedure, in `feedback.md` in the memory directory.
+A user who prefers to report in public can file an issue:
 
 **https://github.com/visionscaper/collabmem/issues**
 

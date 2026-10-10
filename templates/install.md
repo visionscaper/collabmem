@@ -190,7 +190,13 @@ Ask this on its own, and wait for the answer before you go on.
 
 **Then, in every setup: describe, name the defaults, and ask.**
 
-Tell the user what you are about to install and where: the memory directory, the collabmem block in the instruction file, and the hooks. In a distributed setup also the symlink, and what goes into `.gitignore`.
+Tell the user what you are about to install and where:
+
+- The memory directory.
+- The collabmem block in the instruction file.
+- The hooks.
+- In a distributed setup, tell them also about the symlink, and about the entries that are added to `.gitignore`.
+- One small file outside the project, `~/.config/collabmem/personal.ini`. It holds this person's own settings for collabmem, such as their answers to two questions at the end of the install. `setup-options.md` says what is in it, for when the user asks.
 
 Name every default, and say that each can be changed. Without that the user cannot decide whether they want anything different. Then ask whether to proceed, and offer to answer questions first.
 
@@ -454,7 +460,7 @@ Check the points below. Tell the user the outcome in a sentence or two, not as a
 
 - `.collab-config` is at the project root.
 - In a distributed setup: the `collab` symlink is at the project root and leads to the memory directory.
-- The memory directory holds its version file `.collab-memory-system`, the twelve memory files (`methodology.md`, `support.md`, `index.md`, `index-archive.md`, `notes.md` and the seven world files), and the `docs/` directory.
+- The memory directory holds its version file `.collab-memory-system`, the fourteen memory files (`methodology.md`, `support.md`, `install-signal.md`, `feedback.md`, `index.md`, `index-archive.md`, `notes.md` and the seven world files), and the `docs/` directory.
 - `methodology.md` and `world/context.md` start with their load-check marker lines.
 - The instruction file holds the collabmem block between its two markers, including the `COLLABMEM-LOAD-CHECK` section.
 - The three version stamps agree: the first line of the block, the header of the hook script, and `.collab-memory-system`. Without hooks: the block and the version file.
@@ -468,8 +474,10 @@ Files in the right place do not prove that Claude Code loads them. The load chec
 Tell the user that, before you run it. Then run this from the project directory:
 
 ```bash
-claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Begin your reply with the exact banner line your load-check instructions specify, then answer present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation." < /dev/null
+COLLABMEM_PROBE=1 claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Begin your reply with the exact banner line your load-check instructions specify, then answer present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation." < /dev/null
 ```
+
+`COLLABMEM_PROBE=1` tells the session hook that this session is a check and that no person reads it. The hook then keeps its messages for the user's own first real session.
 
 **Show the result as it came.** Paste the output unchanged, on success and on failure, and follow it with one plain sentence on what it means. The same holds for every later run: the user sees the `LOADED SUCCESSFULLY` banner themselves, not only your report of it.
 
@@ -604,7 +612,11 @@ While a migration is under way, recommend adding this comment just above the col
 
 ### 11 - Committing the installation
 
-Everything is written now: the memory, and the installation note. Tell the user what will be committed and where, and ask for their consent.
+Everything is written now: the memory, and the installation note.
+
+**First make the install ID.** It is a random number that stands for this install, kept in the memory directory as `<collab>/.install-id`. Step 12 needs it, and it is committed here with the rest. Follow "The install ID" in step 12. If no install ID can be made, go on without one.
+
+Then tell the user what will be committed and where, and ask for their consent.
 
 - **Solo:** commit in the code repository. Do not push: pushing is part of the user's normal workflow.
 - **Standalone:** commit and push. The remote is the memory's backup.
@@ -616,31 +628,18 @@ Everything is written now: the memory, and the installation note. Tell the user 
 
 The installation is done and committed. Before you close it off, the collabmem developers have two questions for the user: whether they want to star the project, and whether you may send an install signal.
 
-**First collect the values of the install signal.** Do this before you say anything: follow "The values of the signal", "Collecting the values" and "The install ID" below. The `signal_kind` is `team_member` in a distributed setup, and `install` in a solo or a standalone setup. If no install ID can be made, the install signal is skipped and one question is left.
+**First collect the values of the install signal.** Do this before you say anything: follow "The values of the signal" and "Collecting the values" below. The `signal_kind` is `team_member` in a distributed setup, and `install` in a solo or a standalone setup. If step 11 could make no install ID, the install signal is skipped and one question is left.
 
-**Then say how many questions are coming.** For example:
+**Then say how many questions are coming, and ask them one at a time.** For example:
 
 > "Before we wrap up: two quick questions from the collabmem developers."
 
-With one question left, say "one quick question".
-
-**Ask one question at a time.** Ask the first, wait for the answer, and do everything that answer asks for, including recording it. Only then ask the second.
+Ask the first, wait for the answer, and do everything that answer asks for, including recording it. Only then ask the second.
 
 1. The star ask: follow "starmem — Supporting the Project" below, the first ask.
 2. The install signal: follow "The install signal" below, from "How to ask".
 
-When both questions are answered, go on with "Committing the install ID" at the end of this step.
-
-**When the installation had problems, this step is different.** That is the case when:
-
-- A step failed, or needed a workaround.
-- The installation could not be completed.
-- collabmem could not be fitted into what the user already has.
-- Something in the installation annoyed the user.
-
-When you are in doubt whether the installation went smoothly for the user, ask them whether there is anything they would like the developers to know. Say that you write the mail for them, and that they only read it and press send.
-
-In that case:
+**When the installation did not go smoothly, this step is different.** "When to suggest it" in the feedback procedure below says when that is the case.
 
 1. First offer feedback to the collabmem developers: follow "feedbackmem — Feedback to the collabmem Developers" below.
 2. Do not ask the star question now, and record nothing for it. It is not the moment to ask for a star, and with no answer recorded the user can be asked later.
@@ -651,14 +650,6 @@ In that case:
 {{install_signal}}
 
 {{feedback}}
-
-#### Committing the install ID
-
-The two answers are personal. They are saved in the user's personal file, outside the project, so there is nothing to commit for them.
-
-The install ID is different: the file `<collab>/.install-id` is part of the memory. When you made it in this step, commit it where the memory is committed, in the same way as in step 11. In a distributed setup that is the shared-knowledge repository, and you push it, so every team member sends the same install ID.
-
-Tell the user in one line that this is done.
 
 ### 13 - Closing the installation
 

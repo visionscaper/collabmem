@@ -125,6 +125,7 @@ The three setups differ in where files live, but every install is made of the sa
 - `docs/troubleshoot.md` — the troubleshooting guide, copied at install
 - the memory itself: notes, indexes, the `world/` files, and the `docs/` reference documents
 - `.collab-memory-system` — the version marker
+- `.install-id` — a random number that stands for this install, used by the install signal
 
 **The per-clone part** is what makes the harness load the shared part:
 
@@ -139,6 +140,37 @@ Each per-clone copy carries its own version stamp:
 - a header line in the hook: `# collabmem hook, checked and updated up to: vX.Y.Z`
 
 The stamp means: this copy was checked, and updated where needed, up to that version. The shared version marker cannot say this about any particular copy. The upgrade procedure compares both.
+
+## The personal file
+
+Next to the two parts of an install there is one file per person: `~/.config/collabmem/personal.ini`. It is in the person's home directory, outside every project and outside the memory.
+
+It holds what belongs to one person and not to a project or a team: their own settings for collabmem. Nobody else sees it, and it is never committed.
+
+The file is a plain INI text file. It has one section per project, named by the path of the project root, and one section for settings that hold for all projects. `git config --file` reads and writes it, so no other tool is needed.
+
+What it holds today:
+
+- `project-starred` — this person's answer to the question whether they want to star collabmem: `done`, `maybe-later` or `declined`.
+- `signal` and `signal-version` — whether this person agreed to the install signal, and for which collabmem version they were last asked.
+- `welcomed` — the collabmem version of the last message from the developers that this person saw in this project, so the welcome and each upgrade message come once.
+- `entries-at-welcome` — how many notes the memory had when this person got their welcome. The star question waits until there are five more.
+- `collabmem.feedback-suggestions` — set to `off` by a person who does not want the AI to suggest sending feedback. It holds for all projects.
+
+For example:
+
+```
+[project "/Users/sam/work/my-project"]
+    welcomed = 1.8.7
+    entries-at-welcome = 12
+    signal = sent
+    signal-version = 1.8.7
+    project-starred = maybe-later
+[collabmem]
+    feedback-suggestions = off
+```
+
+Removing the file is safe. The questions it remembers the answers to are then asked once more.
 
 ## Quick comparison
 

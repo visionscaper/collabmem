@@ -15,6 +15,7 @@ Suggest feedback when one of these happened:
   - A step failed, or needed a workaround.
   - The procedure could not be completed.
   - collabmem could not be fitted into the user's existing workflow or memory setup.
+  - The instructions were wrong or unclear for this project.
   - Something in the procedure annoyed the user.
 
 - **During normal use:**
@@ -27,7 +28,7 @@ Suggest feedback when one of these happened:
 
 **When you are in doubt at the end of an install or an upgrade** whether it went smoothly for the user, ask them. Make clear that it costs them little: you write the mail. For example: "Was there anything in this that bothered you, or that could be better? I can write it up as a short mail to the collabmem developers. You only read it and press send." A no ends it.
 
-Keep it from becoming a nuisance:
+**Suggesting must never be a nuisance, and sending is the user's business.**
 
 - Never interrupt the work for it. Suggest it when the task at hand is finished, or at a memory update.
 - Suggest it at most once per issue.

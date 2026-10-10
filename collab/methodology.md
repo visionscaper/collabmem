@@ -146,7 +146,7 @@ After completing any memory update, verify:
 2. If any Tier 2 world file was updated (`world/domain.md`, `world/how-tos.md`, `world/factoids.md`): `world/index.md` was updated to reflect the change (see Writing World Model Index Entries in the World Model Protocol)
 3. If a note or world model update relates to a document in `docs/`: the document is referenced from the note or relevant world model entry
 4. Every episodic note has a corresponding row in the Episodic Memory Index (`index.md`)
-5. If the session-start hook reported pending questions from the collabmem developers, and you have not asked them yet in this session: ask them now, one at a time, in the form the hook's message names. The star ask is the `starmem` procedure (see Section 15 — starmem). The install signal is described in `<collab_dir>/install-signal.md`; start at "When the session hook reports the signal as pending"
+5. If the session-start hook reported pending questions from the collabmem developers, and you have not asked them yet in this session: ask them now, one at a time, in the form the hook's message names. The star ask is the `starmem` procedure (see Section 15 — starmem). The install signal is the procedure in `<collab_dir>/install-signal.md`; its section "When the session hook reports the signal as pending" says what holds in this case
 
 ### 4. maintainmem — Maintaining and Consolidating Memory
 
@@ -450,12 +450,13 @@ All installed components are identifiable by markers:
 - **Hooks:** named with `collab-memory-` prefix
 - **Config:** `.collab-config` at project root
 - **Data directory:** contains `.collab-memory-system` marker file
+- **Personal file:** `~/.config/collabmem/personal.ini`, outside the project. It holds this person's own settings for collabmem, with one section per project, named by the project's path
 
 **To uninstall:** Always confirm with the user before proceeding — explain that uninstallation will remove the system's ability to maintain long-term memory, and that accumulated knowledge in the collaboration directory can be preserved or removed.
 
 1. Remove instruction file imports (between the comment markers)
 2. Remove hook configurations with the `collab-memory-` prefix
-3. Remove `.collab-config` from project root
+3. Remove `.collab-config` from project root, and this project's section from the personal file `~/.config/collabmem/personal.ini`. Leave the sections of other projects
 4. Ask the user whether to keep or remove the collaboration directory (default: keep — preserves accumulated knowledge). If the collaboration directory is a symlink (team install pattern pointing to a shared-knowledge repo), removing the symlink is safe, but the target repo must never be deleted — it holds shared team data. Confirm explicitly with the user which is meant.
 
 **Never delete or modify files, code, or data that do not belong to the collaboration memory system.**
@@ -487,7 +488,7 @@ This section is about what to do when the user has a question about the memory s
 1. **Try to explain or resolve it.** Use your understanding of the methodology to answer the question, or to fix the problem within the normal operating procedures. The user can also ask for help explicitly, with `helpmem`.
 2. **If it cannot be resolved without changing the system itself**, do not improvise changes to system files. The system itself is the methodology, the templates, the hooks and the installation procedure. Suggest feedback to the developers instead, with `feedbackmem`.
 
-The two procedures follow below. Supporting the project with a star is a separate matter: see `starmem` (Section 15).
+The two procedures follow below.
 
 #### helpmem — Help with the Memory System
 
@@ -525,10 +526,10 @@ When the user includes `helpmem` in their message, you MUST provide help about t
 
 **Suggest it yourself** when something about collabmem went wrong or annoyed the user:
 
-- A step of an install or an upgrade failed, needed a workaround, or could not be completed.
 - The user shows frustration about how collabmem works, or about how you work with it.
 - The same problem with the memory system happens a second time.
-- An instruction of this methodology turns out to be wrong, or impossible to follow.
+- An instruction of the methodology turns out to be wrong, contradictory or impossible to follow.
+- The user has a suggestion for collabmem.
 
 **Do not let it become a nuisance:**
 

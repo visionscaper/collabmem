@@ -27,7 +27,30 @@ This upgrade operates on **the current install only** — the one whose instruct
 
 1. Read the installed version from `<collab_dir>/.collab-memory-system` in the user's project, where `<collab_dir>` is the value in the project's `.collab-config` (it may be a custom path like `collab/<project>`, not literally `collab/`; a hard-coded `collab/...` will not exist for custom dirs).
 2. Read the latest version from `collab/.collab-memory-system` in this repository (in the repo it is inside `collab/`, not at the repo root).
-3. If the versions match, the shared part is current. Now check the **per-clone part** (see "What an Install Consists Of"): read the block's stamp and the hook's stamp and compare them with the version in this repository. Then, whatever the stamps say, **check the per-clone contents**: diff the installed hook against this repository's template (Step 5's hook-freshness check), and confirm the import block contains every system section the template has (e.g. `COLLABMEM-LOAD-CHECK`), with this install's paths and user additions preserved. If the stamps match and the contents are current, stop (up to date). Otherwise do a **per-clone catch-up**: re-copy the hook (always — its stamp changes every release), apply the instruction-file changes needed, set the block's stamp to the current version, and run the verify probe. The stamp tells you which releases' per-clone changes to apply, from the release notes: everything after the stamped version. A missing stamp is how installs older than v1.8.6 look; treat it as "older than v1.8.6". Skip the shared-file copies — they were already done from another copy. After the catch-up, go to Step 6: the questions from the collabmem developers are asked at a catch-up too. If the shared version is behind, proceed with the full upgrade below regardless of what the stamps say — it covers both parts.
+3. Compare the two versions, and decide which of three things to do.
+
+   What this is about: an install has a shared part and a per-clone part, as "What an Install Consists Of" explains. Someone else may have upgraded the shared part already. Then the versions match, and the copy you are in can still be behind.
+
+   **If the shared version is behind:** do the full upgrade below. It covers both parts, whatever the stamps say.
+
+   **If the versions match:** the shared part is current. Check the per-clone part of this clone, in two ways.
+
+   - **The stamps.** Read the stamp of the instruction block and the stamp of the hook. Compare them with the version in this repository.
+   - **The contents,** whatever the stamps say.
+     - Diff the installed hook against the template in this repository. Step 5 calls this the hook-freshness check.
+     - Confirm that the import block has every system section the template has, for example `COLLABMEM-LOAD-CHECK`. This install's paths and the user's additions stay as they are.
+
+   **If the stamps match and the contents are current:** stop. The install is up to date.
+
+   **Otherwise: do a per-clone catch-up.**
+
+   - Re-copy the hook. Do this always: its stamp changes with every release.
+   - Apply the changes the instruction file needs. The stamp tells you which: the per-clone changes of every release after the stamped version, from the release notes.
+   - A missing stamp is how an install older than v1.8.6 looks. Treat it as "older than v1.8.6".
+   - Set the block's stamp to the current version.
+   - Run the verify probe.
+   - Skip the copies of the shared files. They were done already, from another clone.
+   - Then go on with Steps 6 to 8. The feedback offer and the questions from the collabmem developers hold for a catch-up too.
 
 ### Step 2: Read Release Notes
 
@@ -64,11 +87,7 @@ Apply all changes in a single pass:
    - **Set the block's version stamp:** the first line inside the start marker, `collabmem instruction block, checked and updated up to: vX.Y.Z`, to the version being installed. If the block has no such line (installs older than v1.8.6), add it. If lines that are not part of the template sit at the top of the block (e.g. a comment left by an earlier install), put the stamp above them, directly under the start marker, and keep those lines. Do this on every upgrade, also when the block content did not change: the stamp means "checked and updated up to this version." The hook's stamp needs no edit — it is in the hook header and comes with the `cp`.
    - **System support files that are copies** (e.g. `<collab>/docs/troubleshoot.md` on Claude Code): copy/replace them; do NOT add a `world/index.md` entry for them (they are system files, not world knowledge — the index-every-doc rule does not apply).
 2. Add any new configuration settings to `.collab-config`.
-   - **The star answer of an install from before v1.8.7.** Such an install kept it as a line `project_starred=<value>` in `.collab-config`. The answer is personal and now lives in the user's personal file. If the line is there:
-
-     - **The user has an answer in the personal file already:** do nothing. "Where the answer is kept" in the new `support.md` says how to read it.
-     - **`.collab-config` is git-ignored** (`git check-ignore -q .collab-config` succeeds): the file is this user's own copy, so the answer is theirs. Write its value to the personal file, as "Recording the answer" in the new `support.md` describes, and remove the line from `.collab-config`.
-     - **`.collab-config` is not git-ignored:** the file may be shared, and the line does not say who gave the answer. Ask the user, in plain words. For example: "This project has a recorded answer to the question whether to star collabmem: `<value>`. Was that your answer?" On a yes, write the value to the personal file. On a no, write nothing: Step 6 then asks them the star question. Leave the line in `.collab-config`, so the person who gave the answer can still claim it at their own upgrade.
+   - **The star answer of an install from before v1.8.7.** Such an install kept it as a line `project_starred=<value>` in `.collab-config`. An old star answer belongs to whoever gave it. If the user has no star answer in their personal file yet, ask them whether the recorded answer was theirs. For example: "This project has a recorded answer to the question whether to star collabmem: `<value>`. Was that your answer?" On a yes, write the value to their personal file, as "Recording the answer" in the new `support.md` describes. Leave the line in `.collab-config`: in a shared project the person who gave the answer can still claim it at their own upgrade.
    - **The install ID.** If `<collab_dir>/.install-id` does not exist, make it now: follow "The install ID" in `<collab_dir>/install-signal.md`, which item 1 has just copied into the installation. It is committed with the other files in item 5.
 3. If memory data migrations are needed, apply them with the user's approval. Narrate each change to the user's memory files — what is being modified, why, and what the result looks like. If a migration is ambiguous or could lose information, ask the user how to proceed rather than guessing.
 4. Update `<collab_dir>/.collab-memory-system` (the `collab_dir` from `.collab-config`) to the latest version.
@@ -93,8 +112,10 @@ Confirm that:
 
 **Probe what actually loads (Claude Code).** The checks above verify files on disk; finish by verifying the harness really injects them. Run a fresh, non-interactive probe from the project directory and **show its verbatim output to the user**:
 
+`COLLABMEM_PROBE=1` tells the session hook that this session is a check and that no person reads it. The hook then keeps its messages for the user's own next real session.
+
 ```bash
-claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Begin your reply with the exact banner line your load-check instructions specify, then answer present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation." < /dev/null
+COLLABMEM_PROBE=1 claude -p "Do NOT use any tools. From your system context ONLY: state whether a line containing COLLABMEM-MARKER- joined with METHODOLOGY, and a line containing COLLABMEM-MARKER- joined with CONTEXT, are present in your context. Begin your reply with the exact banner line your load-check instructions specify, then answer present/absent for the methodology marker and for the context marker — do not repeat the joined marker tokens themselves. Then stop: do not run the readmem orientation." < /dev/null
 ```
 
 Show the probe's raw output verbatim — on both success and failure — then give a one-line plain-language translation. If either marker is reported absent, imports are not loading — consult `clients/claude-code/troubleshoot.md` (also copied to `<collab>/docs/troubleshoot.md`), and explain the problem and fix to the user in plain language (no jargon about markers/imports/config; offer technical detail only if the user asks). If you cannot run the probe from inside your session, ask the user to run it in a terminal from the project directory and paste the output.
@@ -107,44 +128,32 @@ Recommend the user re-run this probe after any CLI upgrade, config-directory cha
 
 **Other memory projects in the same repository.** If the shared-knowledge repository holds more than one memory project (several `collab` directories, e.g. under `projects/<name>/`), list the others with the version in their `.collab-memory-system`, say which ones are now behind, and tell the user that each of those is upgraded from its own project's session. This is read-only — it writes nothing outside the current install — and it turns a silent divergence into a stated one.
 
-Inform the user that the upgrade is complete and summarise what changed. The upgrade takes effect in the next session (Tier 1 imports load once at session start) — suggest a restart.
+### Step 6: Feedback When the Upgrade Did Not Go Smoothly
 
-### Step 6: Questions from the collabmem developers
+Skip this step when the upgrade went smoothly.
 
-After the upgrade-complete message, the collabmem developers may have up to two questions for the user: whether they want to star the project, and whether you may send an upgrade signal.
+Otherwise offer the user to send feedback to the collabmem developers, before the questions of Step 7. Read `<collab_dir>/feedback.md` in the user's installation and follow it: "When to suggest it" says when an upgrade counts as not smooth. This holds for a per-clone catch-up too.
 
-**When the upgrade had problems, do Step 7 first.** Then come back here for the upgrade signal only. Do not ask the star question in that case, and record nothing for it: it is not the moment to ask for a star, and with no answer recorded the user can be asked later.
+### Step 7: Questions from the collabmem developers
 
-**This step is for everyone who goes through this document:** the person who runs the full upgrade, and also a team member who only did the per-clone catch-up of Step 1, after someone else had upgraded the shared part. Each of them is asked for themselves.
+Before you close the upgrade, the collabmem developers may have up to two questions for the user: whether they want to star the project, and whether you may send an upgrade signal.
 
-**The answers are personal.** They are kept in the user's personal file, `~/.config/collabmem/personal.ini`, in the section of this project. Which questions are asked depends on what that file records for the person in front of you. The two procedures say how to read it: "Where the answer is kept" in `<collab_dir>/support.md`, and "Recording the answer" in `<collab_dir>/install-signal.md`.
+**Say how many questions are coming, then ask them one at a time.** For example: "Before we wrap up: two quick questions from the collabmem developers."
 
-**The star ask.** It depends on the `project-starred` value:
+**This step is for everyone who goes through this document:** the person who runs the full upgrade, and also a team member who only did the per-clone catch-up of Step 1, after someone else had upgraded the shared part. Each of them is asked for themselves, and each answer is kept in that person's own file, `~/.config/collabmem/personal.ini`. The two procedures say how to read it.
 
-- No value: ask, with the first ask.
-- Any value: do not ask. The user has been asked before.
+**The two questions** are the star ask and the upgrade signal. Each has its own condition for being asked.
 
-**The upgrade signal.** It depends on the `signal` and `signal-version` values:
+**The star ask.** Follow `<collab_dir>/support.md`, the first ask. It is asked when the user has no `project-starred` value. It is not asked when the upgrade did not go smoothly: it is not the moment to ask for a star, and with no answer recorded the user is asked later.
+
+**The upgrade signal.** Follow `<collab_dir>/install-signal.md`. The `signal_kind` is `upgrade`. Collect its values before you say anything. Which form it takes depends on the user's `signal` and `signal-version` values:
 
 - `signal-version` is the version just installed: do not ask. This person has been asked for this version already.
 - No `signal` value: ask with the full message.
 - `sent` or `failed`: ask with the short ask.
 - `declined`: do not ask.
 
-The upgrade signal is also skipped when there is no `<collab_dir>/.install-id`: Step 4 could not make one.
-
-**How to go through them.**
-
-1. If the upgrade signal is to be asked, first collect its values. Do this before you say anything: follow "The values of the signal" and "Collecting the values" in `<collab_dir>/install-signal.md`. The `signal_kind` is `upgrade`.
-
-2. Count the questions that are left. With none, this step is done. Otherwise say how many are coming, for example: "Before we wrap up: two quick questions from the collabmem developers." With one question, say "one quick question".
-
-3. Ask one question at a time. Ask the first, wait for the answer, and do everything that answer asks for, including recording it. Only then ask the second.
-
-   - The star ask: follow `<collab_dir>/support.md`, the first ask.
-   - The upgrade signal: follow `<collab_dir>/install-signal.md` from "How to ask", or from "The short ask, for a later upgrade".
-
-Both answers go to the personal file, outside the project, so there is nothing to commit in this step.
+Without a `<collab_dir>/.install-id` there is no upgrade signal: Step 4 could not make one.
 
 **Record which version this person had.** In their next session the session hook tells the user once that collabmem was upgraded, and where to read what is new. It can only do that for a person whose earlier version is recorded. If the personal file has no `welcomed` value for this project, write the version this person had before, without the leading `v`:
 
@@ -162,17 +171,8 @@ git config --file ~/.config/collabmem/personal.ini --get "project.$(pwd -P).welc
 
 Do this also when no question was asked, and also at a per-clone catch-up.
 
-### Step 7: Feedback When the Upgrade Had Problems
+### Step 8: Closing the Upgrade
 
-Skip this step when the upgrade went smoothly. When it did not, this step comes before Step 6.
+Tell the user that the upgrade is complete, and summarise what changed.
 
-Offer the user to send feedback to the collabmem developers when:
-
-- A step failed, or needed a workaround.
-- The upgrade could not be completed.
-- These instructions were wrong or unclear for this install.
-- Something in the upgrade procedure annoyed the user.
-
-When you are in doubt whether the upgrade went smoothly for the user, ask them whether there is anything they would like the developers to know. Say that you write the mail for them, and that they only read it and press send.
-
-Read `<collab_dir>/feedback.md` in the user's installation and follow it. This holds for a per-clone catch-up too.
+End with the restart: the upgrade takes effect in the next session, because the memory files are loaded once, at the start of a session. This comes last on purpose. A reminder given before the questions gets buried under them.
