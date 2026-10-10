@@ -90,7 +90,7 @@ At the end of an install or an upgrade, the AI asks you two quick questions on o
 - You see every value before it is sent, and it is sent only after you say yes.
 - To block fake signals, we keep a scrambled form of your network address for a limited time, then erase it. Apart from that, we store nothing that could identify you, and we do not track you.
 
-Each person is asked for themselves, and your answers are kept in your personal file (see "What Gets Installed"). When you say no, the question is not asked again.
+Each person is asked for themselves, and your answers are kept in your personal file (see "What Gets Installed"). The install signal is also asked once per upgrade. When you say no, the question is not asked again.
 
 ## What Gets Installed
 
@@ -100,6 +100,7 @@ The system adds a collaboration directory (default `collab/`) to the project:
 .collab-config                  ← system settings (at project root)
 collab/
 ├── .collab-memory-system       ← version marker
+├── .install-id                 ← random install ID, for the install signal
 ├── methodology.md              ← AI operating instructions
 ├── support.md                  ← starmem support-ask procedure
 ├── install-signal.md           ← install signal procedure

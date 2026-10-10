@@ -504,13 +504,15 @@ gives no messages from its developers and asks none of their questions.
   `git config --file ~/.config/collabmem/personal.ini --list`. A file damaged by a manual edit can be
   repaired by hand; it is a plain INI file with one section per project. Removing the file is safe:
   the answers in it are then asked once more.
-- **"unwritable":** the file, or its folder, cannot be written. The usual cause is that it belongs to
+- **"unwritable":** the file or its folder cannot be written. Both are needed: `git` writes a lock
+  file next to the file. The usual cause is that it belongs to
   another user, for example after a command that was run with `sudo`. Check with
   `ls -ld ~/.config/collabmem ~/.config/collabmem/personal.ini`.
 
 A different case gives no such report: the hook can use the file, but the session may not write
-outside the project, so the AI cannot save an answer. The fix is to allow that one file in the
-session's settings. As a last resort the user runs the one command themselves.
+outside the project, so the AI cannot save an answer. The fix is to allow writing in the folder
+`~/.config/collabmem` in the session's settings. The folder and not only the file, because `git` writes
+a lock file next to it. As a last resort the user runs the one command themselves.
 
 ---
 

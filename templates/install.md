@@ -29,7 +29,7 @@ Say conceptually what you created, did or changed, what it is for, and what the 
 .collab-config              → project root
 collab/                     → (solo and standalone: a real directory | distributed: a symlink into the shared-knowledge repository)
 ├── .collab-memory-system   (version marker)
-├── .install-id             (random install ID, made in step 12)
+├── .install-id             (random install ID, made in step 11)
 ├── methodology.md          (your operating instructions)
 ├── support.md              (starmem support-ask procedure)
 ├── install-signal.md       (install signal procedure)
@@ -642,7 +642,7 @@ Ask the first, wait for the answer, and do everything that answer asks for, incl
 **When the installation did not go smoothly, this step is different.** "When to suggest it" in the feedback procedure below says when that is the case.
 
 1. First offer feedback to the collabmem developers: follow "feedbackmem — Feedback to the collabmem Developers" below.
-2. Do not ask the star question now, and record nothing for it. It is not the moment to ask for a star, and with no answer recorded the user can be asked later.
+2. Do not ask the star question now: "When to ask" in the star procedure says why.
 3. Then ask the install signal, as the one quick question that is left.
 
 {{support}}

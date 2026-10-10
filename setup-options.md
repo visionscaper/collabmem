@@ -151,10 +151,10 @@ The file is a plain INI text file. It has one section per project, named by the 
 
 What it holds today:
 
-- `project-starred` — this person's answer to the question whether they want to star collabmem: `done`, `maybe-later` or `declined`.
 - `signal` and `signal-version` — whether this person agreed to the install signal, and for which collabmem version they were last asked.
 - `welcomed` — the collabmem version of the last message from the developers that this person saw in this project, so the welcome and each upgrade message come once.
 - `entries-at-welcome` — how many notes the memory had when this person got their welcome. The star question waits until there are five more.
+- `collabmem.starred` — this person's answer to the question whether they want to star collabmem: `done`, `maybe-later` or `declined`. It holds for all projects: a star is given once, to the collabmem repository.
 - `collabmem.feedback-suggestions` — set to `off` by a person who does not want the AI to suggest sending feedback. It holds for all projects.
 
 For example:
@@ -165,8 +165,8 @@ For example:
     entries-at-welcome = 12
     signal = sent
     signal-version = 1.8.7
-    project-starred = maybe-later
 [collabmem]
+    starred = maybe-later
     feedback-suggestions = off
 ```
 

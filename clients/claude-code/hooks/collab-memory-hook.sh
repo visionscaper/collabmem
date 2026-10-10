@@ -144,6 +144,8 @@ personal_file_state() {
         git config --file "$PERSONAL_FILE" --list >/dev/null 2>&1 \
             || { echo "unreadable"; return 0; }
         [ -w "$PERSONAL_FILE" ] || { echo "unwritable"; return 0; }
+        # git writes a lock file next to the file, so the folder counts too.
+        [ -w "$(dirname "$PERSONAL_FILE")" ] || { echo "unwritable"; return 0; }
     else
         mkdir -p "$(dirname "$PERSONAL_FILE")" 2>/dev/null \
             || { echo "unwritable"; return 0; }
@@ -160,6 +162,15 @@ read_personal_value() {
     # The same path the procedures use when they write a value.
     git config --file "$PERSONAL_FILE" \
         --get "project.$(pwd -P).$1" 2>/dev/null || true
+}
+
+# Reads one value that holds for all projects of this person; empty when
+# absent. The star answer is such a value: a star is given once, to the
+# collabmem repository, whatever project the person works in.
+read_personal_value_for_all_projects() {
+    [ -f "$PERSONAL_FILE" ] || return 0
+
+    git config --file "$PERSONAL_FILE" --get "collabmem.$1" 2>/dev/null || true
 }
 
 # The collabmem version that is installed in this project, without the "v".
@@ -214,7 +225,7 @@ print_pending_questions() {
     # work by then. Counting from the welcome matters for a person who joins
     # a memory that is large already.
     local starred entries_at_welcome
-    starred=$(read_personal_value project-starred)
+    starred=$(read_personal_value_for_all_projects starred)
     entries_at_welcome=$(read_personal_value entries-at-welcome)
     case "$entries_at_welcome" in
         ''|*[!0-9]*) entries_at_welcome=0 ;;
@@ -280,9 +291,11 @@ print_welcome() {
     git config --file "$PERSONAL_FILE" \
         "project.$(pwd -P).welcomed" "$version" 2>/dev/null || return 1
 
-    # At the first welcome, remember how large the memory is. The star ask
-    # counts from here.
-    if [ -z "$welcomed" ]; then
+    # Remember how large the memory is, when that is not recorded yet. The
+    # star ask counts from here. A person who came through the upgrade
+    # procedure has a "welcomed" value and no count, so this cannot depend on
+    # the welcome being the first.
+    if [ -z "$(read_personal_value entries-at-welcome)" ]; then
         local entries
         entries=$(grep -c '^| [0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9] ' \
             "$COLLAB_DIR/index.md" 2>/dev/null || true)

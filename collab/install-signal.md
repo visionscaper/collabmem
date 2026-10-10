@@ -8,7 +8,7 @@ The signal must only be sent after the user has said yes. The user sees every va
 
 Every person who uses collabmem is asked for themselves. When the answer is no, the install signal is never asked for again.
 
-**One question, one attempt, then it is over.** That holds for the asking and for the sending.
+**One question at a time, one attempt at sending, and at most one reminder.** After that it is over.
 
 #### The procedure in short
 
@@ -208,7 +208,7 @@ git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).signal" <a
 git config --file ~/.config/collabmem/personal.ini "project.$(pwd -P).signal-version" <collabmem_version>
 ```
 
-**If the file cannot be written,** for example because the session may not write outside the project: tell the user that the answer could not be saved, and what that means. collabmem cannot remember it, so they may be asked again. Offer to help fix it; Issue 4 of the troubleshooting guide, `<collab>/docs/troubleshoot.md`, has the usual causes. When the session's own settings are what blocks it, those settings have to allow this one file. As a last resort, show the commands and ask the user to run them themselves.
+**If the file cannot be written,** for example because the session may not write outside the project: tell the user that the answer could not be saved, and what that means. collabmem cannot remember it, so they may be asked again. Offer to help fix it; Issue 4 of the troubleshooting guide, `<collab>/docs/troubleshoot.md`, has the usual causes. When the session's own settings are what blocks it, those settings have to allow writing in the folder `~/.config/collabmem`. As a last resort, show the commands and ask the user to run them themselves.
 
 To read what is recorded, run these in the project root. Each prints nothing when there is no value yet.
 

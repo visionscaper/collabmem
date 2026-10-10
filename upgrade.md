@@ -144,7 +144,7 @@ Before you close the upgrade, the collabmem developers may have up to two questi
 
 **The two questions** are the star ask and the upgrade signal. Each has its own condition for being asked.
 
-**The star ask.** Follow `<collab_dir>/support.md`, the first ask. It is asked when the user has no `project-starred` value. It is not asked when the upgrade did not go smoothly: it is not the moment to ask for a star, and with no answer recorded the user is asked later.
+**The star ask.** Follow `<collab_dir>/support.md`, the first ask. "When to ask" in that file says when it is asked.
 
 **The upgrade signal.** Follow `<collab_dir>/install-signal.md`. The `signal_kind` is `upgrade`. Collect its values before you say anything. Which form it takes depends on the user's `signal` and `signal-version` values:
 
