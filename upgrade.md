@@ -50,6 +50,7 @@ This upgrade operates on **the current install only** — the one whose instruct
    - Set the block's stamp to the current version.
    - Run the verify probe.
    - Skip the copies of the shared files. They were done already, from another clone.
+   - Do Step 4 item 2, the star answer of an install from before v1.8.7. It is a question for each person, not a file copy.
    - Then go on with Steps 6 to 8. The feedback offer and the questions from the collabmem developers hold for a catch-up too.
 
 ### Step 2: Read Release Notes

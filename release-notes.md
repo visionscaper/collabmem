@@ -6,29 +6,33 @@
 
 **New: `feedbackmem`, private feedback to the developers.** When something about collabmem goes wrong, annoys you, or gives you an idea, type `feedbackmem`. The AI drafts a short mail to the developers, without details of your work. You read it, and you send it yourself.
 
-The AI may also suggest it, for example when the same problem happens a second time, or when you show frustration about how collabmem works. It does so at most once per issue, and only when the task at hand is finished. If you prefer to report in public, GitHub issues remain open.
+The AI may also suggest it, for example when the same problem happens a second time, or when you show frustration about how collabmem works. It does so at most once per issue, and only when the task at hand is finished. If you would rather not get these suggestions, say so once, and the AI stops suggesting it. If you prefer to report in public, GitHub issues remain open.
 
-**New: a welcome, and a message after each upgrade.** In a person's first session in a project, the AI gives one short welcome from the developers: a thank-you, how to get help with `helpmem`, and how to send feedback with `feedbackmem`. After an upgrade, each person gets one message saying that collabmem was upgraded, with a link to these release notes.
+**New: a welcome, and a message after each upgrade.** In a person's first session in a project, the AI gives one short welcome from the developers: a thank-you, how to get help with `helpmem`, how to send feedback with `feedbackmem`, and a link for occasional news about collabmem. After an upgrade, each person gets one message saying that collabmem was upgraded, with a link to these release notes. A person who was never welcomed gets the welcome instead.
 
-This also reaches team members who get collabmem through a plain `git pull`, who until now never saw what the installer saw.
+This also reaches team members who did not run the install or the upgrade themselves, once their own clone has the v1.8.7 session hook. In a distributed setup the hook belongs to each clone, and a `git pull` of the shared memory does not bring it. So after you upgrade, ask your team members to type `upgrademem` in their own clone.
 
 **New: two questions from us, asked for each team member.** At the end of an install or an upgrade the AI asks two quick questions on our behalf. You can say no to both, and collabmem works the same either way.
 
 - **Would you star the project?** This was already asked since v1.8.4.
 
-- **May the AI send one install signal?** It helps us understand which setups people use, and show that collabmem is really used. The signal is anonymous. It contains the collabmem version, the kind of setup, the AI client and model, the operating system, and a random number that stands for the install. You see every value before it is sent. To block fake signals, the endpoint keeps a scrambled form of your network address for 48 hours, then erases it.
+- **May the AI send a signal at each install and upgrade?** It helps us understand which setups people use, and show that collabmem is really used. The signal contains nothing about you or your project, apart from a random number that stands for the install. It holds the collabmem version, the kind of setup, the AI client and model, the operating system, and that number. You see every value before it is sent. To block fake signals, the endpoint keeps a scrambled form of your network address for 48 hours, then erases it. You are asked again at each upgrade; a no is final.
 
-A team member who joins through `git pull` is asked too: the session hook notices that this person was never asked, and the AI asks at the end of its first answer in that session.
+A team member who was never asked is asked too, once their clone has the new hook. The signal question comes at the end of the AI's first answer in that person's session. The star question comes later, once they have worked with the memory for a while.
 
-**Changed: your preferences and setup are personal.** Answers to these questions, and other collabmem related preferences, belong to a person, not to a project. They now live in a file in your home directory, `~/.config/collabmem/personal.ini`, with one section per project. It is plain text, never committed, and removing it is safe: the questions are then asked once more. `setup-options.md` lists what it holds.
+A question you leave unanswered counts as an answer, so it is not repeated. After an install or upgrade that did not go smoothly, the AI offers to send feedback first, and leaves out the star question.
+
+**Changed: your preferences are personal.** Answers to these questions, and other collabmem related preferences, belong to a person, not to a project. They now live in a file in your home directory, `~/.config/collabmem/personal.ini`. It has one section per project, and one section for settings that hold for all projects, such as your star answer. It is plain text and never committed. Removing it is safe: the welcome and the questions then come once more. `setup-options.md` lists what it holds.
 
 The star answer used to be kept in the project's `.collab-config`, as `project_starred`. The upgrade asks whether that recorded answer was yours, and moves it to your personal file if so.
 
-**Changed: `install.md` is rewritten to be easier to follow.** For you, the AI now explains each step by what it does and why, gives configuration choices with their defaults, asks one thing at a time, and ends with a closing message that stands on its own. For the AI, the instructions are shorter and more direct, so models at medium effort install collabmem completely. We tested this with simulated users on Claude Sonnet 5 and Claude Opus 5.5.
+**New: an install ID.** Each install now has a file `<collab_dir>/.install-id` with a random number, committed with the memory. It is the number the signal carries, so that an install and its team members are counted once.
+
+**Changed: `install.md` is rewritten to be easier to follow.** For you, the AI now explains each step by what it does and why, gives configuration choices with their defaults, asks one thing at a time, and ends with a closing message that stands on its own. For the AI, the instructions are shorter and more direct. In our simulated tests, Claude Sonnet 5 and Claude Opus 5.5 at medium effort completed the install.
 
 **Also:**
 
-- The verify probe now sets `COLLABMEM_PROBE=1`, so the session hook keeps its messages for your next real session instead of giving them to the probe.
+- The verify probe, the check the AI runs at the end of an install or upgrade to confirm that the memory loads, now sets `COLLABMEM_PROBE=1`. The session hook then keeps its messages for your next real session instead of giving them to the probe.
 
 - The troubleshooting guide has a new Issue 4, for when the session hook reports a problem with the personal file.
 
@@ -39,13 +43,14 @@ The star answer used to be kept in the project's `.collab-config`, as `project_s
 - **collab/feedback.md (NEW):** the `feedbackmem` procedure: when to suggest it, the form of the mail, opening it as a mail draft or copying it to the clipboard, and the public route.
 - **collab/install-signal.md (NEW):** the install signal procedure: the install ID, the values, the message, sending, and recording the answer.
 - **collab/support.md:** the star answer moves to the personal file, an unanswered question counts as an answer, and the follow-up ask waits for five more notes after the person's welcome.
-- **collab/methodology.md:** `feedbackmem` added to the sentinels; New Session step 6 acts on the hook's messages; Post-update Verification item 5 asks pending questions from the developers; the personal file in Uninstallation; sections 14 and 15 merged into "Help, Troubleshooting and Feedback", so `starmem` is now section 15.
-- **clients/claude-code/hooks/collab-memory-hook.sh:** the welcome and the upgrade message, pending questions, the check of the personal file, `COLLABMEM_PROBE`.
-- **install.md:** rewritten, now generated from `templates/install.md` and `user-friendliness.md`; step 12 holds the two questions. The instruction-block template is unchanged apart from a line wrap.
-- **upgrade.md:** the new files in the shared part; the star answer from `project_starred`; the install ID; Step 6 feedback when an upgrade did not go smoothly; Step 7 the two questions and recording the earlier version; Step 8 closing.
-- **clients/claude-code/troubleshoot.md:** the new files in the file tree, the personal file, `COLLABMEM_PROBE=1` in the probes, Issue 4, escalation through `feedbackmem`.
+- **collab/methodology.md:** `feedbackmem` added to the sentinels; New Session step 6 acts on the hook's messages; Post-update Verification item 5 asks pending questions from the developers; the personal file in Uninstallation; the help and feedback sections merged into "Help, Troubleshooting and Feedback".
+- **collab/.install-id (NEW, made at install or upgrade):** the random install ID, committed in the shared part.
+- **clients/claude-code/hooks/collab-memory-hook.sh:** the welcome and the upgrade message with the news link, pending questions, the check of the personal file, `COLLABMEM_PROBE`.
+- **install.md:** rewritten, now generated from `templates/install.md` and `user-friendliness.md`; step 12 holds the two questions; the closing message has the news link. The instruction-block template is unchanged apart from a line wrap.
+- **upgrade.md:** the new files in the shared part; the star answer from `project_starred`, also at a per-clone catch-up; the install ID; Step 6 feedback when an upgrade did not go smoothly; Step 7 the two questions and recording the earlier version; Step 8 closing.
+- **clients/claude-code/troubleshoot.md:** the new files in the file tree, the personal file, `COLLABMEM_PROBE=1` in the probes, Issue 4, escalation through `feedbackmem`; Applies-to → v1.8.7.
 - **setup-options.md:** the new files in the shared part; new section "The personal file".
-- **README.md:** new section "Two Questions from Us"; `feedbackmem` among the sentinels; the new files and the personal file under "What Gets Installed"; Status → v1.8.7.
+- **README.md:** new section "Two Questions from Us"; `feedbackmem` among the sentinels; the new files and the personal file under "What Gets Installed"; tested and recommended models; Status → v1.8.7.
 - **collab/.collab-memory-system:** bumped to `v1.8.7`.
 - For collabmem's own development, not installed: `templates/`, `user-friendliness.md`, `tools/build_instructions.py`, and tests for the session hook in `tests/`.
 
@@ -107,7 +112,7 @@ Two decisions come with it. Memory inside a code repo is now **discouraged** for
 3. **Re-copy the troubleshooting guide** `clients/claude-code/troubleshoot.md` → `<collab_dir>/docs/troubleshoot.md`.
 4. **Refresh the import block:** add the duplicate-install paragraph to the `COLLABMEM-LOAD-CHECK` section (from install.md's template, after the multi-install paragraph), and add the version-stamp line `collabmem instruction block, checked and updated up to: v1.8.6` as the first line after `<!-- collab-memory-system:start -->`. Keep the existing paths and user additions. **Then check the `.collab-config` import line:** if it reads `@collab/.collab-config` (or `@../collab/.collab-config`), it points at a file that does not exist — change it to `@.collab-config` (instruction file at the project root) or `@../.collab-config` (instruction file in `.claude/`), i.e. the same path prefix as the other imports minus the `collab/` segment. Installs whose `.collab-config` sits next to the collab directory in a memory repo (e.g. `@<abs-path>/projects/<name>/.collab-config`) are already correct — leave them.
 5. Bump `<collab_dir>/.collab-memory-system` to `v1.8.6`.
-6. **Verify:** the three versions agree (block stamp, hook stamp, marker); run the probe (install.md Step 8 / upgrade.md Step 5). Takes effect next session.
+6. **Verify:** the three versions agree (block stamp, hook stamp, marker); run the probe (upgrade.md Step 5). Takes effect next session.
 7. **Distributed installs:** shared part once (steps 1, 3, 5, then push the shared-knowledge repo); per-clone part (steps 2, 4, 6) in every clone, from a session in that clone.
 
 ## v1.8.5a
@@ -159,7 +164,7 @@ Several *installed* files change. Do all of the following, then run the probe:
 4. **Prepend one line to the user-owned `collab/world/context.md`** (do not replace the file) using an **edit tool** (not shell/`cp` — the change must be a reviewable diff): `COLLABMEM-MARKER-CONTEXT — load-check marker, do not remove` as the new first line, leaving all existing content untouched. Idempotent: if that line is already the first line, skip it.
 5. **Refresh the import block** in the instruction file (CLAUDE.md or equivalent): add the `COLLABMEM-LOAD-CHECK` section from install.md's template just before `<!-- collab-memory-system:end -->`. **Keep the existing install's import paths** (e.g. `@../collab/...`); adjust the block's local `collab/docs/troubleshoot.md` pointer only for a custom collab-dir name or an external directory.
 6. Bump `collab/.collab-memory-system` to `v1.8.5`.
-7. **Verify:** run the probe from install.md Step 8 / upgrade.md Step 5 and show its output. The load-check takes effect in the next session — suggest a restart.
+7. **Verify:** run the probe from upgrade.md Step 5 and show its output. The load-check takes effect in the next session — suggest a restart.
 
 ## v1.8.4
 

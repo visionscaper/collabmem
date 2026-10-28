@@ -23,9 +23,9 @@ with Claude Code.
 
 **Status:** v1.8.7 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/collabmem/issues.
 
-All testing and development so far has been done using Claude Opus 4.8 (medium effort) and Fable 5 (medium effort). This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
+The installation has been tested successfully with Claude Sonnet 5 and Claude Opus 5.5, at medium effort. This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
 
-A note on model choice: collabmem is built around close turn-by-turn collaboration, so it works best with a model that communicates clearly and in context. We currently recommend Opus 4.8 or Fable 5. We'd advise against Opus 5 for this use — in our experience its communication style is less suited to the collaborative, in-context back-and-forth collabmem depends on.
+A note on model choice: collabmem is built around close turn-by-turn collaboration, so it works best with a model that communicates clearly and in context. We currently recommend Opus 5.5, or Fable 5.1 or newer. We'd advise against Opus 5 for this use — in our experience its communication style is less suited to the collaborative, in-context back-and-forth collabmem depends on.
 
 ## Stay in the Loop
 
