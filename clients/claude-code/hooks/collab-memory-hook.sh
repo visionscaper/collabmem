@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # collab-memory-hook.sh — Lifecycle hook for the Collaboration Memory System
-# collabmem hook, checked and updated up to: v1.8.6
+# collabmem hook, checked and updated up to: v1.8.7
 #
 # Handles two Claude Code hook events:
 #   - SessionStart: Context recovery, health check, and memory triggers
