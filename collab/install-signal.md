@@ -67,6 +67,8 @@ The signal consists of the values below. Each has a name, and the rest of this p
 
 - `client_type`: how the user works with the client. One of `terminal`, `native`, `web`, `ide`, or `unknown`. `native` is a desktop app.
 
+  In Claude Code, read it from the environment variable `CLAUDE_CODE_ENTRYPOINT`, with `echo "$CLAUDE_CODE_ENTRYPOINT"`. `cli` means `terminal`, and `claude-desktop` means `native`. Any other value, or none, means `unknown`.
+
 - `model`: the AI model you are. Use the identifier of the model when you know it, for example `claude-opus-5-5`; otherwise its name.
 
 - `os`: the operating system. One of `macos`, `linux`, `windows`, or `unknown`.
