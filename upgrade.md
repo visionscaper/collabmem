@@ -66,6 +66,7 @@ Read all sections in [`release-notes.md`](release-notes.md) between the installe
 Diff from that commit to HEAD in this repository. Use the release notes as context to understand the changes.
 
 Check for user customisations: diff the user's installed system files against the originals from the installed version's commit found above. Any differences indicate user customisations that must be preserved or merged during the upgrade.
+
 Plan the upgrade as a single pass — do not apply version by version. Identify:
 - Which setup this install is, and what that means for other clones of this project, if it has any. "The three setups" in `setup-options.md` says this per setup: in a standalone memory project the instruction file and the hook are committed, so other clones only `git pull` and start a new session; in the distributed setup each clone has its own copy and needs its own `upgrademem`, unless the instruction file and the hook are committed in the code repository; then the other clones get them by pulling the code repository, once the user has committed the change. Confirm it with `git ls-files <instruction file> <hook>`, run in the repository that holds the instruction file. Name the setup and the consequence in the plan.
 - System files that need replacing (e.g., `methodology.md`, hook scripts, client support files such as `clients/<client-name>/troubleshoot.md` → `<collab>/docs/`)
