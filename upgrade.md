@@ -13,7 +13,7 @@ These instructions are for you, the AI assistant. Follow them to upgrade an exis
 
 ## What an Install Consists Of
 
-Read `setup-options.md` first. It describes the three setups and the two parts every install is made of. The short version:
+Read `setup-options.md` first. It describes the three setups and the two parts every install is made of. Step 3, Diff and Plan, asks you to name this install's setup in the plan. The short version:
 
 - **Shared part** — the collab directory: `methodology.md`, `support.md`, `install-signal.md`, `feedback.md`, `docs/troubleshoot.md`, the memory, and the version marker `.collab-memory-system`. In the distributed setup it lives in the shared-knowledge repo, so there is one copy for everyone: upgrade it once, and every clone gets it on the next pull.
 - **Per-clone part** — the import block in the instruction file and the hook script. In the distributed setup there is one copy per clone, and upgrading one does nothing for the others. Each copy carries a version stamp: the first line inside the import block, and a header line in the hook, both reading `checked and updated up to: vX.Y.Z`.
@@ -23,7 +23,7 @@ Read `setup-options.md` first. It describes the three setups and the two parts e
 
 ### Step 1: Compare Versions
 
-This upgrade operates on **the current install only** — the one whose instruction file and `.collab-config` govern this session. Do not reach into other projects/installs from here: if the user has multiple installs (multiple scopes, or several team members sharing a repo), each is upgraded separately from its own session.
+This upgrade operates on **the current install only** — the one whose instruction file and `.collab-config` govern this session. Do not reach into other projects/installs from here: if the user has multiple installs, for example a user-level and a project-level install on one machine, each is upgraded separately from its own session. Other clones of the same project are a different matter: Step 3, Diff and Plan, finds out what they need.
 
 1. Read the installed version from `<collab_dir>/.collab-memory-system` in the user's project, where `<collab_dir>` is the value in the project's `.collab-config` (it may be a custom path like `collab/<project>`, not literally `collab/`; a hard-coded `collab/...` will not exist for custom dirs).
 2. Read the latest version from `collab/.collab-memory-system` in this repository (in the repo it is inside `collab/`, not at the repo root).
@@ -68,6 +68,7 @@ Diff from that commit to HEAD in this repository. Use the release notes as conte
 Check for user customisations: diff the user's installed system files against the originals from the installed version's commit found above. Any differences indicate user customisations that must be preserved or merged during the upgrade.
 
 Plan the upgrade as a single pass — do not apply version by version. Identify:
+- Which setup this install is, and what that means for other clones of this project, if it has any. "The three setups" in `setup-options.md` says this per setup: in a standalone memory project the instruction file and the hook are committed, so other clones only `git pull` and start a new session; in the distributed setup each clone has its own copy and needs its own `upgrademem`, unless the files are committed. Confirm it with `git ls-files <instruction file> <hook>`. Name the setup and the consequence in the plan.
 - System files that need replacing (e.g., `methodology.md`, hook scripts, client support files such as `clients/<client-name>/troubleshoot.md` → `<collab>/docs/`)
 - Instruction-file block updates — changes to the import block between the `<!-- collab-memory-system:start/end -->` markers in the project's instruction file (e.g., the COLLABMEM-LOAD-CHECK section)
 - Configuration settings that need adding or updating (e.g., new `.collab-config` entries)
@@ -175,5 +176,7 @@ Do this also when no question was asked, and also at a per-clone catch-up.
 ### Step 8: Closing the Upgrade
 
 Tell the user that the upgrade is complete, and summarise what changed.
+
+If the project has other clones, say what their users need to do, as Step 3, Diff and Plan, found: only pull and start a new session, or type `upgrademem` in their own clone.
 
 End with the restart: the upgrade takes effect in the next session, because the memory files are loaded once, at the start of a session. This comes last on purpose. A reminder given before the questions gets buried under them.
