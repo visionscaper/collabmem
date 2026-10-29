@@ -70,7 +70,7 @@ If the indexes don't yield results:
 
 A new session is an implicit `readmem` trigger.
 
-1. If a shared-knowledge repo is used, BEFORE continuing, pull it first (ONLY the shared-knowledge repo — not the project code repo) to have the latest additions to the memory. If the pull updated Tier 1 files (`world/context.md`, `world/preferences.md`, `world/state.md`, `index.md`, `world/index.md`), notify the user — the in-context Tier 1 is now stale — and suggest a session restart so imports load the updated files.
+1. If a shared-knowledge repo is used, BEFORE continuing, pull it first (ONLY the shared-knowledge repo — not the project code repo) to have the latest additions to the memory. If the pull updated Tier 1 files (`world/context.md`, `world/preferences.md`, `world/state.md`, `index.md`, `world/index.md`) or `methodology.md`, notify the user — the in-context Tier 1 is now stale — and suggest a session restart so imports load the updated files. Do the same if the pull updated the instruction file or the session hook: both are read only when a session starts.
 2. Tier 1 files are already loaded via imports, as confirmed by the COLLABMEM-LOAD-CHECK — trust them
 3. Check `world/state.md` for current work
 4. Scan recent entries in the Episodic Memory Index (`index.md`) for context on active work

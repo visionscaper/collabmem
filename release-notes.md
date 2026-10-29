@@ -12,9 +12,9 @@ The AI may also suggest it, for example when the same problem happens a second t
 
 This also reaches team members who did not run the install or the upgrade themselves, once their own clone has the v1.8.7 session hook. How they get it depends on the setup:
 
-- **Distributed:** the hook belongs to each clone, and a `git pull` of the shared memory does not bring it. Ask your team members to type `upgrademem` in their own clone. If your code repository commits the instruction file and the hook, they get them by pulling the code repository instead, once you have committed the change.
+- **Distributed:** the hook belongs to each clone, and a `git pull` of the shared memory does not bring it. Ask your team members to type `upgrademem` in their own clone. If your code repository commits the instruction file and the hook, they get them by pulling the code repository instead, once you have committed the change, and then start a new session.
 
-- **Standalone memory project:** the hook is committed in the memory repository. Your team members only `git pull` and start a new session.
+- **Standalone memory project:** the hook is committed in the memory repository. Your team members type `readmem` in a session, or run `git pull` themselves. Then they start a new session: that is where the new version takes effect.
 
 **New: two questions from us, asked for each team member.** At the end of an install or an upgrade the AI asks two quick questions on our behalf. You can say no to both, and collabmem works the same either way.
 
@@ -47,7 +47,7 @@ The star answer used to be kept in the project's `.collab-config`, as `project_s
 - **collab/feedback.md (NEW):** the `feedbackmem` procedure: when to suggest it, the form of the mail, opening it as a mail draft or copying it to the clipboard, and the public route.
 - **collab/install-signal.md (NEW):** the install signal procedure: the install ID, the values, the message, sending, and recording the answer.
 - **collab/support.md:** the star answer moves to the personal file, an unanswered question counts as an answer, and the follow-up ask waits for five more notes after the person's welcome.
-- **collab/methodology.md:** `feedbackmem` added to the sentinels; New Session step 6 acts on the hook's messages; Post-update Verification item 5 asks pending questions from the developers; the personal file in Uninstallation; the help and feedback sections merged into "Help, Troubleshooting and Feedback".
+- **collab/methodology.md:** `feedbackmem` added to the sentinels; New Session step 6 acts on the hook's messages; Post-update Verification item 5 asks pending questions from the developers; the personal file in Uninstallation; the help and feedback sections merged into "Help, Troubleshooting and Feedback"; New Session step 1 also suggests a restart when the pull updated `methodology.md`, the instruction file or the session hook.
 - **collab/.install-id (NEW, made at install or upgrade):** the random install ID, committed in the shared part.
 - **clients/claude-code/hooks/collab-memory-hook.sh:** the welcome and the upgrade message with the news link, pending questions, the check of the personal file, `COLLABMEM_PROBE`.
 - **install.md:** rewritten, now generated from `templates/install.md` and `user-friendliness.md`; step 12 holds the two questions; the closing message has the news link. The instruction-block template is unchanged apart from a line wrap.
@@ -60,6 +60,8 @@ The star answer used to be kept in the project's `.collab-config`, as `project_s
 
 **Upgrade from v1.8.6:**
 
+This list says what changed since v1.8.6. `upgrade.md` is the procedure; where the two differ, follow `upgrade.md`.
+
 *Coming from further back? The per-version upgrade lists are cumulative. Merge this list with the earlier ones below, oldest first, and apply them as a single pass.*
 
 1. **Replace** `collab/methodology.md` and `collab/support.md`.
@@ -70,10 +72,7 @@ The star answer used to be kept in the project's `.collab-config`, as `project_s
 6. **The install ID:** if `<collab_dir>/.install-id` does not exist, make it as "The install ID" in `install-signal.md` describes.
 7. **The star answer:** if `.collab-config` has a `project_starred` line and the user has no star answer in their personal file, ask whether the recorded answer was theirs, as `upgrade.md` Step 4 describes. Leave the line in `.collab-config`.
 8. Bump `<collab_dir>/.collab-memory-system` to `v1.8.7`.
-9. **Verify:** the three versions agree (block stamp, hook stamp, marker); run the probe with `COLLABMEM_PROBE=1`, as in `upgrade.md` Step 5.
-10. **Close:** feedback if the upgrade did not go smoothly, then the two questions and recording the earlier version (`upgrade.md` Steps 6 to 8). Takes effect next session.
-11. **Distributed installs:** do the shared part once (steps 1, 2, 3, 6, 8, then push the shared-knowledge repo). Do the per-clone part (steps 4, 5, 9) in every clone, from a session in that clone. Steps 7 and 10 are for each person.
-12. **Standalone memory project with several clones:** do all steps once, in one clone, and push. The other clones only `git pull` and start a new session. Their first session gives the message from the developers and asks the signal question by itself.
+Then follow `upgrade.md`: Step 3 says what this means for other clones in your setup, and Steps 5 to 8 verify and close the upgrade.
 
 ## v1.8.6
 
