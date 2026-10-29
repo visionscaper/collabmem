@@ -10,7 +10,11 @@ The AI may also suggest it, for example when the same problem happens a second t
 
 **New: a welcome, and a message after each upgrade.** In a person's first session in a project, the AI gives one short welcome from the developers: a thank-you, how to get help with `helpmem`, how to send feedback with `feedbackmem`, and a link for occasional news about collabmem. After an upgrade, each person gets one message saying that collabmem was upgraded, with a link to these release notes. A person who was never welcomed gets the welcome instead.
 
-This also reaches team members who did not run the install or the upgrade themselves, once their own clone has the v1.8.7 session hook. In a distributed setup the hook belongs to each clone, and a `git pull` of the shared memory does not bring it. So after you upgrade, ask your team members to type `upgrademem` in their own clone.
+This also reaches team members who did not run the install or the upgrade themselves, once their own clone has the v1.8.7 session hook. How they get it depends on the setup:
+
+- **Distributed:** the hook belongs to each clone, and a `git pull` of the shared memory does not bring it. Ask your team members to type `upgrademem` in their own clone. If your code repository commits the instruction file and the hook, they get them by pulling the code repository instead, once you have committed the change.
+
+- **Standalone memory project:** the hook is committed in the memory repository. Your team members only `git pull` and start a new session.
 
 **New: two questions from us, asked for each team member.** At the end of an install or an upgrade the AI asks two quick questions on our behalf. You can say no to both, and collabmem works the same either way.
 
@@ -69,6 +73,7 @@ The star answer used to be kept in the project's `.collab-config`, as `project_s
 9. **Verify:** the three versions agree (block stamp, hook stamp, marker); run the probe with `COLLABMEM_PROBE=1`, as in `upgrade.md` Step 5.
 10. **Close:** feedback if the upgrade did not go smoothly, then the two questions and recording the earlier version (`upgrade.md` Steps 6 to 8). Takes effect next session.
 11. **Distributed installs:** do the shared part once (steps 1, 2, 3, 6, 8, then push the shared-knowledge repo). Do the per-clone part (steps 4, 5, 9) in every clone, from a session in that clone. Steps 7 and 10 are for each person.
+12. **Standalone memory project with several clones:** do all steps once, in one clone, and push. The other clones only `git pull` and start a new session. Their first session gives the message from the developers and asks the signal question by itself.
 
 ## v1.8.6
 
