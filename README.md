@@ -1,4 +1,4 @@
-> **v1.8.7 — new: `feedbackmem`, private feedback to the developers.** When something about collabmem goes wrong or gives you an idea, the AI drafts a short mail without details of your work; you read it and send it. Also new: a welcome and an upgrade message for each person, two optional questions from us (see "Two Questions from Us" below), and an install that is easier to follow. See [`release-notes.md`](release-notes.md).
+> **v1.8.7 — latest version.** See [`release-notes.md`](release-notes.md).
 >
 > ⚠️ **v1.8.5 — important fix for team installs.** Recent Claude Code versions silently stopped loading memory files from shared team directories — sessions ran with **no memory at all, and nothing errored**. v1.8.5 adds a load check that verifies your memory actually reached the AI's context and helps solve any issue when it doesn't. If you run a team install on an older version, please upgrade (type `upgrademem`).
 
