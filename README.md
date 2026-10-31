@@ -35,7 +35,7 @@ collabmem is built by [Lucens](https://lucens.ai) — collaborative AI that buil
 
 Ask your AI assistant:
 
-> "Install the long-term collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the instructions in it."
+> Install the long-term collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the instructions in it.
 
 The AI will clone the repository, read the installation instructions, and walk you through setup. You'll be asked to choose a setup and to confirm before any changes are made; defaults are offered at every step, and customization is available if needed.
 
@@ -67,7 +67,7 @@ The AI will explain the options and help you choose. Details, and what each setu
 
 Ask your AI assistant:
 
-> "Upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the upgrade instructions in it."
+> Upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the upgrade instructions in it.
 
 The AI will compare your installed version with the latest, read the release notes, and apply the differences. Your notes, world model, and accumulated knowledge are never modified during an upgrade — only system files (methodology, hooks, configuration) are updated. In rare cases where memory data needs to be adapted to a new version, the AI will discuss the changes with you and ask for approval before making any modifications.
 
