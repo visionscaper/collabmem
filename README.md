@@ -23,7 +23,7 @@ with Claude Code.
 
 The installation has been tested successfully with Claude Sonnet 5 and Claude Opus 5.5, at medium effort. This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
 
-A note on model choice: collabmem is built around close turn-by-turn collaboration, so it works best with a model that communicates clearly and in context. We currently recommend Opus 5.5, or Fable 5.1 or newer. We'd advise against Opus 5 for this use — in our experience its communication style is less suited to the collaborative, in-context back-and-forth collabmem depends on.
+A note on model choice: collabmem is built around close turn-by-turn collaboration, so it works best with a model that communicates clearly and in context. We currently recommend Opus 5.5, or Fable 5.1 or newer.
 
 ## Stay in the Loop
 
@@ -63,10 +63,6 @@ The AI will explain the options and help you choose. Details, and what each setu
 
 ## How to Upgrade
 
-### For AI Assistants
-
-If a user asks you to upgrade the collaboration memory system, read [`upgrade.md`](upgrade.md) and follow the step-by-step instructions.
-
 ### For Humans
 
 Ask your AI assistant:
@@ -74,6 +70,10 @@ Ask your AI assistant:
 > "Upgrade the collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the upgrade instructions in it."
 
 The AI will compare your installed version with the latest, read the release notes, and apply the differences. Your notes, world model, and accumulated knowledge are never modified during an upgrade — only system files (methodology, hooks, configuration) are updated. In rare cases where memory data needs to be adapted to a new version, the AI will discuss the changes with you and ask for approval before making any modifications.
+
+### For AI Assistants
+
+If a user asks you to upgrade the collaboration memory system, read [`upgrade.md`](upgrade.md) and follow the step-by-step instructions.
 
 ## Two Questions from Us
 
