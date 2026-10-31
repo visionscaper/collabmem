@@ -1,6 +1,4 @@
 > **v1.8.7 — latest version.** See [`release-notes.md`](release-notes.md).
->
-> ⚠️ **v1.8.5 — important fix for team installs.** Recent Claude Code versions silently stopped loading memory files from shared team directories — sessions ran with **no memory at all, and nothing errored**. v1.8.5 adds a load check that verifies your memory actually reached the AI's context and helps solve any issue when it doesn't. If you run a team install on an older version, please upgrade (type `upgrademem`).
 
 # collabmem
 
@@ -21,7 +19,7 @@ with Claude Code.
 
 ## Help Us Improve This System
 
-**Status:** v1.8.7 — we are actively testing and developing this. The episodic memory (notes, index) is the more mature component; the world model memory is functional but earlier in its development. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/collabmem/issues.
+**Status:** v1.8.7 — we are actively testing and developing collabmem. We welcome you to try it and share your experience — what worked, what didn't, what's missing. Your feedback directly shapes what we build next. File issues or experience reports at https://github.com/visionscaper/collabmem/issues.
 
 The installation has been tested successfully with Claude Sonnet 5 and Claude Opus 5.5, at medium effort. This system relies on the AI's ability to follow nuanced instructions, maintain context awareness, and make judgement calls about when to write notes and update the world model — capabilities that may not be available in smaller or less powerful models.
 
@@ -32,6 +30,14 @@ A note on model choice: collabmem is built around close turn-by-turn collaborati
 collabmem is built by [Lucens](https://lucens.ai) — collaborative AI that builds your organisation's memory. For occasional updates about collabmem and Lucens, [subscribe to The Lucens Loop newsletter](https://lucens.ai/subscribe/?source=github&source_topic=collabmem).
 
 ## How to Install
+
+### For Humans
+
+Ask your AI assistant:
+
+> "Install the long-term collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the instructions in it."
+
+The AI will clone the repository, read the installation instructions, and walk you through setup. You'll be asked to choose a setup and to confirm before any changes are made; defaults are offered at every step, and customization is available if needed.
 
 ### For AI Assistants
 
@@ -44,14 +50,6 @@ If a user asks you to install this system, read [`install.md`](install.md) and f
 - Installing platform-specific hooks
 - Optional initial world population
 - Verification
-
-### For Humans
-
-Ask your AI assistant:
-
-> "Install the long-term collaboration memory system by cloning https://github.com/visionscaper/collabmem to a temporary location and following the instructions in it."
-
-The AI will clone the repository, read the installation instructions, and walk you through setup. You'll be asked to choose a setup and to confirm before any changes are made; defaults are offered at every step, and customization is available if needed.
 
 ### Choosing a Setup
 
