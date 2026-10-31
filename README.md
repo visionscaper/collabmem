@@ -3,7 +3,7 @@
 # collabmem
 
 collabmem is a simple, easy-to-use, yet powerful memory system enabling long-term collaboration between
-humans and AI assistants. It's easy to install as well!
+humans and AI assistants. It's easy to install and can be used to collaborate in teams with a shared AI memory as well!
 
 Losing context at every new session or compaction is a well-known problem — and there are already memory solutions for it. But that's only the surface. Real long-term collaboration needs a rich conceptual history of what you've done together and a shared world model of the project, the user, and the work. That's where collabmem comes in.
 
